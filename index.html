@@ -3,111 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HilltopAds Final Test</title>
+    <title>VAST Video Ad Tester - HilltopAds</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
-            background: #121212;
+            background: #0f0f0f;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
+            font-family: Arial, sans-serif;
             padding: 20px;
         }
-        .card {
-            background: #1e1e1e;
-            color: white;
+        .container {
+            background: #1a1a1a;
+            padding: 30px;
             border-radius: 16px;
-            padding: 40px 30px;
-            max-width: 500px;
+            max-width: 720px;
             width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             border: 1px solid #333;
         }
-        h1 { color: #fff; font-size: 22px; }
-        .note {
-            background: #2d2d2d;
-            padding: 15px;
-            border-radius: 10px;
+        h1 {
+            color: #fff;
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .sub {
+            color: #9ca3af;
+            text-align: center;
             font-size: 14px;
-            color: #ccc;
-            text-align: left;
-            margin: 20px 0;
-            border-left: 4px solid #f59e0b;
+            margin-bottom: 20px;
+        }
+        .video-wrapper {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #video-player {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #000;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
         }
         .btn {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 16px 30px;
-            font-size: 18px;
+            padding: 12px 28px;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 50px;
+            border-radius: 40px;
             cursor: pointer;
-            width: 100%;
             transition: 0.2s;
+            flex: 1;
+            min-width: 120px;
         }
-        .btn:hover { background: #2563eb; }
-        .status {
-            margin-top: 20px;
-            font-size: 14px;
+        .btn:hover {
+            background: #2563eb;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        #status {
             color: #9ca3af;
+            font-size: 14px;
+            padding: 10px;
+            background: #222;
+            border-radius: 8px;
+            margin-top: 12px;
+            text-align: center;
+            word-break: break-all;
         }
-        .error-text { color: #f87171; }
-        .success-text { color: #34d399; }
-        .highlight { color: #fbbf24; }
+        .note {
+            background: #2d2d2d;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #d1d5db;
+            margin-top: 15px;
+            border-left: 4px solid #f59e0b;
+        }
+        .note strong {
+            color: #fbbf24;
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>📢 HilltopAds Redirect Test</h1>
-    <p style="color: #9ca3af; font-size: 14px;">Aap ka naya URL ke liye special test</p>
+<div class="container">
+    <h1>📺 VAST Video Ad Tester</h1>
+    <p class="sub">Ye panel <strong>Video Ads</strong> (Pre-roll) dikhane ke liye bana hai</p>
 
-    <div class="note">
-        ⚠️ <strong>Important:</strong> 
-        <ul>
-            <li>Ye ad <u>popup window</u> mein khulegi.</li>
-            <li>Agar <span class="highlight">"ERRORCODE"</span> ya koi bara sa error page aata hai, to iska matlab <strong>HilltopAds ke paas abhi koi ad nahi</strong> (ye aap ki ghalti nahi).</li>
-            <li>Subah ya raat 9-12 baje ke darmiyan try karein, tab fill rate zyada hoti hai.</li>
-        </ul>
+    <div class="video-wrapper">
+        <video id="video-player" controls playsinline></video>
     </div>
 
-    <!-- New URL inserted here -->
-    <button class="btn" id="showAdBtn">🚀 Show Ad (Open Popup)</button>
+    <div class="controls">
+        <button class="btn" id="showAdBtn">▶ Show Ad</button>
+    </div>
 
-    <div class="status" id="status">🟡 Ready for test...</div>
-    
-    <div style="margin-top: 20px; font-size: 12px; color: #555; border-top: 1px solid #333; padding-top: 15px;">
-        Verification File: <strong>434f183aaa02fda862b7</strong> (Dashboard mein site Active hona lazmi hai)
+    <div id="status">🟡 Ready. Button dabayein...</div>
+
+    <div class="note">
+        ⚠️ <strong>Note:</strong> Agar ad load hotay hi <strong>"Error"</strong> ya kuch nahi dikhta, 
+        to iska matlab <strong>HilltopAds ke paas is waqt is region ke liye koi video inventory nahi</strong>. 
+        Ye aap ki ghalti nahi. Raat 9-12 baje ya subah 8-10 baje try karein.
     </div>
 </div>
 
+<!-- Google IMA SDK -->
+<script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+
 <script>
-    // Aap ka naya diya hua URL
-    const AD_URL = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
-    
-    const btn = document.getElementById('showAdBtn');
-    const status = document.getElementById('status');
+    (function() {
+        // ⚠️ Aap ka diya hua VAST URL (JO XML RETURN KAR RAHA THA)
+        const VAST_URL = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
 
-    btn.addEventListener('click', function() {
-        status.innerHTML = '⏳ Popup open ho raha hai...';
-        status.className = 'status';
+        const video = document.getElementById('video-player');
+        const statusDiv = document.getElementById('status');
+        const btn = document.getElementById('showAdBtn');
 
-        // Try to open as a popup
-        const newWin = window.open(AD_URL, '_blank');
+        let adDisplayContainer;
+        let adsLoader;
+        let adsManager;
 
-        if (newWin) {
-            // Agar popup khul gaya
-            status.innerHTML = '✅ Popup khul gaya! <br> Agar usme <b>"ERRORCODE"</b> ya white page aata hai, to samjhein <u>abhi koi ad inventory nahi</u>. <br> <span style="color:#fbbf24;">Kuch ghante baad try karein.</span>';
-            status.className = 'status success-text';
-        } else {
-            // Agar popup block ho gaya
-            status.innerHTML = '❌ Popup BLOCK ho gaya! <br> Browser ke address bar mein <b>popup allow</b> karein, ya Chrome mein right side par click karke "Pop-ups and redirects" ko Allow karein.';
-            status.className = 'status error-text';
+        // SDK initialize karein
+        function initIMA() {
+            try {
+                // Create ad display container
+                adDisplayContainer = new google.ima.AdDisplayContainer(video);
+                // Create ads loader
+                adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+
+                // Event listeners
+                adsLoader.addEventListener(
+                    google.ima.AdsLoaderEvent.Type.ADS_MANAGER_LOADED,
+                    onAdsManagerLoaded,
+                    false
+                );
+                adsLoader.addEventListener(
+                    google.ima.AdsLoaderEvent.Type.AD_ERROR,
+                    onAdError,
+                    false
+                );
+
+                statusDiv.innerHTML = '✅ IMA SDK ready. Ad load kar sakte hain.';
+            } catch (e) {
+                statusDiv.innerHTML = '❌ SDK Error: ' + e.message;
+            }
         }
-    });
+
+        function onAdsManagerLoaded(adsManagerLoadedEvent) {
+            adsManager = adsManagerLoadedEvent.getAdsManager(video);
+            adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, onContentResumeRequested);
+            adsManager.addEventListener(google.ima.AdEvent.Type.ALL_ADS_COMPLETED, onAdComplete);
+            adsManager.addEventListener(google.ima.AdEvent.Type.AD_ERROR, onAdError);
+
+            try {
+                adsManager.init(640, 360, google.ima.ViewMode.NORMAL);
+                adsManager.start();
+                statusDiv.innerHTML = '🎬 Ad chal raha hai... (Video player mein dekhein)';
+            } catch (adError) {
+                statusDiv.innerHTML = '❌ Ad start nahi ho saka: ' + adError.message;
+            }
+        }
+
+        function onContentResumeRequested() {
+            // Ad khatam, video player ko chhor do (yahan kuch nahi)
+            statusDiv.innerHTML = '⏹️ Ad khatam. Dobara test ke liye page refresh karein.';
+        }
+
+        function onAdComplete() {
+            statusDiv.innerHTML = '✅ Ad successfully complete ho gaya!';
+        }
+
+        function onAdError(adErrorEvent) {
+            const error = adErrorEvent.getError();
+            statusDiv.innerHTML = '❌ Ad Error: ' + (error ? error.toString() : 'Unknown error') + 
+                '<br><span style="color:#fbbf24;">Tip: Iska matlab inventory khatam hai. Kuch der baad try karein.</span>';
+            // Reload ads loader to reset state
+            if (adsLoader) {
+                adsLoader.contentComplete();
+            }
+        }
+
+        function requestAds() {
+            if (!adsLoader) {
+                statusDiv.innerHTML = '❌ SDK load nahi hua. Page refresh karein.';
+                return;
+            }
+
+            statusDiv.innerHTML = '⏳ Ad request bhej rahe hain...';
+
+            // video element ko reset karein agar koi ad chali to
+            try {
+                video.pause();
+                video.currentTime = 0;
+            } catch(e) {}
+
+            // VAST request bhejein
+            const adsRequest = new google.ima.AdsRequest();
+            adsRequest.adTagUrl = VAST_URL;
+
+            // Desktop/mobile ke liye proper width set karein
+            adsRequest.linearAdSlotWidth = video.clientWidth || 640;
+            adsRequest.linearAdSlotHeight = video.clientHeight || 360;
+
+            adsLoader.requestAds(adsRequest);
+        }
+
+        // Button click par ad load karein
+        btn.addEventListener('click', function() {
+            // Agar pehle se ad chal rahi hai to use destroy karein
+            if (adsManager) {
+                try {
+                    adsManager.destroy();
+                } catch(e) {}
+                adsManager = null;
+            }
+            requestAds();
+        });
+
+        // Page load par IMA init karein
+        window.addEventListener('load', function() {
+            // Thoda delay dein taake SDK properly load ho
+            setTimeout(initIMA, 500);
+        });
+
+        // Agar window resize ho to player size update karein (optional)
+        window.addEventListener('resize', function() {
+            if (adsManager) {
+                try {
+                    const w = video.clientWidth;
+                    const h = video.clientHeight;
+                    if (w > 0 && h > 0) {
+                        adsManager.resize(w, h, google.ima.ViewMode.NORMAL);
+                    }
+                } catch(e) {}
+            }
+        });
+    })();
 </script>
 </body>
 </html>
