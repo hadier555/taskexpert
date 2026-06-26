@@ -3,28 +3,41 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HilltopAds Redirect Test</title>
+    <title>HilltopAds Test Panel</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            margin: 0;
         }
-        .card {
+        .container {
             background: white;
             border-radius: 16px;
             padding: 40px 30px;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
             text-align: center;
         }
-        h1 { font-size: 24px; color: #1a1a2e; }
+        h1 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
         .btn {
             background: #4f46e5;
             color: white;
@@ -34,60 +47,175 @@
             font-weight: 600;
             border-radius: 40px;
             cursor: pointer;
-            margin: 20px 0;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
         }
-        .btn:hover { background: #4338ca; }
-        .warning {
-            background: #fef9c3;
-            padding: 15px;
-            border-radius: 10px;
-            color: #854d0e;
+        .btn:hover {
+            background: #4338ca;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .ad-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 2px dashed #d1d5db;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s;
+        }
+        .ad-container.loading {
+            border-color: #4f46e5;
+        }
+        .ad-container .placeholder {
+            color: #9ca3af;
             font-size: 14px;
-            text-align: left;
-            margin: 15px 0;
         }
-        .status { font-size: 14px; color: #6b7280; }
-        .status.error { color: #dc2626; font-weight: bold; }
+        .ad-container iframe,
+        .ad-container img,
+        .ad-container div[id^="div-gpt-ad"],
+        .ad-container ins {
+            max-width: 100%;
+        }
+        .status {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .status.success {
+            color: #16a34a;
+        }
+        .status.error {
+            color: #dc2626;
+        }
+        .footer {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .footer a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>📢 HilltopAds Redirect Test</h1>
-    <p>Ye tag <strong>popup/new window</strong> mein chalta hai.</p>
 
-    <div class="warning">
-        ⚠️ <strong>Note:</strong> Agar ad nahi aata to is ka matlab hai:
-        <ul>
-            <li>HilltopAds ke paas aapke region ke liye koi campaign nahi hai.</li>
-            <li>Browser ne popup block kar diya ho (allow karein).</li>
-            <li>Ye tag sirf redirect hai, is liye ye <u>iframe ke andar</u> nahi dikhega.</li>
-        </ul>
+<div class="container">
+    <h1>📢 HilltopAds Test Panel</h1>
+    <p class="subtitle">Apne ad tag ko test karne ke liye button dabayein</p>
+
+    <button class="btn" id="showAdBtn">▶ Show Ads</button>
+
+    <div class="ad-container" id="adContainer">
+        <span class="placeholder">Yahan ad show hoga</span>
     </div>
 
-    <button class="btn" id="showAdBtn">🚀 Open Ad (Popup)</button>
     <div class="status" id="status">Ready</div>
+
+    <div class="footer">
+        <a href="https://user.hilltopads.com/publisher/sites" target="_blank">HilltopAds Publisher Panel</a>
+    </div>
 </div>
 
 <script>
-    const AD_URL = 'https://difficultblock.com/d.mnFHzzddG/NkveZBGhUr/ieYmi9IusZ/UzlwkTPUTHcsx_NlzWIVyxOgDuk/t/N/zzE-3JMUjiIg5ZMRwL';
-    const btn = document.getElementById('showAdBtn');
-    const status = document.getElementById('status');
+    (function() {
+        const btn = document.getElementById('showAdBtn');
+        const container = document.getElementById('adContainer');
+        const statusEl = document.getElementById('status');
 
-    btn.addEventListener('click', function() {
-        status.textContent = '⏳ Popup open ho raha hai...';
-        status.className = 'status';
+        // ⚠️ YAHAN APNA AD TAG URL LAGAYEIN ⚠️
+        const AD_TAG_URL = 'https://difficultblock.com/d.mnFHzzddG/NkveZBGhUr/ieYmi9IusZ/UzlwkTPUTHcsx_NlzWIVyxOgDuk/t/N/zzE-3JMUjiIg5ZMRwL';
 
-        // Try to open in new window
-        const newWin = window.open(AD_URL, '_blank');
+        function loadAd() {
+            // Clear previous content
+            container.innerHTML = '';
+            container.classList.add('loading');
+            statusEl.textContent = '⏳ Ad load ho raha hai...';
+            statusEl.className = 'status';
 
-        if (newWin) {
-            status.textContent = '✅ Popup open ho gaya! Agar ad nahi aaya to is ka matlab inventory khatam hai.';
-            status.className = 'status';
-        } else {
-            status.textContent = '❌ Popup block ho gaya! Browser ki settings mein popup allow karein.';
-            status.className = 'status error';
+            try {
+                // Method 1: Try loading as iframe (most common for ad tags)
+                const iframe = document.createElement('iframe');
+                iframe.src = AD_TAG_URL;
+                iframe.style.width = '100%';
+                iframe.style.height = '250px';
+                iframe.style.border = 'none';
+                iframe.style.borderRadius = '8px';
+                iframe.style.background = '#ffffff';
+
+                // Timeout for iframe load
+                let loaded = false;
+                const timeout = setTimeout(() => {
+                    if (!loaded) {
+                        container.classList.remove('loading');
+                        statusEl.textContent = '⚠️ Ad load nahi ho raha. Ho sakta hai tag invalid ho ya network issue ho.';
+                        statusEl.className = 'status error';
+                    }
+                }, 15000);
+
+                iframe.onload = function() {
+                    loaded = true;
+                    clearTimeout(timeout);
+                    container.classList.remove('loading');
+                    statusEl.textContent = '✅ Ad successfully load ho gaya!';
+                    statusEl.className = 'status success';
+                };
+
+                iframe.onerror = function() {
+                    clearTimeout(timeout);
+                    container.classList.remove('loading');
+                    // Fallback: try script injection
+                    tryScriptInjection();
+                };
+
+                container.appendChild(iframe);
+
+            } catch (e) {
+                container.classList.remove('loading');
+                statusEl.textContent = '❌ Error: ' + e.message;
+                statusEl.className = 'status error';
+            }
         }
-    });
+
+        function tryScriptInjection() {
+            // Method 2: Try loading via script tag (for JS-based ad tags)
+            try {
+                statusEl.textContent = '⏳ Script method se try kar rahe hain...';
+                const script = document.createElement('script');
+                script.src = AD_TAG_URL;
+                script.async = true;
+                script.onload = function() {
+                    container.classList.remove('loading');
+                    statusEl.textContent = '✅ Ad (script) successfully load ho gaya!';
+                    statusEl.className = 'status success';
+                };
+                script.onerror = function() {
+                    container.classList.remove('loading');
+                    statusEl.textContent = '❌ Dono methods fail ho gaye. Ad tag check karein.';
+                    statusEl.className = 'status error';
+                    // Show fallback
+                    container.innerHTML = '<p style="color:#dc2626;font-size:14px;">❌ Ad load nahi ho saka. Tag invalid ho sakta hai.</p>';
+                };
+                container.appendChild(script);
+            } catch (e) {
+                container.classList.remove('loading');
+                statusEl.textContent = '❌ Error: ' + e.message;
+                statusEl.className = 'status error';
+            }
+        }
+
+        btn.addEventListener('click', loadAd);
+
+        // Optional: Auto-load on page open (comment out if not needed)
+        // window.addEventListener('load', loadAd);
+    })();
 </script>
+
 </body>
 </html>
