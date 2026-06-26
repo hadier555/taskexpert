@@ -4,6 +4,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Task Expert - User Panel</title>
+    
+    <!-- HilltopAds Rewarded Video Code Start -->
+    <script>
+        var hilltopVastUrl = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
+        
+        function showHilltopRewardedAd(callback) {
+            var videoContainer = document.createElement('div');
+            videoContainer.id = 'hilltop-ad-container';
+            videoContainer.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:99999;';
+            
+            var videoElement = document.createElement('video');
+            videoElement.style.cssText = 'width:100%;height:100%;';
+            videoElement.controls = true;
+            videoElement.autoplay = true;
+            videoContainer.appendChild(videoElement);
+            document.body.appendChild(videoContainer);
+            
+            var script = document.createElement('script');
+            script.src = 'https://imasdk.googleapis.com/js/sdkloader/ima3.js';
+            script.onload = function() {
+                var adDisplayContainer = new google.ima.AdDisplayContainer(videoContainer, videoElement);
+                adDisplayContainer.initialize();
+                var adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+                var adsRequest = new google.ima.AdsRequest();
+                adsRequest.adTagUrl = hilltopVastUrl;
+                adsRequest.linearAdSlotWidth = window.innerWidth;
+                adsRequest.linearAdSlotHeight = window.innerHeight;
+                
+                adsLoader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, function(event) {
+                    var adsManager = event.getAdsManager(videoElement);
+                    
+                    adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, function() {
+                        videoContainer.remove();
+                        if(callback) callback(true); // Reward دو
+                    });
+                    
+                    adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, function() {
+                        videoContainer.remove();
+                        if(callback) callback(false); // Reward مت دو
+                    });
+                    
+                    adsManager.addEventListener(google.ima.AdEvent.Type.ALL_ADS_COMPLETED, function() {
+                        videoContainer.remove();
+                    });
+                    
+                    try {
+                        adsManager.init(window.innerWidth, window.innerHeight, google.ima.ViewMode.FULLSCREEN);
+                        adsManager.start();
+                    } catch (adError) {
+                        videoContainer.remove();
+                        if(callback) callback(false);
+                    }
+                });
+                
+                adsLoader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, function() {
+                    videoContainer.remove();
+                    if(callback) callback(false);
+                });
+                
+                adsLoader.requestAds(adsRequest);
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+    <!-- HilltopAds Rewarded Video Code End -->
 
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" sizes="512x512" href="launchericon-512x512.png" />
@@ -12,14 +77,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
