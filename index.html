@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAST Video Ad Tester - HilltopAds</title>
+    <title>VAST Video Ad Tester - Fixed</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0f0f0f;
             display: flex;
@@ -28,23 +24,12 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             border: 1px solid #333;
         }
-        h1 {
-            color: #fff;
-            font-size: 22px;
-            text-align: center;
-            margin-bottom: 5px;
-        }
-        .sub {
-            color: #9ca3af;
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
+        h1 { color: #fff; font-size: 22px; text-align: center; }
+        .sub { color: #9ca3af; text-align: center; font-size: 14px; margin-bottom: 20px; }
         .video-wrapper {
             background: #000;
             border-radius: 12px;
             overflow: hidden;
-            position: relative;
             aspect-ratio: 16 / 9;
             width: 100%;
             display: flex;
@@ -61,7 +46,6 @@
             margin-top: 20px;
             display: flex;
             gap: 12px;
-            align-items: center;
             flex-wrap: wrap;
         }
         .btn {
@@ -77,12 +61,8 @@
             flex: 1;
             min-width: 120px;
         }
-        .btn:hover {
-            background: #2563eb;
-        }
-        .btn:active {
-            transform: scale(0.96);
-        }
+        .btn:hover { background: #2563eb; }
+        .btn:disabled { background: #555; cursor: not-allowed; opacity: 0.6; }
         #status {
             color: #9ca3af;
             font-size: 14px;
@@ -92,6 +72,7 @@
             margin-top: 12px;
             text-align: center;
             word-break: break-all;
+            border: 1px solid #333;
         }
         .note {
             background: #2d2d2d;
@@ -102,58 +83,51 @@
             margin-top: 15px;
             border-left: 4px solid #f59e0b;
         }
-        .note strong {
-            color: #fbbf24;
-        }
+        .error-text { color: #f87171; }
+        .success-text { color: #34d399; }
+        .warning-text { color: #fbbf24; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>📺 VAST Video Ad Tester</h1>
-    <p class="sub">Ye panel <strong>Video Ads</strong> (Pre-roll) dikhane ke liye bana hai</p>
+    <p class="sub">Ab <strong>SDK load</strong> ka wait karega, error nahi aayega</p>
 
     <div class="video-wrapper">
         <video id="video-player" controls playsinline></video>
     </div>
 
     <div class="controls">
-        <button class="btn" id="showAdBtn">▶ Show Ad</button>
+        <button class="btn" id="showAdBtn" disabled>⏳ Loading SDK...</button>
     </div>
 
-    <div id="status">🟡 Ready. Button dabayein...</div>
+    <div id="status">🟡 SDK load ho raha hai, intezaar karein...</div>
 
     <div class="note">
-        ⚠️ <strong>Note:</strong> Agar ad load hotay hi <strong>"Error"</strong> ya kuch nahi dikhta, 
-        to iska matlab <strong>HilltopAds ke paas is waqt is region ke liye koi video inventory nahi</strong>. 
-        Ye aap ki ghalti nahi. Raat 9-12 baje ya subah 8-10 baje try karein.
+        ⚠️ <strong>Note:</strong> Agar ye "Failed to load IMA SDK" ka error dikhaye to 
+        <strong>AdBlocker (uBlock/AdGuard) band karein</strong> ya <strong>VPN/Proxy</strong> change karein 
+        kyunke Pakistan mein Google APIs kabhi block ho jati hain.
     </div>
 </div>
 
-<!-- Google IMA SDK -->
-<script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-
 <script>
     (function() {
-        // ⚠️ Aap ka diya hua VAST URL (JO XML RETURN KAR RAHA THA)
+        // Aap ka VAST URL (jo XML return kar raha tha)
         const VAST_URL = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
 
         const video = document.getElementById('video-player');
         const statusDiv = document.getElementById('status');
         const btn = document.getElementById('showAdBtn');
 
-        let adDisplayContainer;
-        let adsLoader;
-        let adsManager;
+        let adDisplayContainer, adsLoader, adsManager;
+        let sdkReady = false;
 
-        // SDK initialize karein
+        // ---------- IMA SDK Initialize ----------
         function initIMA() {
             try {
-                // Create ad display container
                 adDisplayContainer = new google.ima.AdDisplayContainer(video);
-                // Create ads loader
                 adsLoader = new google.ima.AdsLoader(adDisplayContainer);
 
-                // Event listeners
                 adsLoader.addEventListener(
                     google.ima.AdsLoaderEvent.Type.ADS_MANAGER_LOADED,
                     onAdsManagerLoaded,
@@ -165,12 +139,68 @@
                     false
                 );
 
-                statusDiv.innerHTML = '✅ IMA SDK ready. Ad load kar sakte hain.';
+                sdkReady = true;
+                btn.disabled = false;
+                btn.textContent = '▶ Show Ad';
+                statusDiv.innerHTML = '✅ SDK Ready! Button dabayein.';
+                statusDiv.className = 'success-text';
+                console.log('IMA SDK Initialized Successfully.');
             } catch (e) {
-                statusDiv.innerHTML = '❌ SDK Error: ' + e.message;
+                statusDiv.innerHTML = '❌ SDK Init Error: ' + e.message;
+                statusDiv.className = 'error-text';
+                btn.disabled = true;
             }
         }
 
+        // ---------- SDK Loader (Smart Wait) ----------
+        function loadIMAAndInit() {
+            // Pehle check karein ke kahin pehle se load to nahi
+            if (typeof google !== 'undefined' && google.ima && google.ima.AdsLoaderEvent) {
+                initIMA();
+                return;
+            }
+
+            statusDiv.innerHTML = '⏳ Google IMA SDK download ho raha hai...';
+            statusDiv.className = '';
+            btn.disabled = true;
+            btn.textContent = '⏳ Loading...';
+
+            // Dynamically script tag add karein
+            const script = document.createElement('script');
+            script.src = '//imasdk.googleapis.com/js/sdkloader/ima3.js';
+            script.async = true;
+
+            script.onload = function() {
+                console.log('IMA Script loaded, waiting for namespace...');
+                // SDK load ho gaya, lekin namespace register hone mein 2-3 ms lagte hain
+                let attempts = 0;
+                const maxAttempts = 30; // 3 seconds
+                const interval = setInterval(() => {
+                    attempts++;
+                    if (typeof google !== 'undefined' && google.ima && google.ima.AdsLoaderEvent) {
+                        clearInterval(interval);
+                        initIMA(); // Ab initialize karein
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(interval);
+                        statusDiv.innerHTML = '❌ SDK load to ho gaya but namespace register nahi hua. Try refreshing or disable AdBlocker.';
+                        statusDiv.className = 'error-text';
+                        btn.disabled = true;
+                        btn.textContent = '❌ Error';
+                    }
+                }, 100);
+            };
+
+            script.onerror = function() {
+                statusDiv.innerHTML = '❌ Failed to download IMA SDK. <br> 1. AdBlocker band karein. <br> 2. Agar Pakistan mein hain to VPN use karein (Google APIs blocked ho sakti hain).';
+                statusDiv.className = 'error-text';
+                btn.disabled = true;
+                btn.textContent = '⚠️ Check Network';
+            };
+
+            document.head.appendChild(script);
+        }
+
+        // ---------- Ad Event Handlers ----------
         function onAdsManagerLoaded(adsManagerLoadedEvent) {
             adsManager = adsManagerLoadedEvent.getAdsManager(video);
             adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, onContentResumeRequested);
@@ -178,77 +208,86 @@
             adsManager.addEventListener(google.ima.AdEvent.Type.AD_ERROR, onAdError);
 
             try {
-                adsManager.init(640, 360, google.ima.ViewMode.NORMAL);
+                const width = video.clientWidth || 640;
+                const height = video.clientHeight || 360;
+                adsManager.init(width, height, google.ima.ViewMode.NORMAL);
                 adsManager.start();
                 statusDiv.innerHTML = '🎬 Ad chal raha hai... (Video player mein dekhein)';
+                statusDiv.className = 'success-text';
+                btn.disabled = false;
+                btn.textContent = '▶ Ad Running...';
             } catch (adError) {
                 statusDiv.innerHTML = '❌ Ad start nahi ho saka: ' + adError.message;
+                statusDiv.className = 'error-text';
             }
         }
 
         function onContentResumeRequested() {
-            // Ad khatam, video player ko chhor do (yahan kuch nahi)
             statusDiv.innerHTML = '⏹️ Ad khatam. Dobara test ke liye page refresh karein.';
+            statusDiv.className = '';
         }
 
         function onAdComplete() {
             statusDiv.innerHTML = '✅ Ad successfully complete ho gaya!';
+            statusDiv.className = 'success-text';
+            btn.textContent = '▶ Show Ad Again (Refresh)';
         }
 
         function onAdError(adErrorEvent) {
             const error = adErrorEvent.getError();
-            statusDiv.innerHTML = '❌ Ad Error: ' + (error ? error.toString() : 'Unknown error') + 
-                '<br><span style="color:#fbbf24;">Tip: Iska matlab inventory khatam hai. Kuch der baad try karein.</span>';
-            // Reload ads loader to reset state
+            const errorMsg = error ? error.toString() : 'Unknown (No Fill/Inventory)';
+            statusDiv.innerHTML = '❌ Ad Error: ' + errorMsg + 
+                '<br><span style="color:#fbbf24;">Tip: Iska matlab inventory khatam hai. Raat 9-12 baje try karein.</span>';
+            statusDiv.className = 'error-text';
+            btn.disabled = false;
+            btn.textContent = '▶ Retry';
+            // Reset ads loader state
             if (adsLoader) {
-                adsLoader.contentComplete();
+                try { adsLoader.contentComplete(); } catch(e) {}
             }
         }
 
+        // ---------- Request Ad (Button Click) ----------
         function requestAds() {
-            if (!adsLoader) {
-                statusDiv.innerHTML = '❌ SDK load nahi hua. Page refresh karein.';
+            if (!sdkReady || !adsLoader) {
+                statusDiv.innerHTML = '⏳ SDK abhi ready nahi, thoda intezaar karein...';
                 return;
             }
 
-            statusDiv.innerHTML = '⏳ Ad request bhej rahe hain...';
-
-            // video element ko reset karein agar koi ad chali to
-            try {
-                video.pause();
-                video.currentTime = 0;
-            } catch(e) {}
-
-            // VAST request bhejein
-            const adsRequest = new google.ima.AdsRequest();
-            adsRequest.adTagUrl = VAST_URL;
-
-            // Desktop/mobile ke liye proper width set karein
-            adsRequest.linearAdSlotWidth = video.clientWidth || 640;
-            adsRequest.linearAdSlotHeight = video.clientHeight || 360;
-
-            adsLoader.requestAds(adsRequest);
-        }
-
-        // Button click par ad load karein
-        btn.addEventListener('click', function() {
-            // Agar pehle se ad chal rahi hai to use destroy karein
+            // Agar pehle se ad manager hai to destroy karein
             if (adsManager) {
-                try {
-                    adsManager.destroy();
-                } catch(e) {}
+                try { adsManager.destroy(); } catch(e) {}
                 adsManager = null;
             }
-            requestAds();
-        });
 
-        // Page load par IMA init karein
+            statusDiv.innerHTML = '⏳ Ad request bhej rahe hain...';
+            statusDiv.className = '';
+            btn.disabled = true;
+            btn.textContent = '⏳ Loading Ad...';
+
+            try {
+                const adsRequest = new google.ima.AdsRequest();
+                adsRequest.adTagUrl = VAST_URL;
+                adsRequest.linearAdSlotWidth = video.clientWidth || 640;
+                adsRequest.linearAdSlotHeight = video.clientHeight || 360;
+                adsLoader.requestAds(adsRequest);
+            } catch (e) {
+                statusDiv.innerHTML = '❌ Request Error: ' + e.message;
+                statusDiv.className = 'error-text';
+                btn.disabled = false;
+                btn.textContent = '▶ Retry';
+            }
+        }
+
+        // ---------- Event Bindings ----------
+        btn.addEventListener('click', requestAds);
+
+        // Page load hone par SDK load karein
         window.addEventListener('load', function() {
-            // Thoda delay dein taake SDK properly load ho
-            setTimeout(initIMA, 500);
+            loadIMAAndInit();
         });
 
-        // Agar window resize ho to player size update karein (optional)
+        // Agar video player resize ho to ad manager ko update karein
         window.addEventListener('resize', function() {
             if (adsManager) {
                 try {
