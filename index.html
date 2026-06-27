@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
     <title>Task Expert - User Panel</title>
 
     <link rel="manifest" href="manifest.json" />
@@ -11,6 +12,12 @@
     <meta name="theme-color" content="#1e3c72" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- ===== VIDEOJS + IMA SDK ===== -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-ima@2.4.0/dist/videojs.ima.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js">
     </script>
@@ -446,6 +453,8 @@
             margin-bottom: 10px;
             display: inline-block;
         }
+
+        /* ===== GOOGLE BUTTON (SMALLER) ===== */
         .google-btn {
             background: white;
             color: #444;
@@ -454,27 +463,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
-            padding: 10px;
-            font-size: 15px;
+            padding: 8px 12px;
+            font-size: 13px;
             border-radius: 30px;
             transition: 0.3s;
+            margin: 4px 0;
         }
         .google-btn:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: scale(1.01);
         }
+        .google-btn img {
+            width: 18px;
+            height: 18px;
+        }
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-direction: column;
-            margin-top: 20px;
+            margin-top: 12px;
         }
         .register-link {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
             color: #555;
         }
         .register-link a {
@@ -484,7 +498,7 @@
             text-decoration: none;
         }
         .back-to-login {
-            margin-top: 15px;
+            margin-top: 12px;
             text-align: center;
         }
         .back-to-login a {
@@ -1387,51 +1401,116 @@
             z-index: 9999 !important;
         }
 
-        /* ===== AD PLAYER MODAL ===== */
+        /* ===== AD PLAYER MODAL (FULL SCREEN) ===== */
+        .ad-player-modal {
+            background: #000;
+            z-index: 9999 !important;
+        }
         .ad-player-modal .modal-content {
-            max-width: 600px;
-            background: #1a1a2e;
-            color: white;
-        }
-        .ad-player-modal .modal-content h3 {
-            color: #fff;
-        }
-        .ad-player-modal .ad-video-wrapper {
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        .ad-player-modal .ad-video-wrapper video {
+            max-width: 100%;
             width: 100%;
-            aspect-ratio: 16/9;
+            height: 100%;
+            border-radius: 0;
             background: #000;
-            display: block;
-        }
-        .ad-player-modal .ad-controls {
+            color: white;
+            padding: 0;
+            max-height: 100vh;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+            position: relative;
+            animation: none;
         }
-        .ad-player-modal .ad-timer {
-            color: #ffc107;
-            font-weight: bold;
-            font-size: 16px;
+        .ad-player-modal .modal-content .video-js {
+            width: 100%;
+            height: 100%;
+            max-height: 100vh;
+            background: #000;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-        .ad-player-modal .claim-btn {
-            background: #28a745;
+        .ad-player-modal .modal-content .ad-overlay-btn {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 14px 40px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
-        .ad-player-modal .claim-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .ad-player-modal .modal-content .ad-overlay-btn:active {
+            transform: translateX(-50%) scale(0.95);
         }
-        .ad-player-modal .ad-status {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-top: 8px;
+        .ad-player-modal .modal-content .ad-overlay-btn.ready {
+            border-color: #38ef7d;
+            background: rgba(56, 239, 125, 0.2);
+            animation: pulseClaim 1.5s ease-in-out infinite;
+        }
+        .ad-player-modal .modal-content .ad-overlay-btn.ready:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+        .ad-player-modal .modal-content .ad-overlay-btn .sub-text {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.6;
+            display: block;
+            margin-top: 2px;
+        }
+        .ad-player-modal .modal-content .ad-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 25;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        .ad-player-modal .modal-content .ad-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        @keyframes pulseClaim {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(56, 239, 125, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(56, 239, 125, 0.5);
+            }
+        }
+
+        /* ===== VIDEOJS OVERRIDES ===== */
+        .video-js .vjs-big-play-button {
+            display: none !important;
+        }
+        .video-js .vjs-control-bar {
+            z-index: 10 !important;
+        }
+        .vjs-ima-ad-container {
+            z-index: 5 !important;
         }
 
         @media (max-width: 400px) {
@@ -1458,6 +1537,20 @@
             .coin-amount {
                 font-size: 28px;
             }
+            .ad-player-modal .modal-content .ad-overlay-btn {
+                padding: 10px 24px;
+                font-size: 16px;
+                min-width: 150px;
+                bottom: 40px;
+            }
+            .google-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .google-btn img {
+                width: 16px;
+                height: 16px;
+            }
         }
     </style>
 </head>
@@ -1482,7 +1575,7 @@
                 <div class="loader-status" id="loaderStatus"></div>
                 <div class="loader-dots"><span></span><span></span><span></span></div>
             </div>
-            <div class="loader-footer">v2.0</div>
+            <div class="loader-footer">v3.0</div>
         </div>
 
         <!-- ===== UPLOAD OVERLAY ===== -->
@@ -1499,19 +1592,15 @@
             <img id="modalImage" src="" alt="Preview">
         </div>
 
-        <!-- ===== AD PLAYER MODAL ===== -->
+        <!-- ===== AD PLAYER MODAL (FULL SCREEN) ===== -->
         <div id="adPlayerModal" class="modal ad-player-modal">
             <div class="modal-content">
-                <h3 id="adModalTitle">🎬 Watch Ad to Claim Reward</h3>
-                <div class="ad-video-wrapper">
-                    <video id="adVideo" controls playsinline></video>
-                </div>
-                <div class="ad-controls">
-                    <span class="ad-timer" id="adTimer">⏱️ 0s / 20s</span>
-                    <button id="claimAdRewardBtn" class="btn claim-btn" disabled>✅ Claim Reward</button>
-                </div>
-                <div class="ad-status" id="adStatus">⏳ Loading ad... Please wait.</div>
-                <button class="btn btn-danger" onclick="closeAdPlayer()" style="margin-top:10px;">❌ Cancel</button>
+                <button class="ad-close-btn" onclick="closeAdPlayer()"><i class="fas fa-times"></i></button>
+                <video id="adVideoPlayer" class="video-js vjs-default-skin vjs-big-play-centered" controls playsinline></video>
+                <button class="ad-overlay-btn" id="claimAdRewardBtn" disabled>
+                    🎁 Claim Reward
+                    <span class="sub-text">Watch ad to claim</span>
+                </button>
             </div>
         </div>
 
@@ -1542,7 +1631,7 @@
             <div class="card" style="margin-top:30px;text-align:center;">
                 <div id="loginSection">
                     <h3>Welcome Back!</h3>
-                    <p style="margin:15px 0;">Login with Google</p>
+                    <p style="margin:10px 0;font-size:14px;color:#666;">Login with Google</p>
                     <div class="btn-group">
                         <button class="btn google-btn" onclick="loginWithGoogle()">
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" /> Login with Google
@@ -1651,7 +1740,7 @@
                         🎉 You Won <strong id="scratchWonCoins">0</strong> Coins!
                         <button class="btn btn-success" onclick="claimScratchReward()" id="claimScratchBtn">Claim Now</button>
                     </div>
-                    <div class="scratch-info">Scratches Left: <strong id="scratchesLeftDisplay">0</strong> / <span id="scratchDailyLimitDisplay">3</span></div>
+                    <div class="scratch-info">Scratches Left: <strong id="scratchesLeftDisplay">0</strong> / <span id="scratchDailyLimitDisplay">100</span></div>
                 </div>
             </div>
             <div id="adsContent" style="display:none;">
@@ -1751,16 +1840,20 @@
         let depositBonusPercent = 0,
             withdrawCommissionPercent = 0;
 
-        // Ad Player State
-        let adPlayerResolve = null,
-            adPlayerReject = null;
-        let adSecondsWatched = 0,
-            adTimerInterval = null;
+        // Ad Player State (VideoJS + IMA)
+        let adPlayer = null;
+        let adTimerInterval = null;
+        let adSecondsWatched = 0;
+        let adIsReady = false;
+        let adResolve = null;
+        let adReject = null;
+        let adClaimResolve = null;
+        const VAST_URL = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
 
         // Scratch Card State
         let scratchRevealed = false,
             scratchWonCoins = 0,
-            scratchDailyLimit = 3,
+            scratchDailyLimit = 100,
             scratchUsedToday = 0;
         let scratchIsDrawing = false,
             scratchRadius = 20;
@@ -2741,7 +2834,7 @@
                 e) {} }
 
         // ============================================================
-        // DAILY REWARD (with Ad)
+        // DAILY REWARD (with Ad - Using VideoJS+IMA)
         // ============================================================
         async function loadDailyRewardGrid() {
             try { let rewards = [10, 20, 30, 40, 50, 60, 70];
@@ -2780,97 +2873,199 @@
             let daily = currentUserData.dailyReward || {};
             if (daily.lastClaimDate === today && daily.claimed) { showToast("Already claimed today!"); return; }
             let rewardCoins = (await db.ref('settings/ads/dailyRewardCoins').once('value')).val() || 10;
-            if (!confirm(`Claim Daily Reward: ${rewardCoins} Coins - Watch this Ad?`)) return;
-            try { await showAdPlayer('Daily Reward Ad');
-                let nc = (currentUserData.coins || 0) + rewardCoins;
-                await db.ref(`users/${currentUser.uid}/coins`).set(nc);
-                await db.ref(`users/${currentUser.uid}/dailyReward`).set({ claimed: true, lastClaimDate: today });
-                currentUserData.coins = nc;
-                currentUserData.dailyReward = { claimed: true, lastClaimDate: today };
-                updateUI();
-                showToast(`+${rewardCoins} coins claimed!`);
-                loadDailyRewardGrid(); } catch (err) { showToast('❌ Ad not completed. Try again.'); }
+            try {
+                // Show ad player and wait for completion
+                const adCompleted = await showAdPlayer('Daily Reward');
+                if (adCompleted) {
+                    let nc = (currentUserData.coins || 0) + rewardCoins;
+                    await db.ref(`users/${currentUser.uid}/coins`).set(nc);
+                    await db.ref(`users/${currentUser.uid}/dailyReward`).set({ claimed: true, lastClaimDate: today });
+                    currentUserData.coins = nc;
+                    currentUserData.dailyReward = { claimed: true, lastClaimDate: today };
+                    updateUI();
+                    showToast(`+${rewardCoins} coins claimed!`);
+                    loadDailyRewardGrid();
+                }
+            } catch (err) {
+                showToast('❌ Ad not completed. Try again.');
+            }
         }
 
         // ============================================================
-        // AD PLAYER (VAST Video with 20 sec requirement)
+        // AD PLAYER (VideoJS + IMA SDK - FULL SCREEN)
         // ============================================================
         function showAdPlayer(title) {
             return new Promise((resolve, reject) => {
-                adPlayerResolve = resolve;
-                adPlayerReject = reject;
-                document.getElementById('adModalTitle').innerText = title || 'Watch Ad';
-                document.getElementById('claimAdRewardBtn').disabled = true;
-                document.getElementById('adTimer').innerText = '⏱️ 0s / 20s';
-                document.getElementById('adStatus').innerText = '⏳ Loading ad...';
-                document.getElementById('adVideo').src = '';
+                adResolve = resolve;
+                adReject = reject;
+                adSecondsWatched = 0;
+                adIsReady = false;
+
+                // Show modal
                 document.getElementById('adPlayerModal').style.display = 'flex';
-                loadAdVideo().then(() => {
-                    document.getElementById('adStatus').innerText =
-                        '▶️ Watch at least 20 seconds to claim.';
-                }).catch(err => {
-                    document.getElementById('adStatus').innerText = '❌ Ad load failed: ' + err
-                        .message;
-                });
+
+                // Update button
+                const claimBtn = document.getElementById('claimAdRewardBtn');
+                claimBtn.disabled = true;
+                claimBtn.classList.remove('ready');
+                claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+
+                // Initialize VideoJS player if not exists
+                const videoEl = document.getElementById('adVideoPlayer');
+                if (!adPlayer) {
+                    adPlayer = videojs(videoEl, {
+                        controls: true,
+                        autoplay: true,
+                        muted: true,
+                        preload: 'auto',
+                        fluid: true,
+                        techOrder: ['html5'],
+                        controlBar: {
+                            playToggle: false,
+                            volumePanel: false,
+                            currentTimeDisplay: false,
+                            timeDivider: false,
+                            durationDisplay: false,
+                            progressControl: false,
+                            liveDisplay: false,
+                            seekToLive: false,
+                            remainingTimeDisplay: false,
+                            customControlSpacer: false,
+                            playToggle: false
+                        }
+                    });
+
+                    // Setup IMA plugin
+                    adPlayer.ima({
+                        adTagUrl: VAST_URL,
+                        autoPlayAdBreaks: true,
+                        id: 'adVideoPlayer',
+                        adDebug: false,
+                        locale: 'en',
+                        pauseAd: false,
+                        disableDefaultAds: false,
+                        useStyledAdContainer: true
+                    });
+
+                    // IMA event listeners
+                    adPlayer.on('ads-manager', function(e) {
+                        console.log('IMA: Ads manager loaded');
+                    });
+
+                    adPlayer.on('ads-ad-started', function(e) {
+                        console.log('IMA: Ad started');
+                        adIsReady = true;
+                        // Start timer
+                        if (adTimerInterval) clearInterval(adTimerInterval);
+                        adTimerInterval = setInterval(() => {
+                            if (adPlayer && adPlayer.currentTime && adPlayer.currentTime() >
+                                0) {
+                                const ct = Math.floor(adPlayer.currentTime());
+                                if (ct > adSecondsWatched) {
+                                    adSecondsWatched = ct;
+                                    console.log(`Ad time: ${adSecondsWatched}s`);
+                                    if (adSecondsWatched >= 20) {
+                                        clearInterval(adTimerInterval);
+                                        adTimerInterval = null;
+                                        // Enable claim button
+                                        const btn = document.getElementById(
+                                        'claimAdRewardBtn');
+                                        btn.disabled = false;
+                                        btn.classList.add('ready');
+                                        btn.innerHTML =
+                                            '🎁 Claim Reward <span class="sub-text">✅ Ready to claim!</span>';
+                                    }
+                                }
+                            }
+                        }, 500);
+                    });
+
+                    adPlayer.on('ads-ad-ended', function(e) {
+                        console.log('IMA: Ad ended');
+                        if (adSecondsWatched >= 20) {
+                            const btn = document.getElementById('claimAdRewardBtn');
+                            btn.disabled = false;
+                            btn.classList.add('ready');
+                            btn.innerHTML =
+                                '🎁 Claim Reward <span class="sub-text">✅ Ready to claim!</span>';
+                        }
+                        if (adTimerInterval) clearInterval(adTimerInterval);
+                        adTimerInterval = null;
+                    });
+
+                    adPlayer.on('ads-error', function(e) {
+                        console.log('IMA: Ad error', e);
+                        if (adTimerInterval) clearInterval(adTimerInterval);
+                        adTimerInterval = null;
+                        showToast('⚠️ Ad error. Please try again.');
+                        closeAdPlayer();
+                        if (adReject) adReject(new Error('Ad error'));
+                    });
+
+                    adPlayer.on('adskip', function(e) {
+                        console.log('IMA: Ad skipped');
+                        if (adSecondsWatched < 20) {
+                            showToast('❌ You skipped the ad. Watch at least 20 seconds!');
+                            // Replay ad
+                            adPlayer.ima.reset();
+                            adPlayer.ima.requestAds();
+                            adSecondsWatched = 0;
+                            const btn = document.getElementById('claimAdRewardBtn');
+                            btn.disabled = true;
+                            btn.classList.remove('ready');
+                            btn.innerHTML =
+                                '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+                        }
+                    });
+                } else {
+                    // Reset player
+                    adPlayer.ima.reset();
+                    adPlayer.ima.requestAds();
+                }
+
+                // Handle claim button click
+                document.getElementById('claimAdRewardBtn').onclick = function() {
+                    if (adSecondsWatched >= 20) {
+                        // Claim reward
+                        if (adTimerInterval) clearInterval(adTimerInterval);
+                        adTimerInterval = null;
+                        closeAdPlayer();
+                        if (adResolve) adResolve(true);
+                    } else {
+                        // Replay ad
+                        showToast('⏳ Watch at least 20 seconds first!');
+                        adPlayer.ima.reset();
+                        adPlayer.ima.requestAds();
+                        adSecondsWatched = 0;
+                        this.disabled = true;
+                        this.classList.remove('ready');
+                        this.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+                    }
+                };
             });
         }
 
         function closeAdPlayer() {
             document.getElementById('adPlayerModal').style.display = 'none';
-            let v = document.getElementById('adVideo');
-            v.pause();
-            v.src = '';
+            if (adPlayer) {
+                adPlayer.pause();
+                adPlayer.ima.reset();
+            }
             if (adTimerInterval) { clearInterval(adTimerInterval);
                 adTimerInterval = null; }
-            if (adPlayerReject) adPlayerReject(new Error('User closed ad'));
-        }
-
-        async function loadAdVideo() {
-            let vastUrl = (await db.ref('settings/ads/vastUrl').once('value')).val() ||
-                'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
-            let res = await fetch(vastUrl, { mode: 'cors' });
-            let xmlText = await res.text();
-            let parser = new DOMParser();
-            let xml = parser.parseFromString(xmlText, 'text/xml');
-            let mediaFile = xml.querySelector('MediaFile');
-            if (!mediaFile) throw new Error('No video found');
-            let videoUrl = mediaFile.textContent.trim();
-            let video = document.getElementById('adVideo');
-            video.src = videoUrl;
-            video.load();
-            let secondsWatched = 0;
-            let timerEl = document.getElementById('adTimer');
-            let claimBtn = document.getElementById('claimAdRewardBtn');
-            let statusEl = document.getElementById('adStatus');
-            video.addEventListener('loadedmetadata', () => {
-                video.play().catch(() => {});
-                if (adTimerInterval) clearInterval(adTimerInterval);
-                adTimerInterval = setInterval(() => {
-                    if (video.currentTime > secondsWatched) { secondsWatched = Math.floor(video
-                            .currentTime);
-                        timerEl.innerText = `⏱️ ${secondsWatched}s / 20s`; if (secondsWatched >=
-                            20) { clearInterval(adTimerInterval);
-                            claimBtn.disabled = false;
-                            statusEl.innerText = '✅ You can claim now!'; } }
-                }, 500);
-            });
-            video.addEventListener('ended', () => { if (secondsWatched >= 20) { claimBtn.disabled = false;
-                    statusEl.innerText = '✅ Ad completed! Claim now.'; } });
-            claimBtn.onclick = function() {
-                if (secondsWatched >= 20) { clearInterval(adTimerInterval);
-                    video.pause();
-                    document.getElementById('adPlayerModal').style.display = 'none'; if (adPlayerResolve)
-                        adPlayerResolve(true); } else statusEl.innerText =
-                    '❌ Watch at least 20 seconds!';
-            };
+            // Reset button
+            const btn = document.getElementById('claimAdRewardBtn');
+            btn.disabled = true;
+            btn.classList.remove('ready');
+            btn.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+            if (adReject) adReject(new Error('User closed ad'));
         }
 
         // ============================================================
-        // SCRATCH CARD
+        // SCRATCH CARD (Limit = 100)
         // ============================================================
         async function loadScratchData() {
-            let settings = await db.ref('settings/ads/scratchDailyLimit').once('value');
-            scratchDailyLimit = settings.val() || 3;
+            scratchDailyLimit = 100;
             document.getElementById('scratchDailyLimitDisplay').innerText = scratchDailyLimit;
             let userScratch = currentUserData.scratchCard || {};
             let today = new Date().toDateString();
@@ -2918,7 +3113,6 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('✦ SCRATCH ✦', w / 2, h / 2);
-            // events
             canvas.onmousedown = onScratchStart;
             canvas.onmousemove = onScratchMove;
             canvas.onmouseup = onScratchEnd;
@@ -2971,7 +3165,6 @@
             ctx.arc(x, y, r, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
-            // Check progress
             let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let data = imageData.data;
             let transparent = 0;
@@ -3003,19 +3196,24 @@
 
         async function claimScratchReward() {
             if (scratchWonCoins <= 0) return;
-            try { await showAdPlayer('Scratch Card Reward');
-                let nc = (currentUserData.coins || 0) + scratchWonCoins;
-                await db.ref(`users/${currentUser.uid}/coins`).set(nc);
-                currentUserData.coins = nc;
-                updateUI();
-                showToast(`+${scratchWonCoins} coins from scratch!`);
-                document.getElementById('claimScratchBtn').disabled = true;
-                document.getElementById('claimScratchBtn').innerText = '✅ Claimed'; } catch (err) { showToast(
-                    '❌ Ad not completed. Try again.'); }
+            try {
+                const completed = await showAdPlayer('Scratch Card Reward');
+                if (completed) {
+                    let nc = (currentUserData.coins || 0) + scratchWonCoins;
+                    await db.ref(`users/${currentUser.uid}/coins`).set(nc);
+                    currentUserData.coins = nc;
+                    updateUI();
+                    showToast(`+${scratchWonCoins} coins from scratch!`);
+                    document.getElementById('claimScratchBtn').disabled = true;
+                    document.getElementById('claimScratchBtn').innerText = '✅ Claimed';
+                }
+            } catch (err) {
+                showToast('❌ Ad not completed. Try again.');
+            }
         }
 
         // ============================================================
-        // ADS CENTER (Milestones)
+        // ADS CENTER (Milestones) - with VideoJS+IMA
         // ============================================================
         async function loadAdsCenter() {
             let ms = await db.ref('settings/ads/milestones').once('value');
@@ -3042,14 +3240,20 @@
         }
 
         async function watchAdForMilestone() {
-            try { await showAdPlayer('Ads Center - Watch Ad');
-                totalAdsWatched++;
-                await db.ref(`users/${currentUser.uid}/adsCenter/totalAdsWatched`).set(totalAdsWatched);
-                currentUserData.adsCenter = currentUserData.adsCenter || {};
-                currentUserData.adsCenter.totalAdsWatched = totalAdsWatched;
-                document.getElementById('totalAdsWatched').innerText = totalAdsWatched;
-                renderMilestones();
-                showToast('Ad watched! +1 progress.'); } catch (err) { showToast('❌ Ad not completed. Try again.'); }
+            try {
+                const completed = await showAdPlayer('Ads Center');
+                if (completed) {
+                    totalAdsWatched++;
+                    await db.ref(`users/${currentUser.uid}/adsCenter/totalAdsWatched`).set(totalAdsWatched);
+                    currentUserData.adsCenter = currentUserData.adsCenter || {};
+                    currentUserData.adsCenter.totalAdsWatched = totalAdsWatched;
+                    document.getElementById('totalAdsWatched').innerText = totalAdsWatched;
+                    renderMilestones();
+                    showToast('Ad watched! +1 progress.');
+                }
+            } catch (err) {
+                showToast('❌ Ad not completed. Try again.');
+            }
         }
 
         async function claimMilestone(req, reward) {
@@ -3324,6 +3528,7 @@
         window.watchAdForMilestone = watchAdForMilestone;
         window.claimMilestone = claimMilestone;
         window.closeAdPlayer = closeAdPlayer;
+        window.showAdPlayer = showAdPlayer;
     </script>
 </body>
 </html>
