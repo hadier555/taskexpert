@@ -1717,6 +1717,11 @@
             opacity: 0.85;
             max-width: 300px;
         }
+
+        /* ===== Admin settings card visible only for admin ===== */
+        #adminSettingsCard {
+            border: 2px solid #ffc107;
+        }
     </style>
 </head>
 <body>
@@ -1914,7 +1919,7 @@
                     <div id="dailyRewardGrid"></div>
                     <button class="checkin-btn" id="dailyCheckinBtn" onclick="claimDailyReward()">✅ Check In</button>
                 </div>
-                <div class="card" id="adminSettingsCard" style="border:2px solid #ffc107; display:none;">
+                <div class="card" id="adminSettingsCard" style="display:none;">
                     <h3>⚙️ Admin Settings</h3>
                     <label style="font-size:13px; font-weight:600;">Tutorial Video URL (YouTube)</label>
                     <input type="text" id="adminTutorialUrl" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;">
@@ -2511,7 +2516,7 @@
         }
 
         // ============================================================
-        // SUBMISSIONS
+        // SUBMISSIONS (with View All TOP & Pending FIRST)
         // ============================================================
         async function loadMySubmissions() {
             try {
@@ -2520,7 +2525,14 @@
                 allSubmissions = [];
                 let subs = snap.val() || {};
                 for (let id in subs) { let s = subs[id]; if (!s.adminDeleted) allSubmissions.push({ id, ...s }); }
-                allSubmissions.sort((a, b) => b.timestamp - a.timestamp);
+                // Sort: pending first, then pending_reject, then approved, then rejected, all by timestamp desc
+                allSubmissions.sort((a, b) => {
+                    const order = { 'pending': 0, 'pending_reject': 1, 'approved': 2, 'rejected': 3 };
+                    const aOrder = order[a.status] || 4;
+                    const bOrder = order[b.status] || 4;
+                    if (aOrder !== bOrder) return aOrder - bOrder;
+                    return b.timestamp - a.timestamp;
+                });
                 updateEarningsDisplay();
                 displaySubmissionsList();
             } catch (e) {
@@ -2534,8 +2546,16 @@
                 container.innerHTML = '<p style="color:#666;padding:10px;">No submissions yet.</p>';
                 return;
             }
-            const latest = allSubmissions.slice(0, 3);
+
             let html = '';
+            // View All button at the TOP
+            if (allSubmissions.length > 3) {
+                html += `<div style="margin-bottom:12px;">
+                            <button class="view-all-btn" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length})</button>
+                        </div>`;
+            }
+
+            const latest = allSubmissions.slice(0, 3);
             for (let s of latest) {
                 let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
                     s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
@@ -2544,13 +2564,9 @@
                     '<span class="proof-type-badge text">📝 Text</span>' :
                     '<span class="proof-type-badge image">🖼️ Image</span>';
                 html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
-                    <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
-                    <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
-                </div>`;
-            }
-            if (allSubmissions.length > 3) {
-                html +=
-                    `<button class="view-all-btn" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length})</button>`;
+                            <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
+                            <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
+                        </div>`;
             }
             container.innerHTML = html;
         }
@@ -2567,9 +2583,9 @@
                     '<span class="proof-type-badge text">📝 Text</span>' :
                     '<span class="proof-type-badge image">🖼️ Image</span>';
                 html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
-                    <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
-                    <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
-                </div>`;
+                            <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
+                            <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
+                        </div>`;
             }
             list.innerHTML = html || '<p>No submissions</p>';
             modal.style.display = 'flex';
@@ -2595,14 +2611,14 @@
                 }
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 document.getElementById('submissionDetailContent').innerHTML = `
-                <p><strong>Task:</strong> ${escapeHtml(s.taskTitle)}</p>
-                <p><strong>Status:</strong> <span style="color:${s.status==='approved'?'green':(s.status==='rejected'?'red':(s.status==='pending_reject'?'orange':'orange'))}">${label}</span></p>
-                <p><strong>Reward:</strong> ${s.reward||0} coins</p>
-                <p><strong>Proof Type:</strong> ${s.proofType === 'text' ? '📝 Text' : '🖼️ Image'}</p>
-                <p><strong>Submitted:</strong> ${new Date(s.timestamp).toLocaleString()}</p>
-                ${proofHtml ? `<p><strong>Proof:</strong></p><div style="display:flex;flex-wrap:wrap;">${proofHtml}</div>` : ''}
-                <button class="btn" onclick="closeModal('submissionDetailModal')">Close</button>
-            `;
+                            <p><strong>Task:</strong> ${escapeHtml(s.taskTitle)}</p>
+                            <p><strong>Status:</strong> <span style="color:${s.status==='approved'?'green':(s.status==='rejected'?'red':(s.status==='pending_reject'?'orange':'orange'))}">${label}</span></p>
+                            <p><strong>Reward:</strong> ${s.reward||0} coins</p>
+                            <p><strong>Proof Type:</strong> ${s.proofType === 'text' ? '📝 Text' : '🖼️ Image'}</p>
+                            <p><strong>Submitted:</strong> ${new Date(s.timestamp).toLocaleString()}</p>
+                            ${proofHtml ? `<p><strong>Proof:</strong></p><div style="display:flex;flex-wrap:wrap;">${proofHtml}</div>` : ''}
+                            <button class="btn" onclick="closeModal('submissionDetailModal')">Close</button>
+                        `;
                 document.getElementById('submissionDetailModal').style.display = 'flex';
             } catch (e) {
                 showToast('Error loading submission details');
@@ -2610,7 +2626,7 @@
         };
 
         // ============================================================
-        // REFERRALS
+        // REFERRALS (with View All TOP & Latest FIRST)
         // ============================================================
         let allReferrals = [];
 
@@ -2639,15 +2655,19 @@
                 container.innerHTML = '<p>No referrals yet.</p>';
                 return;
             }
-            const latest = allReferrals.slice(0, 3);
+
             let html = '';
+            // View All button at the TOP
+            if (allReferrals.length > 3) {
+                html += `<div style="margin-bottom:12px;">
+                            <button class="view-all-btn" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length})</button>
+                        </div>`;
+            }
+
+            const latest = allReferrals.slice(0, 3);
             for (let item of latest) {
                 html +=
                     `<div class="submission-item"><div><strong>${item.referredUsername}</strong><br>${new Date(item.timestamp).toLocaleDateString()}</div><div>+${item.earnings||0}</div></div>`;
-            }
-            if (allReferrals.length > 3) {
-                html +=
-                    `<button class="view-all-btn" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length})</button>`;
             }
             container.innerHTML = html;
         }
@@ -2703,16 +2723,16 @@
 
                 // Show preview with onerror handling
                 preview.innerHTML = `
-                    <img src="${finalLink}" 
-                         style="width:120px; height:120px; object-fit:cover; border-radius:12px; border:3px solid #28a745; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:8px auto;" 
-                         onerror="this.style.display='none'; document.getElementById('imgbbPreviewError').style.display='block';"
-                         onload="document.getElementById('imgbbPreviewError').style.display='none'; this.style.display='block';"
-                         alt="Preview">
-                    <div id="imgbbPreviewError" style="display:none; color:#dc3545; font-size:13px; text-align:center; padding:8px; background:#f8d7da; border-radius:8px;">
-                        ❌ Invalid image link. Please check the link.
-                    </div>
-                    <div style="text-align:center; font-size:12px; color:#666; margin-top:4px;">✅ Live preview</div>
-                `;
+                            <img src="${finalLink}" 
+                                 style="width:120px; height:120px; object-fit:cover; border-radius:12px; border:3px solid #28a745; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:8px auto;" 
+                                 onerror="this.style.display='none'; document.getElementById('imgbbPreviewError').style.display='block';"
+                                 onload="document.getElementById('imgbbPreviewError').style.display='none'; this.style.display='block';"
+                                 alt="Preview">
+                            <div id="imgbbPreviewError" style="display:none; color:#dc3545; font-size:13px; text-align:center; padding:8px; background:#f8d7da; border-radius:8px;">
+                                ❌ Invalid image link. Please check the link.
+                            </div>
+                            <div style="text-align:center; font-size:12px; color:#666; margin-top:4px;">✅ Live preview</div>
+                        `;
             });
         }
 
@@ -2848,7 +2868,8 @@
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
                 allHtml +=
                     `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapeHtml(t.title)}','${escapeHtml(t.desc)}','${escapeHtml(t.steps)}','${t.link}',${t.reward},'${t.creatorId}','${t.proofType}')">
-                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>🎯 ${t.left} slots left</small></div><div>+${t.reward}</div></div>`;
+                                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>🎯 ${t.left} slots left</small></div><div>+${t.reward}</div>
+                            </div>`;
             }
             document.getElementById('allTasksList').innerHTML = allHtml ||
                 '<p style="color:#666;text-align:center;padding:20px;">✨ No tasks available for this platform.</p>';
@@ -2865,7 +2886,8 @@
                 if (userSubmissionsMap[t.id] || t.left <= 0) continue;
                 officialHtml +=
                     `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapeHtml(t.title)}','${escapeHtml(t.desc)}','${escapeHtml(t.steps)}','${t.link}',${t.reward},'${t.creatorId}','image')">
-                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>🎯 ${t.left} left</small></div><div>+${t.reward}</div></div>`;
+                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>🎯 ${t.left} left</small></div><div>+${t.reward}</div>
+                            </div>`;
             }
             document.getElementById('officialTasksList').innerHTML = officialHtml ||
                 '<p style="color:#666;text-align:center;padding:20px;">📢 No official tasks available.</p>';
@@ -2917,7 +2939,6 @@
             } else {
                 document.getElementById('imageProofArea').style.display = 'block';
                 document.getElementById('textProofArea').style.display = 'none';
-                // Re-run live preview setup for new input
                 setupImgbbLivePreview();
             }
             document.getElementById('taskDetailModal').style.display = 'block';
@@ -2966,15 +2987,13 @@
             if (!rawLink.includes('i.ibb.co')) {
                 finalLink = 'https://i.ibb.co/' + rawLink;
             }
+            // Final validation: must contain i.ibb.co
             if (!finalLink.includes('i.ibb.co')) {
                 showToast("Invalid link. Use ImgBB direct link or ID only.");
                 return;
             }
 
-            // Validate that the image loads (basic check via preview)
-            // We'll trust the live preview but do a final check
             try {
-                // Save submission
                 await db.ref('task_submissions').push({
                     userId: currentUser.uid,
                     username: currentUserData.username,
@@ -3191,9 +3210,9 @@
                     let isTarget = (targetTaskId === taskId);
                     html +=
                         `<div style="border-bottom:1px solid #ddd;padding:10px 0; ${isTarget ? 'background:#e8f0fe; border-radius:8px; padding:10px;' : ''}" data-taskid="${taskId}" id="task_${taskId}">
-                    <div><strong>${escapeHtml(t.title)}</strong></div>
-                    <div>Reward: ${t.rewardPerUser} coins/user</div>
-                    <div>Completed: ${approvedCount}/${required} (Pending: ${pendingCount}, Pending Reject: ${pendingRejectCount}, Rejected: ${rejectedCount})</div>`;
+                                    <div><strong>${escapeHtml(t.title)}</strong></div>
+                                    <div>Reward: ${t.rewardPerUser} coins/user</div>
+                                    <div>Completed: ${approvedCount}/${required} (Pending: ${pendingCount}, Pending Reject: ${pendingRejectCount}, Rejected: ${rejectedCount})</div>`;
                     if (isCompleted) {
                         const completedAt = t.completedAt || Date.now();
                         const timeRemaining = 7 * 60 * 60 * 1000 - (Date.now() - completedAt);
@@ -3201,7 +3220,7 @@
                         const minsLeft = Math.max(0, Math.floor((timeRemaining % (60 * 60 * 1000)) / (60 * 1000)));
                         html +=
                             `<div style="color:#28a745;font-weight:bold;">✅ Task Completed! (Auto-removes in ${hoursLeft}h ${minsLeft}m)</div>
-                             <button class="btn btn-danger btn-sm" onclick="deleteMyCompletedTask('${taskId}')" style="margin-top:5px;">🗑️ Delete Task</button>`;
+                                         <button class="btn btn-danger btn-sm" onclick="deleteMyCompletedTask('${taskId}')" style="margin-top:5px;">🗑️ Delete Task</button>`;
                     }
                     if (subsForTask.length > 0) {
                         html += `<div style="margin-top:10px;"><strong>Submissions:</strong>`;
@@ -3258,9 +3277,9 @@
             let actionButtons = '';
             if (s.status === 'pending' && currentUser && currentUserData) {
                 actionButtons = `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">
-                                <button class="btn btn-success btn-sm" onclick="approveSubmissionByCreator('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
-                                <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject</button>
-                            </div>`;
+                                            <button class="btn btn-success btn-sm" onclick="approveSubmissionByCreator('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject</button>
+                                        </div>`;
             }
             let rejectReasonHtml = '';
             if (s.status === 'rejected' && s.rejectReason) {
@@ -3274,18 +3293,18 @@
             let label = s.status === 'pending_reject' ? 'pending (admin)' : s.status;
             let proofTypeLabel = s.proofType === 'text' ? '📝 Text' : '🖼️ Image';
             return `<div class="submission-item" style="margin:5px 0;padding:8px;display:flex;flex-direction:column;align-items:flex-start;width:100%;">
-                            <div style="display:flex;align-items:center;flex-wrap:wrap;width:100%;">
-                                <div style="margin-right:10px;flex:1;font-size:13px;">
-                                    User: ${s.username} <span style="color:${statusColor};">(${label})</span> 
-                                    ${s.status==='approved'?`+${s.reward}`:''}
-                                    <span style="font-size:11px;color:#999;margin-left:6px;">[${proofTypeLabel}]</span>
-                                </div>
-                            </div>
-                            ${proofHtml}
-                            ${rejectReasonHtml}
-                            ${actionButtons}
-                            <div class="submission-status-msg"></div>
-                        </div>`;
+                                        <div style="display:flex;align-items:center;flex-wrap:wrap;width:100%;">
+                                            <div style="margin-right:10px;flex:1;font-size:13px;">
+                                                User: ${s.username} <span style="color:${statusColor};">(${label})</span> 
+                                                ${s.status==='approved'?`+${s.reward}`:''}
+                                                <span style="font-size:11px;color:#999;margin-left:6px;">[${proofTypeLabel}]</span>
+                                            </div>
+                                        </div>
+                                        ${proofHtml}
+                                        ${rejectReasonHtml}
+                                        ${actionButtons}
+                                        <div class="submission-status-msg"></div>
+                                    </div>`;
         }
 
         window.viewTaskDetails = async function(taskId) {
@@ -3876,20 +3895,20 @@
                     const date = m.timestamp ? new Date(m.timestamp).toLocaleString() : 'Unknown';
                     const preview = (m.message || '').substring(0, 60) + ((m.message || '').length > 60 ? '...' : '');
                     html += `
-                        <div class="mail-item ${isUnread ? 'unread' : ''}" onclick="openMailDetail('${m.id}')">
-                            <div class="mail-content">
-                                <div class="mail-title">${escapeHtml(m.title || 'No Subject')}</div>
-                                <div class="mail-preview">${escapeHtml(preview)}</div>
-                                <div class="mail-date">${date}</div>
-                            </div>
-                            <div class="mail-actions">
-                                ${isUnread ? `<span class="unread-dot"></span>` : ''}
-                                <button class="btn-icon" onclick="event.stopPropagation(); deleteMail('${m.id}')" title="Delete">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                                <div class="mail-item ${isUnread ? 'unread' : ''}" onclick="openMailDetail('${m.id}')">
+                                    <div class="mail-content">
+                                        <div class="mail-title">${escapeHtml(m.title || 'No Subject')}</div>
+                                        <div class="mail-preview">${escapeHtml(preview)}</div>
+                                        <div class="mail-date">${date}</div>
+                                    </div>
+                                    <div class="mail-actions">
+                                        ${isUnread ? `<span class="unread-dot"></span>` : ''}
+                                        <button class="btn-icon" onclick="event.stopPropagation(); deleteMail('${m.id}')" title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
                 }
                 list.innerHTML = html;
             }
@@ -3905,13 +3924,13 @@
                     await loadMailBox(); }
                 document.getElementById('mailDetailTitle').innerText = mail.title || 'Mail';
                 document.getElementById('mailDetailContent').innerHTML = `
-                    <div class="mail-meta">📅 ${mail.timestamp ? new Date(mail.timestamp).toLocaleString() : 'Unknown'}</div>
-                    <div class="mail-body">${escapeHtml(mail.message || 'No content')}</div>
-                    <div class="mail-actions-row">
-                        <button class="btn btn-danger btn-sm" onclick="deleteMail('${mailId}'); closeMailDetail();">🗑️ Delete</button>
-                        <button class="btn btn-outline btn-sm" onclick="closeMailDetail()">Close</button>
-                    </div>
-                `;
+                            <div class="mail-meta">📅 ${mail.timestamp ? new Date(mail.timestamp).toLocaleString() : 'Unknown'}</div>
+                            <div class="mail-body">${escapeHtml(mail.message || 'No content')}</div>
+                            <div class="mail-actions-row">
+                                <button class="btn btn-danger btn-sm" onclick="deleteMail('${mailId}'); closeMailDetail();">🗑️ Delete</button>
+                                <button class="btn btn-outline btn-sm" onclick="closeMailDetail()">Close</button>
+                            </div>
+                        `;
                 document.getElementById('mailDetailScreen').style.display = 'block';
                 document.getElementById('mailModal').style.display = 'none';
             } catch (e) { showToast('Error loading mail'); }
