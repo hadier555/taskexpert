@@ -1722,6 +1722,33 @@
         #adminSettingsCard {
             border: 2px solid #ffc107;
         }
+
+        /* ===== IMGBB INPUT VALIDATION STYLES ===== */
+        #proofImgbbInput.valid {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+        #proofImgbbInput.invalid {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+        .imgbb-validation-msg {
+            font-size: 12px;
+            margin-top: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        .imgbb-validation-msg.valid {
+            display: block;
+            color: #28a745;
+            background: #e8f5e9;
+        }
+        .imgbb-validation-msg.invalid {
+            display: block;
+            color: #dc3545;
+            background: #f8d7da;
+        }
     </style>
 </head>
 <body>
@@ -1898,6 +1925,7 @@
                 <div class="card"><h3>⏳ Pending Earnings</h3><div id="pendingEarnings">0</div></div>
                 <div class="card"><h3>✅ Approved Earnings</h3><div id="approvedEarnings">0</div></div>
                 <div class="card"><h3>📋 My Submissions</h3>
+                    <!-- VIEW ALL BUTTON - TOP -->
                     <div id="submissionsContainer"></div>
                 </div>
             </div>
@@ -1909,6 +1937,7 @@
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
                         <div><div id="referralEarnings">0</div><div>Earnings</div></div>
                     </div>
+                    <!-- VIEW ALL BUTTON - TOP -->
                     <div id="referralsContainer"></div>
                 </div>
             </div>
@@ -2083,6 +2112,7 @@
                         <a href="#" id="tutorialVideoLink" target="_blank" style="background:#ff0000; color:white; padding:2px 12px; border-radius:12px; text-decoration:none; font-size:12px; font-weight:bold;">Watch</a>
                     </div>
                     <input type="text" id="proofImgbbInput" placeholder="Paste ImgBB link or ID here: https://i.ibb.co/xxxxx or just xxxxx" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; font-size:14px;">
+                    <div id="imgbbValidationMsg" class="imgbb-validation-msg"></div>
                     <div style="font-size:12px; color:#666; margin-top:4px;">Example: 4Yf8k2M/image.jpg or full link https://i.ibb.co/4Yf8k2M/image.jpg</div>
                     <div id="proofImgbbPreview" style="margin-top:10px;"></div>
                 </div>
@@ -2548,7 +2578,7 @@
             }
 
             let html = '';
-            // View All button at the TOP
+            // VIEW ALL BUTTON - TOP (as requested)
             if (allSubmissions.length > 3) {
                 html += `<div style="margin-bottom:12px;">
                             <button class="view-all-btn" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length})</button>
@@ -2657,7 +2687,7 @@
             }
 
             let html = '';
-            // View All button at the TOP
+            // VIEW ALL BUTTON - TOP (as requested)
             if (allReferrals.length > 3) {
                 html += `<div style="margin-bottom:12px;">
                             <button class="view-all-btn" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length})</button>
@@ -2695,17 +2725,21 @@
         }
 
         // ============================================================
-        // ===== LIVE PREVIEW FOR IMGBB LINK =====
+        // ===== LIVE PREVIEW FOR IMGBB LINK WITH VALIDATION =====
         // ============================================================
         function setupImgbbLivePreview() {
             const input = document.getElementById('proofImgbbInput');
             const preview = document.getElementById('proofImgbbPreview');
+            const msg = document.getElementById('imgbbValidationMsg');
             if (!input || !preview) return;
 
             input.addEventListener('input', function() {
                 let raw = this.value.trim();
                 if (!raw) {
                     preview.innerHTML = '';
+                    msg.className = 'imgbb-validation-msg';
+                    msg.textContent = '';
+                    this.className = '';
                     return;
                 }
 
@@ -2714,14 +2748,21 @@
                     finalLink = 'https://i.ibb.co/' + raw;
                 }
 
-                // Validate: must contain i.ibb.co after processing
+                // ===== VALIDATION: Must contain i.ibb.co =====
                 if (!finalLink.includes('i.ibb.co')) {
+                    this.className = 'invalid';
+                    msg.className = 'imgbb-validation-msg invalid';
+                    msg.textContent = '❌ Invalid link. Use ImgBB direct link or ID (must contain i.ibb.co)';
                     preview.innerHTML =
-                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ Invalid link. Must be ImgBB direct link or ID.</div>`;
+                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ Invalid ImgBB link. Please use a valid ImgBB URL or ID.</div>`;
                     return;
                 }
 
-                // Show preview with onerror handling
+                // ===== VALID: show preview =====
+                this.className = 'valid';
+                msg.className = 'imgbb-validation-msg valid';
+                msg.textContent = '✅ Valid ImgBB link!';
+
                 preview.innerHTML = `
                             <img src="${finalLink}" 
                                  style="width:120px; height:120px; object-fit:cover; border-radius:12px; border:3px solid #28a745; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:8px auto;" 
@@ -2731,7 +2772,7 @@
                             <div id="imgbbPreviewError" style="display:none; color:#dc3545; font-size:13px; text-align:center; padding:8px; background:#f8d7da; border-radius:8px;">
                                 ❌ Invalid image link. Please check the link.
                             </div>
-                            <div style="text-align:center; font-size:12px; color:#666; margin-top:4px;">✅ Live preview</div>
+                            <div style="text-align:center; font-size:12px; color:#666; margin-top:4px;">✅ Valid ImgBB link - ready to submit</div>
                         `;
             });
         }
@@ -2910,7 +2951,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT (with LIVE PREVIEW)
+        // TASK DETAIL & SUBMIT (with ImgBB validation)
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -2928,10 +2969,16 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
+            // Reset ImgBB input
             document.getElementById('proofImgbbInput').value = '';
             document.getElementById('proofImgbbPreview').innerHTML = '';
             document.getElementById('proofTextInput').value = '';
             proofTextValue = '';
+            const msg = document.getElementById('imgbbValidationMsg');
+            if (msg) { msg.className = 'imgbb-validation-msg';
+                msg.textContent = ''; }
+            const input = document.getElementById('proofImgbbInput');
+            if (input) input.className = '';
 
             if (currentTask.proofType === 'text') {
                 document.getElementById('imageProofArea').style.display = 'none';
@@ -2978,7 +3025,7 @@
                 return;
             }
 
-            // IMAGE proof - ImgBB link
+            // ===== IMAGE proof - ImgBB link with VALIDATION =====
             const input = document.getElementById('proofImgbbInput');
             let rawLink = input.value.trim();
             if (!rawLink) { showToast("Please paste your ImgBB link or ID."); return; }
@@ -2987,12 +3034,18 @@
             if (!rawLink.includes('i.ibb.co')) {
                 finalLink = 'https://i.ibb.co/' + rawLink;
             }
-            // Final validation: must contain i.ibb.co
+
+            // ===== VALIDATION: Must contain i.ibb.co =====
             if (!finalLink.includes('i.ibb.co')) {
-                showToast("Invalid link. Use ImgBB direct link or ID only.");
+                showToast("❌ Invalid ImgBB link. Must contain 'i.ibb.co'");
+                input.className = 'invalid';
+                const msg = document.getElementById('imgbbValidationMsg');
+                if (msg) { msg.className = 'imgbb-validation-msg invalid';
+                    msg.textContent = '❌ Invalid ImgBB link. Must contain i.ibb.co'; }
                 return;
             }
 
+            // If we reach here, link is valid
             try {
                 await db.ref('task_submissions').push({
                     userId: currentUser.uid,
