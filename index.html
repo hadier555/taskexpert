@@ -13,20 +13,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- ===== VIDEOJS + IMA SDK ===== -->
+    <!-- VideoJS + IMA SDK -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/videojs-ima@2.4.0/dist/videojs.ima.min.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
-    </script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
@@ -1599,7 +1596,7 @@
                 <video id="adVideoPlayer" class="video-js vjs-default-skin vjs-big-play-centered" controls playsinline></video>
                 <button class="ad-overlay-btn" id="claimAdRewardBtn" disabled>
                     🎁 Claim Reward
-                    <span class="sub-text">Watch ad to claim</span>
+                    <span class="sub-text">Loading ad...</span>
                 </button>
             </div>
         </div>
@@ -1848,7 +1845,8 @@
         let adResolve = null;
         let adReject = null;
         let adClaimResolve = null;
-        const VAST_URL = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
+        // USE YOUR VAST URL HERE (or will be fetched from Firebase)
+        const DEFAULT_VAST_URL = 'https://difficultblock.com/dim.F/zJd-G/NLv/ZTGYUG/Feumk9tuTZlU/l/kkPfTzc/xbNszCI/yDOTD_krtWNMzDEa3SMPjuIa5OMNwd';
 
         // Scratch Card State
         let scratchRevealed = false,
@@ -2834,7 +2832,7 @@
                 e) {} }
 
         // ============================================================
-        // DAILY REWARD (with Ad - Using VideoJS+IMA)
+        // DAILY REWARD (with Ad - VideoJS+IMA)
         // ============================================================
         async function loadDailyRewardGrid() {
             try { let rewards = [10, 20, 30, 40, 50, 60, 70];
@@ -2874,7 +2872,6 @@
             if (daily.lastClaimDate === today && daily.claimed) { showToast("Already claimed today!"); return; }
             let rewardCoins = (await db.ref('settings/ads/dailyRewardCoins').once('value')).val() || 10;
             try {
-                // Show ad player and wait for completion
                 const adCompleted = await showAdPlayer('Daily Reward');
                 if (adCompleted) {
                     let nc = (currentUserData.coins || 0) + rewardCoins;
@@ -2892,7 +2889,7 @@
         }
 
         // ============================================================
-        // AD PLAYER (VideoJS + IMA SDK - FULL SCREEN)
+        // AD PLAYER (VideoJS + IMA SDK - FULL SCREEN with retry)
         // ============================================================
         function showAdPlayer(title) {
             return new Promise((resolve, reject) => {
@@ -2904,145 +2901,181 @@
                 // Show modal
                 document.getElementById('adPlayerModal').style.display = 'flex';
 
-                // Update button
-                const claimBtn = document.getElementById('claimAdRewardBtn');
-                claimBtn.disabled = true;
-                claimBtn.classList.remove('ready');
-                claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+                // Get VAST URL from Firebase or use default
+                db.ref('settings/ads/vastUrl').once('value').then(snap => {
+                    const vastUrl = snap.val() || DEFAULT_VAST_URL;
+                    initAdPlayer(vastUrl);
+                }).catch(() => {
+                    initAdPlayer(DEFAULT_VAST_URL);
+                });
+            });
+        }
 
-                // Initialize VideoJS player if not exists
-                const videoEl = document.getElementById('adVideoPlayer');
-                if (!adPlayer) {
-                    adPlayer = videojs(videoEl, {
-                        controls: true,
-                        autoplay: true,
-                        muted: true,
-                        preload: 'auto',
-                        fluid: true,
-                        techOrder: ['html5'],
-                        controlBar: {
-                            playToggle: false,
-                            volumePanel: false,
-                            currentTimeDisplay: false,
-                            timeDivider: false,
-                            durationDisplay: false,
-                            progressControl: false,
-                            liveDisplay: false,
-                            seekToLive: false,
-                            remainingTimeDisplay: false,
-                            customControlSpacer: false,
-                            playToggle: false
-                        }
-                    });
+        function initAdPlayer(vastUrl) {
+            const claimBtn = document.getElementById('claimAdRewardBtn');
+            claimBtn.disabled = true;
+            claimBtn.classList.remove('ready');
+            claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Loading ad...</span>';
 
-                    // Setup IMA plugin
-                    adPlayer.ima({
-                        adTagUrl: VAST_URL,
-                        autoPlayAdBreaks: true,
-                        id: 'adVideoPlayer',
-                        adDebug: false,
-                        locale: 'en',
-                        pauseAd: false,
-                        disableDefaultAds: false,
-                        useStyledAdContainer: true
-                    });
+            const videoEl = document.getElementById('adVideoPlayer');
 
-                    // IMA event listeners
-                    adPlayer.on('ads-manager', function(e) {
-                        console.log('IMA: Ads manager loaded');
-                    });
+            // Dispose old player if exists
+            if (adPlayer) {
+                adPlayer.dispose();
+                adPlayer = null;
+            }
 
-                    adPlayer.on('ads-ad-started', function(e) {
-                        console.log('IMA: Ad started');
-                        adIsReady = true;
-                        // Start timer
-                        if (adTimerInterval) clearInterval(adTimerInterval);
-                        adTimerInterval = setInterval(() => {
-                            if (adPlayer && adPlayer.currentTime && adPlayer.currentTime() >
-                                0) {
-                                const ct = Math.floor(adPlayer.currentTime());
-                                if (ct > adSecondsWatched) {
-                                    adSecondsWatched = ct;
-                                    console.log(`Ad time: ${adSecondsWatched}s`);
-                                    if (adSecondsWatched >= 20) {
-                                        clearInterval(adTimerInterval);
-                                        adTimerInterval = null;
-                                        // Enable claim button
-                                        const btn = document.getElementById(
-                                        'claimAdRewardBtn');
-                                        btn.disabled = false;
-                                        btn.classList.add('ready');
-                                        btn.innerHTML =
-                                            '🎁 Claim Reward <span class="sub-text">✅ Ready to claim!</span>';
-                                    }
-                                }
+            // Create new player
+            adPlayer = videojs(videoEl, {
+                controls: true,
+                autoplay: true,
+                muted: true,
+                preload: 'auto',
+                fluid: true,
+                techOrder: ['html5'],
+                controlBar: {
+                    playToggle: false,
+                    volumePanel: false,
+                    currentTimeDisplay: false,
+                    timeDivider: false,
+                    durationDisplay: false,
+                    progressControl: false,
+                    liveDisplay: false,
+                    seekToLive: false,
+                    remainingTimeDisplay: false,
+                    customControlSpacer: false,
+                    playToggle: false
+                }
+            });
+
+            // Setup IMA
+            adPlayer.ima({
+                adTagUrl: vastUrl,
+                autoPlayAdBreaks: true,
+                id: 'adVideoPlayer',
+                adDebug: true,
+                locale: 'en',
+                pauseAd: false,
+                disableDefaultAds: false,
+                useStyledAdContainer: true
+            });
+
+            // ---- IMA Events ----
+            adPlayer.on('ads-manager', function() {
+                console.log('IMA: Ads manager loaded');
+            });
+
+            adPlayer.on('ads-ad-started', function() {
+                console.log('IMA: Ad started');
+                adIsReady = true;
+                claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Watching ad...</span>';
+                if (adTimerInterval) clearInterval(adTimerInterval);
+                adTimerInterval = setInterval(() => {
+                    if (adPlayer && adPlayer.currentTime && adPlayer.currentTime() > 0) {
+                        const ct = Math.floor(adPlayer.currentTime());
+                        if (ct > adSecondsWatched) {
+                            adSecondsWatched = ct;
+                            console.log(`Ad time: ${adSecondsWatched}s`);
+                            if (adSecondsWatched >= 20) {
+                                clearInterval(adTimerInterval);
+                                adTimerInterval = null;
+                                claimBtn.disabled = false;
+                                claimBtn.classList.add('ready');
+                                claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">✅ Ready to claim!</span>';
                             }
-                        }, 500);
-                    });
-
-                    adPlayer.on('ads-ad-ended', function(e) {
-                        console.log('IMA: Ad ended');
-                        if (adSecondsWatched >= 20) {
-                            const btn = document.getElementById('claimAdRewardBtn');
-                            btn.disabled = false;
-                            btn.classList.add('ready');
-                            btn.innerHTML =
-                                '🎁 Claim Reward <span class="sub-text">✅ Ready to claim!</span>';
                         }
-                        if (adTimerInterval) clearInterval(adTimerInterval);
-                        adTimerInterval = null;
-                    });
+                    }
+                }, 500);
+            });
 
-                    adPlayer.on('ads-error', function(e) {
-                        console.log('IMA: Ad error', e);
-                        if (adTimerInterval) clearInterval(adTimerInterval);
-                        adTimerInterval = null;
-                        showToast('⚠️ Ad error. Please try again.');
-                        closeAdPlayer();
-                        if (adReject) adReject(new Error('Ad error'));
-                    });
+            adPlayer.on('ads-ad-ended', function() {
+                console.log('IMA: Ad ended');
+                if (adSecondsWatched >= 20) {
+                    claimBtn.disabled = false;
+                    claimBtn.classList.add('ready');
+                    claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">✅ Ready to claim!</span>';
+                }
+                if (adTimerInterval) clearInterval(adTimerInterval);
+                adTimerInterval = null;
+            });
 
-                    adPlayer.on('adskip', function(e) {
-                        console.log('IMA: Ad skipped');
-                        if (adSecondsWatched < 20) {
-                            showToast('❌ You skipped the ad. Watch at least 20 seconds!');
-                            // Replay ad
-                            adPlayer.ima.reset();
-                            adPlayer.ima.requestAds();
-                            adSecondsWatched = 0;
-                            const btn = document.getElementById('claimAdRewardBtn');
-                            btn.disabled = true;
-                            btn.classList.remove('ready');
-                            btn.innerHTML =
-                                '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
-                        }
-                    });
-                } else {
-                    // Reset player
+            adPlayer.on('ads-error', function(e) {
+                console.error('IMA: Ad error', e);
+                if (adTimerInterval) clearInterval(adTimerInterval);
+                adTimerInterval = null;
+                claimBtn.innerHTML = '❌ Ad Error <span class="sub-text">Tap to retry</span>';
+                claimBtn.disabled = false;
+                claimBtn.onclick = function() {
+                    // Retry: reload ad
                     adPlayer.ima.reset();
                     adPlayer.ima.requestAds();
-                }
-
-                // Handle claim button click
-                document.getElementById('claimAdRewardBtn').onclick = function() {
-                    if (adSecondsWatched >= 20) {
-                        // Claim reward
-                        if (adTimerInterval) clearInterval(adTimerInterval);
-                        adTimerInterval = null;
-                        closeAdPlayer();
-                        if (adResolve) adResolve(true);
-                    } else {
-                        // Replay ad
-                        showToast('⏳ Watch at least 20 seconds first!');
+                    claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Retrying...</span>';
+                    claimBtn.disabled = true;
+                    claimBtn.onclick = null;
+                };
+                // Auto-retry after 3s
+                setTimeout(() => {
+                    if (adPlayer) {
                         adPlayer.ima.reset();
                         adPlayer.ima.requestAds();
-                        adSecondsWatched = 0;
-                        this.disabled = true;
-                        this.classList.remove('ready');
-                        this.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+                        claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Retrying...</span>';
+                        claimBtn.disabled = true;
                     }
-                };
+                }, 3000);
             });
+
+            adPlayer.on('adskip', function() {
+                console.log('IMA: Ad skipped');
+                if (adSecondsWatched < 20) {
+                    showToast('❌ You skipped the ad. Watch at least 20 seconds!');
+                    // Replay ad
+                    adPlayer.ima.reset();
+                    adPlayer.ima.requestAds();
+                    adSecondsWatched = 0;
+                    claimBtn.disabled = true;
+                    claimBtn.classList.remove('ready');
+                    claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+                }
+            });
+
+            // ---- Claim button ----
+            document.getElementById('claimAdRewardBtn').onclick = function() {
+                if (adSecondsWatched >= 20) {
+                    if (adTimerInterval) clearInterval(adTimerInterval);
+                    adTimerInterval = null;
+                    closeAdPlayer();
+                    if (adResolve) adResolve(true);
+                } else {
+                    showToast('⏳ Watch at least 20 seconds first!');
+                    // Reload ad
+                    adPlayer.ima.reset();
+                    adPlayer.ima.requestAds();
+                    adSecondsWatched = 0;
+                    this.disabled = true;
+                    this.classList.remove('ready');
+                    this.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+                }
+            };
+
+            // ---- If ad doesn't start after 8 seconds, retry ----
+            let retryCount = 0;
+            const checkAdStart = setInterval(() => {
+                if (adIsReady) {
+                    clearInterval(checkAdStart);
+                    return;
+                }
+                retryCount++;
+                if (retryCount > 4) { // 8 seconds
+                    clearInterval(checkAdStart);
+                    if (!adIsReady) {
+                        console.warn('Ad not started, retrying...');
+                        adPlayer.ima.reset();
+                        adPlayer.ima.requestAds();
+                        claimBtn.innerHTML = '🎁 Claim Reward <span class="sub-text">Retrying...</span>';
+                        claimBtn.disabled = true;
+                    }
+                }
+            }, 2000);
         }
 
         function closeAdPlayer() {
@@ -3058,6 +3091,7 @@
             btn.disabled = true;
             btn.classList.remove('ready');
             btn.innerHTML = '🎁 Claim Reward <span class="sub-text">Watch ad to claim</span>';
+            btn.onclick = null;
             if (adReject) adReject(new Error('User closed ad'));
         }
 
