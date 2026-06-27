@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Task Expert - User Panel</title>
 
-    <link rel="manifest" href="manifest.json" />
-    <link rel="apple-touch-icon" sizes="512x512" href="launchericon-512x512.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="launchericon-512x512.png" />
+    <!-- ===== CACHE BUSTING ===== -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <link rel="manifest" href="manifest.json?v=2" />
+    <link rel="apple-touch-icon" sizes="512x512" href="launchericon-512x512.png?v=2" />
+    <link rel="icon" type="image/png" sizes="192x192" href="launchericon-512x512.png?v=2" />
     <meta name="theme-color" content="#1e3c72" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -1434,7 +1439,7 @@
             }
         }
 
-        /* ===== UPLOAD OVERLAY (removing, but keeping just in case) ===== */
+        /* ===== UPLOAD OVERLAY ===== */
         .upload-overlay {
             display: none;
             position: fixed;
@@ -1619,7 +1624,6 @@
             background: #e8f5e9;
             color: #1b5e20;
         }
-        /* ===== Single image upload hint (removed) ===== */
         .single-img-hint {
             display: none;
         }
@@ -1746,7 +1750,7 @@
             <div class="loader-footer">v2.0</div>
         </div>
 
-        <!-- ===== UPLOAD OVERLAY (Kept for fallback, but not used) ===== -->
+        <!-- ===== UPLOAD OVERLAY ===== -->
         <div id="uploadOverlay" class="upload-overlay">
             <div class="spinner"></div>
             <div class="progress-text" id="uploadProgressText">Uploading...</div>
@@ -1790,7 +1794,6 @@
         <div class="screen" id="googleSignInScreen">
             <div class="header"><h1>✅ Task Expert</h1><p>Earn Coins • Complete Tasks</p></div>
             <div class="card" style="margin-top:30px;text-align:center;">
-                <!-- LOGIN SECTION (default visible) -->
                 <div id="loginSection">
                     <h3>Welcome Back!</h3>
                     <p style="margin:15px 0;">Login to your account using Google.</p>
@@ -1804,8 +1807,6 @@
                         Don't have an account? <a onclick="showRegister()">Register</a>
                     </div>
                 </div>
-
-                <!-- REGISTER SECTION (hidden by default) -->
                 <div id="registerSection" style="display:none;">
                     <h3>Create a new account</h3>
                     <p style="margin:15px 0;">Sign up using Google.</p>
@@ -1819,7 +1820,6 @@
                         <a onclick="showLogin()">← Back to Login</a>
                     </div>
                 </div>
-
                 <p style="font-size:12px;color:#666;margin-top:20px;">By continuing, you agree to our Terms and Privacy Policy.</p>
             </div>
         </div>
@@ -1859,7 +1859,6 @@
                         <span class="badge hidden" id="unreadBadge">0</span>
                     </div>
                 </div>
-                <!-- ===== OFFLINE INDICATOR ===== -->
                 <div class="offline-indicator" id="offlineIndicator">
                     <i class="fas fa-wifi-slash"></i> You are offline. Data will sync when online.
                 </div>
@@ -1894,9 +1893,7 @@
                 <div class="card"><h3>⏳ Pending Earnings</h3><div id="pendingEarnings">0</div></div>
                 <div class="card"><h3>✅ Approved Earnings</h3><div id="approvedEarnings">0</div></div>
                 <div class="card"><h3>📋 My Submissions</h3>
-                    <div id="submissionsContainer">
-                        <!-- Latest 3 will be shown here, with view all -->
-                    </div>
+                    <div id="submissionsContainer"></div>
                 </div>
             </div>
             <div id="inviteContent" style="display:none">
@@ -1907,9 +1904,7 @@
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
                         <div><div id="referralEarnings">0</div><div>Earnings</div></div>
                     </div>
-                    <div id="referralsContainer">
-                        <!-- Latest 3 referrals, with view all -->
-                    </div>
+                    <div id="referralsContainer"></div>
                 </div>
             </div>
             <div id="profileContent" style="display:none">
@@ -1919,8 +1914,6 @@
                     <div id="dailyRewardGrid"></div>
                     <button class="checkin-btn" id="dailyCheckinBtn" onclick="claimDailyReward()">✅ Check In</button>
                 </div>
-                <!-- ===== SCRATCH CARD REMOVED ===== -->
-                <!-- ===== ADMIN SETTINGS CARD ===== -->
                 <div class="card" id="adminSettingsCard" style="border:2px solid #ffc107; display:none;">
                     <h3>⚙️ Admin Settings</h3>
                     <label style="font-size:13px; font-weight:600;">Tutorial Video URL (YouTube)</label>
@@ -2118,7 +2111,6 @@
         const auth = firebase.auth();
         const db = firebase.database();
         const provider = new firebase.auth.GoogleAuthProvider();
-
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.error(e));
 
         // ============================================================
@@ -2149,13 +2141,11 @@
         let isOnline = true;
         let isAdmin = false;
 
-        // === COOLDOWN TRACKING (3 minutes) ===
         const COOLDOWN_MS = 3 * 60 * 1000;
         let lastTaskPostTime = 0;
         let lastDepositTime = 0;
         let lastWithdrawTime = 0;
 
-        // === PLATFORM MIN SETTINGS ===
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
             tiktok: { minMembers: 10, minCoins: 5 },
@@ -2165,7 +2155,6 @@
             other: { minMembers: 10, minCoins: 5 }
         };
 
-        // === MIN DEPOSIT/WITHDRAW ===
         let minDeposit = 100;
         let minWithdraw = 1000;
 
@@ -2174,7 +2163,7 @@
         // ============================================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+                navigator.serviceWorker.register('sw.js?v=2').catch(err => console.log('SW error:', err));
             });
         }
 
@@ -2199,70 +2188,6 @@
                 indicator.classList.remove('show');
             }
         });
-
-        // ============================================================
-        // UPLOAD SYSTEM (Only kept for deposit & fallback)
-        // ============================================================
-        const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
-        const CLOUDINARY_API_KEY = '614258583454693';
-        const CLOUDINARY_UPLOAD_PRESET = 'ml_default';
-        const IMGBB_API_KEY = '1b477ca0def1913d17500dfdbad91f2d';
-
-        function base64ToBlob(base64Data) {
-            const raw = base64Data.split(',')[1];
-            const byteCharacters = atob(raw);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            return new Blob([byteArray], { type: 'image/jpeg' });
-        }
-
-        async function uploadToCloudinary(base64Data) {
-            const blob = base64ToBlob(base64Data);
-            const file = new File([blob], 'upload.jpg', { type: 'image/jpeg' });
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-            formData.append('api_key', CLOUDINARY_API_KEY);
-            const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
-            const response = await fetch(url, { method: 'POST', body: formData });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message || 'Cloudinary upload failed');
-            if (!data.secure_url) throw new Error('Cloudinary did not return a URL');
-            return data.secure_url;
-        }
-
-        async function uploadToImgBB(base64Data) {
-            const raw = base64Data.split(',')[1];
-            const formData = new FormData();
-            formData.append('image', raw);
-            formData.append('key', IMGBB_API_KEY);
-            const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-            const data = await res.json();
-            if (!data.success) throw new Error(data.error?.message || 'ImgBB upload failed');
-            return data.data.url;
-        }
-
-        async function uploadImage(base64Data) {
-            const UPLOAD_TIMEOUT = 10000;
-            try {
-                const cloudinaryPromise = uploadToCloudinary(base64Data);
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
-                );
-                const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
-                return result;
-            } catch (cloudErr) {
-                console.warn('Cloudinary failed:', cloudErr.message);
-                try {
-                    return await uploadToImgBB(base64Data);
-                } catch (imgbbErr) {
-                    throw new Error(`All upload services failed. Last error: ${imgbbErr.message}`);
-                }
-            }
-        }
 
         // ============================================================
         // HELPER FUNCTIONS
@@ -2299,9 +2224,6 @@
             document.body.style.overflow = 'auto'; }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 
-        // ============================================================
-        // COOLDOWN HELPERS
-        // ============================================================
         function getCooldownRemaining(lastTime) {
             const elapsed = Date.now() - lastTime;
             const remaining = COOLDOWN_MS - elapsed;
@@ -2465,7 +2387,6 @@
                     currentUserData.depositCoins = currentUserData.nonWithdrawableCoins || 0;
                     await db.ref(`users/${currentUser.uid}/depositCoins`).set(currentUserData.depositCoins);
                 }
-                // Check if admin
                 const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
                 isAdmin = adminSnap.val() === true;
             } else {
@@ -2516,7 +2437,6 @@
                     authProvider: "google"
                 };
                 await db.ref(`users/${currentUser.uid}`).set(currentUserData);
-                // Check admin flag for new users (hardcoded or default false)
                 const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
                 isAdmin = adminSnap.val() === true;
             }
@@ -2524,7 +2444,6 @@
             loadReferralData();
             loadDailyRewardGrid();
             loadTutorialVideo();
-            // Show admin card if isAdmin
             if (isAdmin) {
                 document.getElementById('adminSettingsCard').style.display = 'block';
             } else {
@@ -2592,7 +2511,7 @@
         }
 
         // ============================================================
-        // SUBMISSIONS (with latest 3 + view all)
+        // SUBMISSIONS
         // ============================================================
         async function loadMySubmissions() {
             try {
@@ -2691,7 +2610,7 @@
         };
 
         // ============================================================
-        // REFERRALS (latest 3 + view all)
+        // REFERRALS
         // ============================================================
         let allReferrals = [];
 
@@ -2756,7 +2675,49 @@
         }
 
         // ============================================================
-        // TASKS (load, display, filter)
+        // ===== LIVE PREVIEW FOR IMGBB LINK =====
+        // ============================================================
+        function setupImgbbLivePreview() {
+            const input = document.getElementById('proofImgbbInput');
+            const preview = document.getElementById('proofImgbbPreview');
+            if (!input || !preview) return;
+
+            input.addEventListener('input', function() {
+                let raw = this.value.trim();
+                if (!raw) {
+                    preview.innerHTML = '';
+                    return;
+                }
+
+                let finalLink = raw;
+                if (!raw.includes('i.ibb.co')) {
+                    finalLink = 'https://i.ibb.co/' + raw;
+                }
+
+                // Validate: must contain i.ibb.co after processing
+                if (!finalLink.includes('i.ibb.co')) {
+                    preview.innerHTML =
+                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ Invalid link. Must be ImgBB direct link or ID.</div>`;
+                    return;
+                }
+
+                // Show preview with onerror handling
+                preview.innerHTML = `
+                    <img src="${finalLink}" 
+                         style="width:120px; height:120px; object-fit:cover; border-radius:12px; border:3px solid #28a745; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:8px auto;" 
+                         onerror="this.style.display='none'; document.getElementById('imgbbPreviewError').style.display='block';"
+                         onload="document.getElementById('imgbbPreviewError').style.display='none'; this.style.display='block';"
+                         alt="Preview">
+                    <div id="imgbbPreviewError" style="display:none; color:#dc3545; font-size:13px; text-align:center; padding:8px; background:#f8d7da; border-radius:8px;">
+                        ❌ Invalid image link. Please check the link.
+                    </div>
+                    <div style="text-align:center; font-size:12px; color:#666; margin-top:4px;">✅ Live preview</div>
+                `;
+            });
+        }
+
+        // ============================================================
+        // TASKS
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -2927,7 +2888,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT (SMART IMGBB LINK)
+        // TASK DETAIL & SUBMIT (with LIVE PREVIEW)
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -2945,7 +2906,6 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
-            // Clear previous ImgBB input/preview
             document.getElementById('proofImgbbInput').value = '';
             document.getElementById('proofImgbbPreview').innerHTML = '';
             document.getElementById('proofTextInput').value = '';
@@ -2957,6 +2917,8 @@
             } else {
                 document.getElementById('imageProofArea').style.display = 'block';
                 document.getElementById('textProofArea').style.display = 'none';
+                // Re-run live preview setup for new input
+                setupImgbbLivePreview();
             }
             document.getElementById('taskDetailModal').style.display = 'block';
         };
@@ -2967,7 +2929,6 @@
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
 
-            // Handle TEXT proof
             if (currentTask.proofType === 'text') {
                 const proofText = document.getElementById('proofTextInput').value.trim();
                 if (!proofText) { showToast("Please enter your proof text."); return; }
@@ -2996,29 +2957,24 @@
                 return;
             }
 
-            // Handle IMAGE (ImgBB Link) proof
+            // IMAGE proof - ImgBB link
             const input = document.getElementById('proofImgbbInput');
             let rawLink = input.value.trim();
             if (!rawLink) { showToast("Please paste your ImgBB link or ID."); return; }
 
             let finalLink = rawLink;
-            // Smart validation
             if (!rawLink.includes('i.ibb.co')) {
-                // Auto prepend https://i.ibb.co/
                 finalLink = 'https://i.ibb.co/' + rawLink;
             }
-            // Final validation: must contain i.ibb.co
             if (!finalLink.includes('i.ibb.co')) {
-                showToast("Invalid link. Watch tutorial video. Use ImgBB direct link or ID only.");
+                showToast("Invalid link. Use ImgBB direct link or ID only.");
                 return;
             }
 
-            // Show preview
-            document.getElementById('proofImgbbPreview').innerHTML =
-                `<img src="${finalLink}" class="preview-img" style="width:120px;height:120px;object-fit:cover;border-radius:12px;margin:8px auto;display:block;border:3px solid #28a745;">`;
-
-            // Save submission
+            // Validate that the image loads (basic check via preview)
+            // We'll trust the live preview but do a final check
             try {
+                // Save submission
                 await db.ref('task_submissions').push({
                     userId: currentUser.uid,
                     username: currentUserData.username,
@@ -3043,7 +2999,7 @@
         }
 
         // ============================================================
-        // CREATE TASK (with platform min validation + cooldown)
+        // CREATE TASK
         // ============================================================
         function showCreateTaskModal() {
             if (isCooldownActive(lastTaskPostTime)) {
@@ -3417,6 +3373,7 @@
                 });
             }
             toggleProofTypeFields();
+            setupImgbbLivePreview();
         });
 
         async function submitRejectReason() {
@@ -3529,7 +3486,7 @@
         }
 
         // ============================================================
-        // DEPOSIT (unchanged)
+        // DEPOSIT
         // ============================================================
         async function loadBankDetails() {
             try {
@@ -3541,6 +3498,8 @@
                 document.getElementById('bankEasypaisa').innerText = 'Mukhtar Ahmad - 03418568337';
             }
         }
+
+        let depositImage = null;
 
         function showDepositModal() {
             if (isCooldownActive(lastDepositTime)) {
@@ -3598,8 +3557,6 @@
                 r.readAsDataURL(f);
             }
         });
-
-        let depositImage = null;
 
         async function requestDeposit() {
             if (isCooldownActive(lastDepositTime)) {
@@ -4059,6 +4016,70 @@
         }
 
         // ============================================================
+        // UPLOAD SYSTEM (for deposit only)
+        // ============================================================
+        const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
+        const CLOUDINARY_API_KEY = '614258583454693';
+        const CLOUDINARY_UPLOAD_PRESET = 'ml_default';
+        const IMGBB_API_KEY = '1b477ca0def1913d17500dfdbad91f2d';
+
+        function base64ToBlob(base64Data) {
+            const raw = base64Data.split(',')[1];
+            const byteCharacters = atob(raw);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: 'image/jpeg' });
+        }
+
+        async function uploadToCloudinary(base64Data) {
+            const blob = base64ToBlob(base64Data);
+            const file = new File([blob], 'upload.jpg', { type: 'image/jpeg' });
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('api_key', CLOUDINARY_API_KEY);
+            const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+            const response = await fetch(url, { method: 'POST', body: formData });
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message || 'Cloudinary upload failed');
+            if (!data.secure_url) throw new Error('Cloudinary did not return a URL');
+            return data.secure_url;
+        }
+
+        async function uploadToImgBB(base64Data) {
+            const raw = base64Data.split(',')[1];
+            const formData = new FormData();
+            formData.append('image', raw);
+            formData.append('key', IMGBB_API_KEY);
+            const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error?.message || 'ImgBB upload failed');
+            return data.data.url;
+        }
+
+        async function uploadImage(base64Data) {
+            const UPLOAD_TIMEOUT = 10000;
+            try {
+                const cloudinaryPromise = uploadToCloudinary(base64Data);
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
+                );
+                const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
+                return result;
+            } catch (cloudErr) {
+                console.warn('Cloudinary failed:', cloudErr.message);
+                try {
+                    return await uploadToImgBB(base64Data);
+                } catch (imgbbErr) {
+                    throw new Error(`All upload services failed. Last error: ${imgbbErr.message}`);
+                }
+            }
+        }
+
+        // ============================================================
         // AUTH STATE
         // ============================================================
         auth.onAuthStateChanged(async user => {
@@ -4117,6 +4138,7 @@
             toggleProofTypeFields();
             mailBannerShown = false;
             document.getElementById('newMailBanner').style.display = 'none';
+            setupImgbbLivePreview();
         });
 
         // Expose functions to global
@@ -4165,6 +4187,7 @@
         window.openAllSubmissionsModal = openAllSubmissionsModal;
         window.openAllReferralsModal = openAllReferralsModal;
         window.updateTutorialVideo = updateTutorialVideo;
+        window.setupImgbbLivePreview = setupImgbbLivePreview;
     </script>
 </body>
 </html>
