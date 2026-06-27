@@ -11,12 +11,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-    <!-- VideoJS + IMA SDK -->
-    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-    <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/videojs-ima@2.4.0/dist/videojs.ima.min.js"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -214,22 +208,7 @@
             cursor: not-allowed;
         }
 
-        /* ===== ADMIN BANNER ===== */
-        .admin-banner {
-            background: #eef3fa;
-            border-left: 4px solid #2a7de1;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: #1d2b41;
-            margin: 1rem 0 0.2rem;
-            display: none;
-        }
-        .admin-banner.show {
-            display: block;
-        }
-
-        /* ===== AD PLAYER MODAL (full screen) ===== */
+        /* ===== AD PLAYER MODAL (full screen, simple HTML5) ===== */
         .ad-player-modal {
             display: none;
             position: fixed;
@@ -253,12 +232,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            background: #000;
         }
         .ad-player-modal .ad-content video {
             width: 100%;
             height: 100%;
             max-height: 100vh;
             background: #000;
+            object-fit: contain;
         }
         .ad-player-modal .ad-overlay-btn {
             position: absolute;
@@ -349,7 +330,6 @@
             background: #b13a3a;
         }
 
-        /* Google button */
         .btn-google {
             width: 100%;
             padding: 0.85rem;
@@ -407,7 +387,7 @@
     <div id="adPlayerModal" class="ad-player-modal">
         <div class="ad-content">
             <button class="ad-close-btn" onclick="closeAdPlayer()"><i class="fas fa-times"></i></button>
-            <video id="adVideoPlayer" class="video-js vjs-default-skin" controls playsinline></video>
+            <video id="adVideoPlayer" controls playsinline></video>
             <button class="ad-overlay-btn" id="adClaimBtn" disabled>
                 🎁 Claim Reward
                 <span style="display:block;font-size:12px;opacity:0.6;">Watch ad to claim</span>
@@ -424,7 +404,7 @@
 
         <!-- ===== AD FEATURES ===== -->
         <div class="ad-section">
-            <h3><i class="fas fa-play-circle"></i> Watch Ads & Earn Coins (Demo)</h3>
+            <h3><i class="fas fa-play-circle"></i> Watch Ads & Earn Coins</h3>
             <div class="coin-display">
                 <span class="label"><i class="fas fa-coins" style="color:#f9a825;"></i> Your Coins</span>
                 <span class="value" id="demoCoins">0</span>
@@ -455,7 +435,7 @@
         </div>
 
         <!-- Admin Banner -->
-        <div id="adminBanner" class="admin-banner">
+        <div id="adminBanner" class="admin-banner" style="display:none;">
             <span class="label"><i class="fas fa-bullhorn"></i> Announcement</span>
             <span id="bannerMessage">Welcome!</span>
         </div>
@@ -495,7 +475,7 @@
         const db = firebase.database();
 
         // ================================================================
-        //  TOAST FUNCTION (fixed)
+        //  TOAST
         // ================================================================
         function showToast(msg, type = 'info', duration = 3500) {
             const el = document.getElementById('toast');
@@ -599,12 +579,10 @@
         }
 
         // ================================================================
-        //  AD PLAYER (full-screen VAST with fallback)
+        //  SIMPLE AD PLAYER (No IMA, Direct Fetch + HTML5)
         // ================================================================
-        let adPlayer = null;
         let adTimerInterval = null;
         let adSecondsWatched = 0;
-        let adIsReady = false;
         let adResolve = null;
         let adReject = null;
 
@@ -613,7 +591,6 @@
                 adResolve = resolve;
                 adReject = reject;
                 adSecondsWatched = 0;
-                adIsReady = false;
 
                 const modal = document.getElementById('adPlayerModal');
                 modal.classList.add('active');
@@ -622,228 +599,127 @@
                 claimBtn.classList.remove('ready');
                 claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">Loading ad...</span>';
 
-                initAdPlayer(settings.vastUrl);
-            });
-        }
+                // Reset video
+                const video = document.getElementById('adVideoPlayer');
+                video.pause();
+                video.src = '';
+                video.load();
 
-        function initAdPlayer(vastUrl) {
-            const videoEl = document.getElementById('adVideoPlayer');
-            const claimBtn = document.getElementById('adClaimBtn');
-
-            // Dispose old
-            if (adPlayer) {
-                adPlayer.dispose();
-                adPlayer = null;
-            }
-
-            // Try IMA first
-            try {
-                adPlayer = videojs(videoEl, {
-                    controls: true,
-                    autoplay: true,
-                    muted: true,
-                    preload: 'auto',
-                    fluid: true,
-                    techOrder: ['html5'],
-                    controlBar: {
-                        playToggle: false,
-                        volumePanel: false,
-                        currentTimeDisplay: false,
-                        timeDivider: false,
-                        durationDisplay: false,
-                        progressControl: false,
-                        liveDisplay: false,
-                        seekToLive: false,
-                        remainingTimeDisplay: false,
-                        customControlSpacer: false,
-                        playToggle: false
-                    }
-                });
-
-                adPlayer.ima({
-                    adTagUrl: vastUrl,
-                    autoPlayAdBreaks: true,
-                    id: 'adVideoPlayer',
-                    adDebug: true,
-                    locale: 'en',
-                    pauseAd: false,
-                    disableDefaultAds: false,
-                    useStyledAdContainer: true
-                });
-
-                adPlayer.on('ads-ad-started', function() {
-                    adIsReady = true;
-                    claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">Watching ad...</span>';
-                    if (adTimerInterval) clearInterval(adTimerInterval);
-                    adTimerInterval = setInterval(() => {
-                        if (adPlayer && adPlayer.currentTime && adPlayer.currentTime() > 0) {
-                            const ct = Math.floor(adPlayer.currentTime());
-                            if (ct > adSecondsWatched) {
-                                adSecondsWatched = ct;
-                                if (adSecondsWatched >= 20) {
-                                    clearInterval(adTimerInterval);
-                                    adTimerInterval = null;
-                                    claimBtn.disabled = false;
-                                    claimBtn.classList.add('ready');
-                                    claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
-                                }
-                            }
-                        }
-                    }, 500);
-                });
-
-                adPlayer.on('ads-ad-ended', function() {
-                    if (adSecondsWatched >= 20) {
-                        claimBtn.disabled = false;
-                        claimBtn.classList.add('ready');
-                        claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
-                    }
-                    if (adTimerInterval) clearInterval(adTimerInterval);
-                    adTimerInterval = null;
-                });
-
-                adPlayer.on('ads-error', function() {
-                    fallbackToDirectVideo(vastUrl);
-                });
-
-                adPlayer.on('adskip', function() {
-                    if (adSecondsWatched < 20) {
-                        showToast('❌ You skipped the ad. Watch at least 20 seconds!', 'warning');
-                        adPlayer.ima.reset();
-                        adPlayer.ima.requestAds();
-                        adSecondsWatched = 0;
-                        claimBtn.disabled = true;
-                        claimBtn.classList.remove('ready');
-                        claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">Watch ad to claim</span>';
-                    }
-                });
-
-                // timeout fallback if IMA doesn't start
-                setTimeout(() => {
-                    if (!adIsReady) {
-                        fallbackToDirectVideo(vastUrl);
-                    }
-                }, 6000);
-
-            } catch (e) {
-                fallbackToDirectVideo(vastUrl);
-            }
-
-            // Claim button
-            document.getElementById('adClaimBtn').onclick = function() {
-                if (adSecondsWatched >= 20) {
-                    if (adTimerInterval) clearInterval(adTimerInterval);
-                    adTimerInterval = null;
-                    closeAdPlayer();
-                    if (adResolve) adResolve(true);
-                } else {
-                    showToast('⏳ Watch at least 20 seconds first!', 'warning');
-                    if (adPlayer && adPlayer.ima) {
-                        adPlayer.ima.reset();
-                        adPlayer.ima.requestAds();
-                    } else {
-                        const vid = document.getElementById('adVideoPlayer');
-                        vid.currentTime = 0;
-                        vid.play();
-                    }
-                    adSecondsWatched = 0;
-                    this.disabled = true;
-                    this.classList.remove('ready');
-                    this.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">Watch ad to claim</span>';
-                }
-            };
-        }
-
-        function fallbackToDirectVideo(vastUrl) {
-            console.log('Fallback to direct video');
-            const claimBtn = document.getElementById('adClaimBtn');
-            const videoEl = document.getElementById('adVideoPlayer');
-
-            if (adPlayer) {
-                adPlayer.dispose();
-                adPlayer = null;
-            }
-
-            fetch(vastUrl, { mode: 'cors' })
-                .then(res => res.text())
-                .then(xmlText => {
-                    const parser = new DOMParser();
-                    const xml = parser.parseFromString(xmlText, 'text/xml');
-                    const mediaFiles = xml.querySelectorAll('MediaFile');
-                    let videoUrl = null;
-                    for (let node of mediaFiles) {
-                        const type = node.getAttribute('type') || '';
-                        const url = node.textContent.trim();
-                        if (url && (type.includes('mp4') || type.includes('video/mp4'))) {
-                            videoUrl = url;
-                            break;
-                        }
-                    }
-                    if (!videoUrl) {
+                // Fetch VAST and extract video URL
+                fetch(settings.vastUrl, { mode: 'cors' })
+                    .then(res => res.text())
+                    .then(xmlText => {
+                        const parser = new DOMParser();
+                        const xml = parser.parseFromString(xmlText, 'text/xml');
+                        const mediaFiles = xml.querySelectorAll('MediaFile');
+                        let videoUrl = null;
+                        // Prefer MP4
                         for (let node of mediaFiles) {
+                            const type = node.getAttribute('type') || '';
                             const url = node.textContent.trim();
-                            if (url && url.includes('.mp4')) {
+                            if (url && (type.includes('mp4') || type.includes('video/mp4'))) {
                                 videoUrl = url;
                                 break;
                             }
                         }
-                    }
-                    if (!videoUrl) {
-                        claimBtn.innerHTML = '❌ No video found <span style="display:block;font-size:12px;opacity:0.6;">Tap to retry</span>';
-                        claimBtn.disabled = false;
-                        claimBtn.onclick = function() {
-                            initAdPlayer(vastUrl);
-                        };
-                        return;
-                    }
-
-                    videoEl.src = videoUrl;
-                    videoEl.load();
-                    videoEl.play().catch(() => {});
-                    claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">Watching ad...</span>';
-                    adIsReady = true;
-                    if (adTimerInterval) clearInterval(adTimerInterval);
-                    adTimerInterval = setInterval(() => {
-                        if (videoEl.currentTime && videoEl.currentTime > 0) {
-                            const ct = Math.floor(videoEl.currentTime);
-                            if (ct > adSecondsWatched) {
-                                adSecondsWatched = ct;
-                                if (adSecondsWatched >= 20) {
-                                    clearInterval(adTimerInterval);
-                                    adTimerInterval = null;
-                                    claimBtn.disabled = false;
-                                    claimBtn.classList.add('ready');
-                                    claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
+                        if (!videoUrl) {
+                            // fallback to any video
+                            for (let node of mediaFiles) {
+                                const url = node.textContent.trim();
+                                if (url && url.includes('.mp4')) {
+                                    videoUrl = url;
+                                    break;
                                 }
                             }
                         }
-                    }, 500);
-
-                    videoEl.onended = function() {
-                        if (adSecondsWatched >= 20) {
+                        if (!videoUrl) {
+                            claimBtn.innerHTML = '❌ No video found <span style="display:block;font-size:12px;opacity:0.6;">Tap to retry</span>';
                             claimBtn.disabled = false;
-                            claimBtn.classList.add('ready');
-                            claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
+                            claimBtn.onclick = function() {
+                                showAdPlayer().then(resolve).catch(reject);
+                            };
+                            return;
                         }
+
+                        // Play video
+                        video.src = videoUrl;
+                        video.load();
+                        video.play().catch(() => {});
+
+                        claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">Watching ad...</span>';
                         if (adTimerInterval) clearInterval(adTimerInterval);
-                        adTimerInterval = null;
-                    };
-                })
-                .catch(err => {
-                    claimBtn.innerHTML = '❌ Ad load failed <span style="display:block;font-size:12px;opacity:0.6;">Tap to retry</span>';
-                    claimBtn.disabled = false;
-                    claimBtn.onclick = function() {
-                        initAdPlayer(vastUrl);
-                    };
-                });
+                        adTimerInterval = setInterval(() => {
+                            if (video.currentTime && video.currentTime > 0) {
+                                const ct = Math.floor(video.currentTime);
+                                if (ct > adSecondsWatched) {
+                                    adSecondsWatched = ct;
+                                    if (adSecondsWatched >= 20) {
+                                        clearInterval(adTimerInterval);
+                                        adTimerInterval = null;
+                                        claimBtn.disabled = false;
+                                        claimBtn.classList.add('ready');
+                                        claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
+                                    }
+                                }
+                            }
+                        }, 500);
+
+                        video.onended = function() {
+                            if (adSecondsWatched >= 20) {
+                                claimBtn.disabled = false;
+                                claimBtn.classList.add('ready');
+                                claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
+                            }
+                            if (adTimerInterval) clearInterval(adTimerInterval);
+                            adTimerInterval = null;
+                        };
+
+                        // If user tries to skip (by seeking), reset timer?
+                        video.addEventListener('seeked', function() {
+                            // If user seeks forward beyond 20s, we treat as watched
+                            if (video.currentTime >= 20) {
+                                // Allow claim
+                                if (!claimBtn.disabled) return;
+                                adSecondsWatched = 20;
+                                clearInterval(adTimerInterval);
+                                adTimerInterval = null;
+                                claimBtn.disabled = false;
+                                claimBtn.classList.add('ready');
+                                claimBtn.innerHTML = '🎁 Claim Reward <span style="display:block;font-size:12px;opacity:0.6;">✅ Ready to claim!</span>';
+                            } else {
+                                // If seeked back, reset count? We'll just keep accumulating.
+                            }
+                        });
+
+                        // Claim button
+                        document.getElementById('adClaimBtn').onclick = function() {
+                            if (adSecondsWatched >= 20) {
+                                if (adTimerInterval) clearInterval(adTimerInterval);
+                                adTimerInterval = null;
+                                closeAdPlayer();
+                                if (adResolve) adResolve(true);
+                            } else {
+                                showToast('⏳ Watch at least 20 seconds first!', 'warning');
+                            }
+                        };
+
+                    })
+                    .catch(err => {
+                        console.error('VAST fetch error:', err);
+                        claimBtn.innerHTML = '❌ Ad load failed <span style="display:block;font-size:12px;opacity:0.6;">Tap to retry</span>';
+                        claimBtn.disabled = false;
+                        claimBtn.onclick = function() {
+                            showAdPlayer().then(resolve).catch(reject);
+                        };
+                    });
+            });
         }
 
         function closeAdPlayer() {
             document.getElementById('adPlayerModal').classList.remove('active');
-            if (adPlayer) {
-                adPlayer.pause();
-                if (adPlayer.ima) adPlayer.ima.reset();
-            }
+            const video = document.getElementById('adVideoPlayer');
+            video.pause();
+            video.src = '';
             if (adTimerInterval) clearInterval(adTimerInterval);
             adTimerInterval = null;
             const btn = document.getElementById('adClaimBtn');
@@ -954,7 +830,7 @@
             }
         };
 
-        // Watch Ad button
+        // Watch Ad button (earn 5 coins)
         document.getElementById('watchAdBtn').addEventListener('click', async function() {
             const success = await watchAdAndEarn(5, () => {
                 demoState.totalAdsWatched++;
@@ -966,9 +842,8 @@
         });
 
         // ================================================================
-        //  SIGN-UP (same as original – minimal)
+        //  SIGN-UP (simple)
         // ================================================================
-        // Referral input
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('referrer');
         const refInput = document.getElementById('referralInput');
@@ -984,16 +859,13 @@
                     const user = result.user;
                     const email = user.email;
                     const username = email.split('@')[0];
-                    // Check if already registered
                     db.ref(`users/${user.uid}`).once('value').then(snap => {
                         if (snap.exists()) {
                             showToast('This Google account is already registered.', 'warning');
                             return auth.signOut();
                         }
-                        // Create user
                         const refCodeInput = document.getElementById('referralInput').value.trim();
                         let referredBy = null;
-                        // If ref code provided, find referrer
                         if (refCodeInput && refCodeInput.length === 6) {
                             db.ref('users').orderByChild('referralCode').equalTo(refCodeInput).once('value')
                                 .then(usersSnap => {
@@ -1019,16 +891,13 @@
         });
 
         function completeSignUp(user, username, referredBy) {
-            // Generate referral code
             const newRefCode = String(Math.floor(100000 + Math.random() * 900000));
-            const signupBonus = 50; // could also fetch from settings
+            const signupBonus = 50;
             let referralBonus = 0;
             let coins = signupBonus;
-
             if (referredBy) {
-                referralBonus = 50; // from settings.referralBonus
+                referralBonus = 50;
                 coins += referralBonus;
-                // Update referrer
                 db.ref(`users/${referredBy}`).once('value').then(refSnap => {
                     const refData = refSnap.val() || {};
                     const updates = {};
@@ -1039,7 +908,6 @@
                     referrals.push(user.uid);
                     updates[`users/${referredBy}/referrals`] = referrals;
                     db.ref().update(updates);
-                    // Log referral
                     db.ref('referrals').push({
                         referredBy: referredBy,
                         referredUserId: user.uid,
@@ -1049,7 +917,6 @@
                     });
                 });
             }
-
             const userData = {
                 username: username,
                 email: user.email,
@@ -1072,11 +939,9 @@
                 createdAt: Date.now(),
                 authProvider: 'google'
             };
-
             db.ref(`users/${user.uid}`).set(userData)
                 .then(() => {
                     showToast('✅ Account created! Welcome ' + username, 'success');
-                    // Store session
                     localStorage.setItem('taskExpertUser', JSON.stringify({
                         uid: user.uid,
                         username,
@@ -1086,7 +951,6 @@
                         referredBy,
                         createdAt: Date.now()
                     }));
-                    // Optionally reload or show success
                     window.location.reload();
                 })
                 .catch(err => {
@@ -1101,7 +965,6 @@
         fetchSettings();
         setInterval(fetchSettings, 300000);
 
-        // Check for existing session
         const session = localStorage.getItem('taskExpertUser');
         if (session) {
             try {
@@ -1117,7 +980,7 @@
             } catch (e) {}
         }
 
-        console.log('✅ Task Expert with Ad Features loaded (fixed).');
+        console.log('✅ Task Expert with Direct VAST Player loaded.');
     </script>
 </body>
 </html>
