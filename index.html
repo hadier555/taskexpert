@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Task Expert - User Panel</title>
 
+    <!-- ===== NO CACHE ===== -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" sizes="512x512" href="launchericon-512x512.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="launchericon-512x512.png" />
@@ -467,7 +472,27 @@
             margin-bottom: 10px;
             display: inline-block;
         }
-        /* ===== GOOGLE BUTTON (SMALLER) ===== */
+        .btn-claim {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            color: #333;
+            font-weight: 700;
+        }
+        .btn-claim:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(247, 151, 30, 0.4);
+        }
+        .btn-claimed {
+            background: #28a745;
+            color: white;
+            opacity: 0.7;
+            cursor: default;
+        }
+        .btn-claimed:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ===== GOOGLE BUTTON ===== */
         .google-btn {
             background: white;
             color: #444;
@@ -743,6 +768,45 @@
             justify-content: space-around;
             margin: 15px 0;
             text-align: center;
+        }
+        .referral-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border-left: 4px solid #1e3c72;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .referral-row .user-info {
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+        }
+        .referral-row .progress {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e3c72;
+            background: #e8f0fe;
+            padding: 2px 12px;
+            border-radius: 12px;
+        }
+        .referral-row .progress.complete {
+            color: #28a745;
+            background: #e8f5e9;
+        }
+        .referral-row .claim-btn-wrap {
+            margin-left: auto;
+        }
+        .referral-row .claim-btn-wrap .btn {
+            padding: 4px 14px;
+            font-size: 12px;
+            margin: 0;
         }
 
         /* ===== DAILY REWARD ===== */
@@ -1387,7 +1451,7 @@
             color: #dc3545;
         }
 
-        /* ===== FIX: REJECT MODAL ON TOP OF EVERYTHING ===== */
+        /* ===== FIX: REJECT MODAL ON TOP ===== */
         #rejectReasonModal {
             z-index: 9999 !important;
         }
@@ -1432,6 +1496,18 @@
             }
             .mail-item .mail-title {
                 font-size: 13px;
+            }
+            .referral-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .referral-row .claim-btn-wrap {
+                margin-left: 0;
+                width: 100%;
+            }
+            .referral-row .claim-btn-wrap .btn {
+                width: 100%;
+                text-align: center;
             }
         }
 
@@ -1797,6 +1873,25 @@
         .btn-loading .btn-text {
             visibility: hidden;
         }
+
+        /* ===== REFERRAL PROGRESS BADGE ===== */
+        .referral-progress-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #e8f0fe;
+            color: #1e3c72;
+        }
+        .referral-progress-badge.complete {
+            background: #d4edda;
+            color: #155724;
+        }
+        .referral-progress-badge.claimed {
+            background: #c3e6cb;
+            color: #155724;
+        }
     </style>
 </head>
 <body>
@@ -1827,7 +1922,7 @@
                     <span></span><span></span><span></span>
                 </div>
             </div>
-            <div class="loader-footer">v2.0</div>
+            <div class="loader-footer">v1.0</div>
         </div>
 
         <!-- ===== UPLOAD OVERLAY ===== -->
@@ -1979,7 +2074,7 @@
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
                     <div class="referral-code"><span><i class="fas fa-code-branch"></i> <strong id="referralCode">123456</strong></span><button class="copy-btn" onclick="copyReferralCode()">Copy</button></div>
-                    <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins</div>
+                    <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins <small style="color:#666;font-size:11px;display:block;">(Bonus after 7 approved tasks)</small></div>
                     <div class="referral-stats">
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
                         <div><div id="referralEarnings">0</div><div>Earnings</div></div>
@@ -2159,9 +2254,9 @@
                         <label style="font-weight:600; color:#1e3c72; font-size:14px;">📹 Tutorial Video</label>
                         <a href="#" id="tutorialVideoLink" target="_blank" style="background:#ff0000; color:white; padding:2px 12px; border-radius:12px; text-decoration:none; font-size:12px; font-weight:bold;">Watch</a>
                     </div>
-                    <input type="text" id="proofImgbbInput" placeholder="Paste ImgBB link or ID here: https://i.ibb.co/xxxxx or just xxxxx" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; font-size:14px;">
+                    <input type="text" id="proofImgbbInput" placeholder="Paste ImgBB link: https://i.ibb.co/xxxxx or just xxxxx" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; font-size:14px;">
                     <div id="imgbbValidationMsg" class="imgbb-validation-msg"></div>
-                    <div style="font-size:12px; color:#666; margin-top:4px;">Example: 4Yf8k2M/image.jpg or full link https://i.ibb.co/4Yf8k2M/image.jpg</div>
+                    <div style="font-size:12px; color:#666; margin-top:4px;">✅ Must contain <strong>i.ibb.co</strong> — Example: 4Yf8k2M/image.jpg or full link https://i.ibb.co/4Yf8k2M/image.jpg</div>
                     <div id="proofImgbbPreview" style="margin-top:10px;"></div>
                 </div>
                 <div id="textProofArea" style="display:none;">
@@ -2223,6 +2318,7 @@
         let mailBannerShown = false;
         let isOnline = true;
         let isAdmin = false;
+        let allReferrals = [];
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -2435,23 +2531,11 @@
                 let referralBonusAmount = await getReferralBonusAmount();
                 const urlRef = new URLSearchParams(window.location.search).get('ref');
                 let referredBy = null;
-                let referralBonus = 0;
                 if (urlRef) {
                     const usersSnap = await db.ref('users').once('value');
                     usersSnap.forEach(child => { if (child.val().referralCode === urlRef) referredBy = child.key; });
-                    if (referredBy) {
-                        referralBonus = referralBonusAmount;
-                        const referrerCoins = await db.ref(`users/${referredBy}/coins`).once('value');
-                        await db.ref(`users/${referredBy}/coins`).set((referrerCoins.val() || 0) +
-                        referralBonusAmount);
-                        const currentRefs = (await db.ref(`users/${referredBy}/totalReferrals`).once('value'))
-                            .val() || 0;
-                        await db.ref(`users/${referredBy}/totalReferrals`).set(currentRefs + 1);
-                        await db.ref('referrals').push({ referredBy, referredUserId: currentUser.uid,
-                            referredUsername: uname, timestamp: Date.now(), earnings: referralBonusAmount });
-                    }
                 }
-                let totalCoins = signupBonus + referralBonus;
+                let totalCoins = signupBonus;
                 let nonWithdrawable = signupBonus;
                 currentUserData = {
                     username: uname,
@@ -2464,7 +2548,7 @@
                     approvedEarnings: 0,
                     referrals: [],
                     totalReferrals: 0,
-                    referralEarnings: referralBonus,
+                    referralEarnings: 0,
                     referralCode: refCode,
                     referredBy: referredBy || null,
                     suspended: false,
@@ -2476,6 +2560,24 @@
                     authProvider: "google"
                 };
                 await db.ref(`users/${currentUser.uid}`).set(currentUserData);
+
+                // If referred, create referral record with locked bonus
+                if (referredBy) {
+                    const currentReferralBonus = await getReferralBonusAmount();
+                    await db.ref('referrals').push({
+                        referredBy: referredBy,
+                        referredUserId: currentUser.uid,
+                        referredUsername: uname,
+                        timestamp: Date.now(),
+                        bonusLocked: currentReferralBonus,
+                        tasksCompleted: 0,
+                        bonusClaimed: false,
+                        bonusClaimedAt: null
+                    });
+                    // Increment referrer's totalReferrals count (no coins yet)
+                    const currentRefs = (await db.ref(`users/${referredBy}/totalReferrals`).once('value')).val() || 0;
+                    await db.ref(`users/${referredBy}/totalReferrals`).set(currentRefs + 1);
+                }
                 const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
                 isAdmin = adminSnap.val() === true;
             }
@@ -2511,7 +2613,7 @@
                 'value'); return snap.exists() ? snap.val() : 50; } catch (e) { return 50; } }
 
         // ============================================================
-        // TUTORIAL VIDEO (Admin controlled)
+        // TUTORIAL VIDEO
         // ============================================================
         async function loadTutorialVideo() {
             try {
@@ -2537,7 +2639,7 @@
         }
 
         // ============================================================
-        // BANK DETAILS (Easypaisa + JazzCash)
+        // BANK DETAILS
         // ============================================================
         async function loadBankDetails() {
             try {
@@ -2577,7 +2679,6 @@
                 allSubmissions = [];
                 let subs = snap.val() || {};
                 for (let id in subs) { let s = subs[id]; if (!s.adminDeleted) allSubmissions.push({ id, ...s }); }
-                // Sort by latest first (timestamp descending)
                 allSubmissions.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 updateEarningsDisplay();
                 displaySubmissionsList();
@@ -2592,14 +2693,12 @@
                 container.innerHTML = '<p style="color:#666;padding:10px;">No submissions yet.</p>';
                 return;
             }
-
             let html = '';
             if (allSubmissions.length > 3) {
                 html += `<div style="margin-bottom:12px;">
                             <button class="view-all-btn" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length})</button>
                         </div>`;
             }
-
             const latest = allSubmissions.slice(0, 3);
             for (let s of latest) {
                 let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
@@ -2671,25 +2770,39 @@
         };
 
         // ============================================================
-        // REFERRALS
+        // REFERRALS with 7-task logic
         // ============================================================
-        let allReferrals = [];
-
         async function loadReferralData() {
             try {
                 let snap = await db.ref('referrals').orderByChild('referredBy').equalTo(currentUser.uid).once('value');
                 let list = snap.val() || {};
                 allReferrals = [];
-                for (let id in list) allReferrals.push({ id, ...list[id] });
+                for (let id in list) {
+                    let item = list[id];
+                    // Ensure all fields exist
+                    if (item.bonusLocked === undefined) item.bonusLocked = 100;
+                    if (item.tasksCompleted === undefined) item.tasksCompleted = 0;
+                    if (item.bonusClaimed === undefined) item.bonusClaimed = false;
+                    allReferrals.push({ id, ...item });
+                }
                 allReferrals.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                // Count total referrals and earnings (claimed only)
                 let count = allReferrals.length;
-                let earnings = allReferrals.reduce((sum, r) => sum + (r.earnings || 0), 0);
+                let earnings = allReferrals.filter(r => r.bonusClaimed).reduce((sum, r) => sum + (r.bonusLocked || 0), 0);
                 document.getElementById('totalReferrals').innerText = count;
                 document.getElementById('referralEarnings').innerText = earnings;
+
+                // Also update userData's referralEarnings for display
+                if (currentUserData) {
+                    currentUserData.referralEarnings = earnings;
+                }
+
                 displayReferralsList();
                 let bonusAmount = await getReferralBonusAmount();
                 document.getElementById('refBonusAmount').innerText = bonusAmount;
             } catch (e) {
+                console.warn('Referral load error:', e);
                 document.getElementById('referralsContainer').innerHTML = '<p>No referrals yet</p>';
             }
         }
@@ -2697,7 +2810,7 @@
         function displayReferralsList() {
             const container = document.getElementById('referralsContainer');
             if (!allReferrals.length) {
-                container.innerHTML = '<p>No referrals yet.</p>';
+                container.innerHTML = '<p style="color:#666;padding:10px;">No referrals yet.</p>';
                 return;
             }
 
@@ -2708,10 +2821,42 @@
                         </div>`;
             }
 
-            const latest = allReferrals.slice(0, 3);
-            for (let item of latest) {
-                html +=
-                    `<div class="submission-item"><div><strong>${item.referredUsername}</strong><br>${new Date(item.timestamp).toLocaleDateString()}</div><div>+${item.earnings||0}</div></div>`;
+            const displayItems = allReferrals.slice(0, 10);
+            for (let item of displayItems) {
+                const username = item.referredUsername || 'Unknown';
+                const tasksDone = item.tasksCompleted || 0;
+                const totalNeeded = 7;
+                const isComplete = tasksDone >= totalNeeded;
+                const isClaimed = item.bonusClaimed === true;
+                const progressText = `${tasksDone}/${totalNeeded}`;
+                const progressClass = isComplete ? 'complete' : '';
+
+                let actionHtml = '';
+                if (isComplete && !isClaimed) {
+                    actionHtml =
+                        `<button class="btn btn-claim btn-sm" onclick="claimReferralBonus('${item.id}')">🎁 Claim Bonus</button>`;
+                } else if (isClaimed) {
+                    actionHtml =
+                        `<span style="color:#28a745;font-weight:600;font-size:13px;">✅ Claimed</span>`;
+                } else {
+                    actionHtml =
+                        `<span style="color:#999;font-size:12px;">⏳ ${totalNeeded - tasksDone} more tasks</span>`;
+                }
+
+                html += `
+                            <div class="referral-row">
+                                <div class="user-info">
+                                    <i class="fas fa-user" style="color:#1e3c72;margin-right:6px;"></i>
+                                    ${escapeHtml(username)}
+                                </div>
+                                <div class="progress ${progressClass}">
+                                    ${progressText}
+                                </div>
+                                <div class="claim-btn-wrap">
+                                    ${actionHtml}
+                                </div>
+                            </div>
+                        `;
             }
             container.innerHTML = html;
         }
@@ -2721,11 +2866,103 @@
             const list = document.getElementById('allReferralsList');
             let html = '';
             for (let item of allReferrals) {
-                html +=
-                    `<div class="submission-item"><div><strong>${item.referredUsername}</strong><br>${new Date(item.timestamp).toLocaleDateString()}</div><div>+${item.earnings||0}</div></div>`;
+                const username = item.referredUsername || 'Unknown';
+                const tasksDone = item.tasksCompleted || 0;
+                const totalNeeded = 7;
+                const isComplete = tasksDone >= totalNeeded;
+                const isClaimed = item.bonusClaimed === true;
+                const progressText = `${tasksDone}/${totalNeeded}`;
+
+                let statusText = '';
+                if (isClaimed) statusText = '✅ Claimed';
+                else if (isComplete) statusText = '🎁 Ready to claim!';
+                else statusText = `⏳ ${totalNeeded - tasksDone} left`;
+
+                html += `
+                            <div class="referral-row">
+                                <div class="user-info">${escapeHtml(username)}</div>
+                                <div class="progress">${progressText}</div>
+                                <div style="font-size:12px;font-weight:600;color:${isClaimed?'#28a745':isComplete?'#f7971e':'#999'};">${statusText}</div>
+                            </div>
+                        `;
             }
             list.innerHTML = html || '<p>No referrals</p>';
             modal.style.display = 'flex';
+        }
+
+        // ===== CLAIM REFERRAL BONUS =====
+        async function claimReferralBonus(referralId) {
+            if (!confirm('Claim bonus for this referral? The bonus amount is locked at the time they joined.')) return;
+
+            try {
+                const snap = await db.ref(`referrals/${referralId}`).once('value');
+                const refData = snap.val();
+                if (!refData) { showToast('Referral record not found'); return; }
+                if (refData.bonusClaimed) { showToast('Bonus already claimed'); return; }
+                const tasksDone = refData.tasksCompleted || 0;
+                if (tasksDone < 7) { showToast('User has not completed 7 tasks yet'); return; }
+
+                const bonusAmount = refData.bonusLocked || 100;
+                const referrerId = refData.referredBy;
+
+                if (referrerId !== currentUser.uid) {
+                    showToast('You are not the referrer for this user');
+                    return;
+                }
+
+                // Add bonus to referrer's wallet
+                const currentCoins = (await db.ref(`users/${referrerId}/coins`).once('value')).val() || 0;
+                await db.ref(`users/${referrerId}/coins`).set(currentCoins + bonusAmount);
+
+                // Mark as claimed
+                await db.ref(`referrals/${referralId}/bonusClaimed`).set(true);
+                await db.ref(`referrals/${referralId}/bonusClaimedAt`).set(Date.now());
+
+                // Update user data
+                if (currentUserData) {
+                    currentUserData.coins = (currentUserData.coins || 0) + bonusAmount;
+                    currentUserData.referralEarnings = (currentUserData.referralEarnings || 0) + bonusAmount;
+                    updateUI();
+                }
+
+                showToast(`🎉 Claimed ${bonusAmount} coins bonus!`);
+                await loadReferralData();
+            } catch (err) {
+                console.error(err);
+                showToast('Error claiming bonus: ' + err.message);
+            }
+        }
+
+        // ===== UPDATE REFERRAL TASK PROGRESS =====
+        async function updateReferralProgress(userId) {
+            if (!userId) return;
+            try {
+                // Find referral record where referredUserId = userId
+                const snap = await db.ref('referrals').orderByChild('referredUserId').equalTo(userId).once('value');
+                const refs = snap.val();
+                if (!refs) return;
+
+                // Count approved tasks for this user
+                const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(userId).once('value');
+                const subs = subSnap.val() || {};
+                let approvedCount = 0;
+                for (let id in subs) {
+                    if (subs[id].status === 'approved' && !subs[id].adminDeleted) {
+                        approvedCount++;
+                    }
+                }
+
+                // Update all referral records for this user (should be only one)
+                for (let refId in refs) {
+                    const ref = refs[refId];
+                    if (ref.bonusClaimed) continue; // Skip if already claimed
+                    if (ref.tasksCompleted !== approvedCount) {
+                        await db.ref(`referrals/${refId}/tasksCompleted`).set(approvedCount);
+                    }
+                }
+            } catch (e) {
+                console.warn('Error updating referral progress:', e);
+            }
         }
 
         // ============================================================
@@ -2739,7 +2976,7 @@
         }
 
         // ============================================================
-        // IMGBB LIVE PREVIEW WITH VALIDATION
+        // IMGBB LIVE PREVIEW WITH STRICT VALIDATION
         // ============================================================
         function setupImgbbLivePreview() {
             const input = document.getElementById('proofImgbbInput');
@@ -2757,20 +2994,33 @@
                     return;
                 }
 
-                let finalLink = raw;
+                // Must contain i.ibb.co
                 if (!raw.includes('i.ibb.co')) {
-                    finalLink = 'https://i.ibb.co/' + raw;
-                }
-
-                if (!finalLink.includes('i.ibb.co')) {
                     this.className = 'invalid';
                     msg.className = 'imgbb-validation-msg invalid';
                     msg.textContent = '❌ Invalid ImgBB link. Must contain i.ibb.co';
                     preview.innerHTML =
-                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ Invalid ImgBB link. Please use a valid ImgBB URL or ID.</div>`;
+                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ link is not Valid — must contain i.ibb.co</div>`;
                     return;
                 }
 
+                // Build full link if needed
+                let finalLink = raw;
+                if (!raw.startsWith('http://') && !raw.startsWith('https://')) {
+                    finalLink = 'https://' + raw;
+                }
+
+                // Validate it's a proper ImgBB link
+                if (!finalLink.includes('i.ibb.co')) {
+                    this.className = 'invalid';
+                    msg.className = 'imgbb-validation-msg invalid';
+                    msg.textContent = '❌ link is not Valid';
+                    preview.innerHTML =
+                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ link is not Valid</div>`;
+                    return;
+                }
+
+                // Valid - show preview
                 this.className = 'valid';
                 msg.className = 'imgbb-validation-msg valid';
                 msg.textContent = '✅ Valid ImgBB link!';
@@ -2916,7 +3166,6 @@
             if (currentPlatformFilter !== 'all') {
                 filtered = cachedUserTasks.filter(t => t.platform === currentPlatformFilter);
             }
-            // Remove tasks the user has already submitted, own tasks, and completed tasks
             filtered = filtered.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.creatorId === currentUser?.uid) return false;
@@ -2991,7 +3240,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT (with ImgBB validation)
+        // TASK DETAIL & SUBMIT (with strict ImgBB validation)
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -3064,48 +3313,75 @@
                 return;
             }
 
-            // IMAGE proof - ImgBB link with validation
+            // IMAGE proof - strict ImgBB validation
             const input = document.getElementById('proofImgbbInput');
             let rawLink = input.value.trim();
             if (!rawLink) { showToast("Please paste your ImgBB link or ID."); return; }
 
-            let finalLink = rawLink;
+            // Must contain i.ibb.co
             if (!rawLink.includes('i.ibb.co')) {
-                finalLink = 'https://i.ibb.co/' + rawLink;
+                showToast("❌ link is not Valid — must contain i.ibb.co");
+                input.className = 'invalid';
+                const msg = document.getElementById('imgbbValidationMsg');
+                if (msg) { msg.className = 'imgbb-validation-msg invalid';
+                    msg.textContent = '❌ link is not Valid'; }
+                return;
             }
 
-            // VALIDATION: Must contain i.ibb.co
+            let finalLink = rawLink;
+            if (!rawLink.startsWith('http://') && !rawLink.startsWith('https://')) {
+                finalLink = 'https://' + rawLink;
+            }
+
+            // Final check
             if (!finalLink.includes('i.ibb.co')) {
                 showToast("❌ link is not Valid");
                 input.className = 'invalid';
                 const msg = document.getElementById('imgbbValidationMsg');
                 if (msg) { msg.className = 'imgbb-validation-msg invalid';
-                    msg.textContent = '❌ Invalid ImgBB link. Must contain i.ibb.co'; }
+                    msg.textContent = '❌ link is not Valid'; }
                 return;
             }
 
+            // Validate image loads
             try {
-                await db.ref('task_submissions').push({
-                    userId: currentUser.uid,
-                    username: currentUserData.username,
-                    taskId: currentTask.id,
-                    taskTitle: currentTask.title,
-                    taskType: currentTask.type,
-                    proofType: 'image',
-                    images: [finalLink],
-                    proofText: '',
-                    status: 'pending',
-                    timestamp: Date.now(),
-                    reward: currentTask.reward,
-                    proofLink: finalLink
-                });
-                userSubmissionsMap[currentTask.id] = true;
-                showToast(`✅ Image proof submitted!`);
-                closeTaskDetail();
-                tasksLoaded = false;
-                await loadAllTasks();
-                await loadMySubmissions();
-            } catch (err) { showToast('Error: ' + err.message); }
+                const imgCheck = new Image();
+                imgCheck.onload = async function() {
+                    try {
+                        await db.ref('task_submissions').push({
+                            userId: currentUser.uid,
+                            username: currentUserData.username,
+                            taskId: currentTask.id,
+                            taskTitle: currentTask.title,
+                            taskType: currentTask.type,
+                            proofType: 'image',
+                            images: [finalLink],
+                            proofText: '',
+                            status: 'pending',
+                            timestamp: Date.now(),
+                            reward: currentTask.reward,
+                            proofLink: finalLink
+                        });
+                        userSubmissionsMap[currentTask.id] = true;
+                        showToast(`✅ Image proof submitted!`);
+                        closeTaskDetail();
+                        tasksLoaded = false;
+                        await loadAllTasks();
+                        await loadMySubmissions();
+                    } catch (err) { showToast('Error: ' + err.message); }
+                };
+                imgCheck.onerror = function() {
+                    showToast("❌ link is not Valid — image not found");
+                    input.className = 'invalid';
+                    const msg = document.getElementById('imgbbValidationMsg');
+                    if (msg) { msg.className = 'imgbb-validation-msg invalid';
+                        msg.textContent = '❌ link is not Valid — image not found'; }
+                };
+                imgCheck.src = finalLink;
+            } catch (e) {
+                showToast("❌ link is not Valid");
+                input.className = 'invalid';
+            }
         }
 
         // ============================================================
@@ -3116,7 +3392,6 @@
             updateCostPreview();
             document.getElementById('createTaskModal').style.display = 'flex';
             updateMinFieldsForPlatform(selectedPlatform);
-            // Clear default values
             document.getElementById('taskCoins').value = '';
             document.getElementById('taskMembers').value = '';
             document.getElementById('taskTitle').value = '';
@@ -3205,10 +3480,9 @@
                 showToast(`Insufficient coins (need ${total})`);
                 return;
             }
-            if (!isOnline) { showToast("📴 You are offline. Please connect to the internet."); return; }
+            if (!isOnline) { showToast("📴 You are offline."); return; }
 
-            // Show loading overlay
-            const interval = showLoadingOverlay('Creating Task...', 'Please wait while we process your request');
+            const interval = showLoadingOverlay('Creating Task...', 'Please wait...');
 
             try {
                 let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
@@ -3305,7 +3579,6 @@
                     }
                 }
 
-                // Track which tasks are fully completed (should be hidden)
                 let completedTaskIds = [];
 
                 for (let taskId of taskIds) {
@@ -3332,10 +3605,9 @@
                     let required = t.requiredUsers || 0;
                     let isCompleted = (approvedCount >= required);
 
-                    // HIDE completed tasks (only when creator approved all)
                     if (isCompleted) {
                         completedTaskIds.push(taskId);
-                        continue; // Skip rendering this task
+                        continue;
                     }
 
                     let isTarget = (targetTaskId === taskId);
@@ -3360,12 +3632,6 @@
                     }
                     html +=
                         `<button class="btn btn-sm" style="background:#764ba2;margin-top:5px;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
-                }
-
-                // Hide completed tasks from the view (they won't be rendered)
-                if (completedTaskIds.length > 0) {
-                    // Remove them from Firebase? No, just hide from UI.
-                    // But we also need to clean up from Firebase after 7 hours (already handled by cleanup)
                 }
 
                 if (!hasTasks) html += '<p>No approved tasks yet.</p>';
@@ -3581,8 +3847,9 @@
                         await db.ref(`tasks/user/${taskId}/completedAt`).set(Date.now());
                     }
                 }
+                // Update referral progress for the worker
+                await updateReferralProgress(workerId);
                 showToast('Approved! Worker earned +' + reward + ' coins.');
-                // Refresh the view - this will now hide completed tasks
                 refreshAfterAction(taskId);
             } catch (err) { console.error(err);
                 showToast('Error: ' + err.message); }
@@ -3595,6 +3862,7 @@
             }
             loadAllTasks();
             loadMySubmissions();
+            loadReferralData();
         }
 
         // ============================================================
@@ -3644,7 +3912,6 @@
             loadBankDetails();
             loadBonusAndCommissionSettings();
             document.getElementById('depositModal').style.display = 'flex';
-            // Clear previous
             document.getElementById('depositAmount').value = '';
             document.getElementById('depositTid').value = '';
             document.getElementById('depositPreview').innerHTML = '';
@@ -4118,6 +4385,13 @@
                     }
                 });
             });
+            // Watch for referral progress updates
+            db.ref('task_submissions').on('child_changed', (snap) => {
+                const data = snap.val();
+                if (data && data.status === 'approved' && data.userId) {
+                    updateReferralProgress(data.userId);
+                }
+            });
             setInterval(() => { if (currentUser) cleanupCompletedTasks(); }, 5 * 60 * 1000);
         }
 
@@ -4228,6 +4502,19 @@
                         loadTutorialVideo();
                         setupRealtimeListeners();
                         loadMaintenanceAndUpdate();
+                        // Update referral progress for all referred users on load
+                        if (currentUser) {
+                            db.ref('referrals').orderByChild('referredBy').equalTo(currentUser.uid).once('value')
+                                .then(snap => {
+                                    const refs = snap.val() || {};
+                                    for (let id in refs) {
+                                        const ref = refs[id];
+                                        if (ref.referredUserId && !ref.bonusClaimed) {
+                                            updateReferralProgress(ref.referredUserId);
+                                        }
+                                    }
+                                }).catch(() => {});
+                        }
                     }, 400);
                 } catch (e) {
                     console.error(e);
@@ -4261,7 +4548,6 @@
             mailBannerShown = false;
             document.getElementById('newMailBanner').style.display = 'none';
             setupImgbbLivePreview();
-            // Load bank details on init
             loadBankDetails();
         });
 
@@ -4312,6 +4598,8 @@
         window.openAllReferralsModal = openAllReferralsModal;
         window.updateTutorialVideo = updateTutorialVideo;
         window.setupImgbbLivePreview = setupImgbbLivePreview;
+        window.claimReferralBonus = claimReferralBonus;
+        window.updateReferralProgress = updateReferralProgress;
     </script>
 </body>
 </html>
