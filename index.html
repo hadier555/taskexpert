@@ -243,28 +243,6 @@
             display: none;
         }
 
-        /* ===== OFFLINE INDICATOR ===== */
-        .offline-indicator {
-            display: none;
-            background: #ffc107;
-            color: #333;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            justify-content: center;
-            animation: fadeIn 0.4s ease;
-        }
-        .offline-indicator.show {
-            display: flex;
-        }
-        .offline-indicator i {
-            font-size: 14px;
-        }
-
         /* ===== NEW MAIL BANNER ===== */
         .new-mail-banner {
             position: fixed;
@@ -476,16 +454,24 @@
             background: linear-gradient(135deg, #f7971e, #ffd200);
             color: #333;
             font-weight: 700;
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-size: 13px;
+            box-shadow: 0 3px 12px rgba(247, 151, 30, 0.3);
+            transition: all 0.3s;
         }
         .btn-claim:hover {
             transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(247, 151, 30, 0.4);
+            box-shadow: 0 6px 20px rgba(247, 151, 30, 0.5);
         }
         .btn-claimed {
             background: #28a745;
             color: white;
             opacity: 0.7;
             cursor: default;
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-size: 13px;
         }
         .btn-claimed:hover {
             transform: none;
@@ -1169,16 +1155,62 @@
         .history-table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13px;
         }
         .history-table th,
         .history-table td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+            padding: 10px 8px;
+            border-bottom: 1px solid #e8e8e8;
             text-align: left;
         }
         .history-table th {
-            background-color: #f2f2f2;
+            background-color: #f2f4f8;
+            color: #1e3c72;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        .history-table tr:hover td {
+            background-color: #f8f9fc;
+        }
+        .history-table .status-badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: capitalize;
+        }
+        .history-table .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .history-table .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        .history-table .status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .history-table .status-badge.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .history-table .status-badge.cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .history-table .amount-positive {
+            color: #28a745;
+            font-weight: 700;
+        }
+        .history-table .amount-negative {
+            color: #dc3545;
+            font-weight: 700;
+        }
+
         .maintenance-screen,
         .update-screen {
             text-align: center;
@@ -1451,11 +1483,6 @@
             color: #dc3545;
         }
 
-        /* ===== FIX: REJECT MODAL ON TOP ===== */
-        #rejectReasonModal {
-            z-index: 9999 !important;
-        }
-
         /* ===== VIEW ALL BUTTON ===== */
         .view-all-btn {
             background: none;
@@ -1508,6 +1535,13 @@
             .referral-row .claim-btn-wrap .btn {
                 width: 100%;
                 text-align: center;
+            }
+            .history-table {
+                font-size: 11px;
+            }
+            .history-table th,
+            .history-table td {
+                padding: 6px 4px;
             }
         }
 
@@ -1696,11 +1730,135 @@
             background: #e8f5e9;
             color: #1b5e20;
         }
-        .single-img-hint {
+
+        /* ===== UPLOAD AREA - IMPROVED DESIGN ===== */
+        .upload-area {
+            border: 2.5px dashed #1e3c72;
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8faff;
+            margin: 10px 0;
+            color: #1e3c72;
+            font-weight: 600;
+            position: relative;
+        }
+        .upload-area:hover {
+            background: #eef4ff;
+            border-color: #2a5298;
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(30, 60, 114, 0.08);
+        }
+        .upload-area.dragover {
+            background: #e0eaff;
+            border-color: #1e3c72;
+            border-style: solid;
+            transform: scale(1.02);
+        }
+        .upload-area i {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 8px;
+            color: #2a5298;
+        }
+        .upload-area .upload-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e3c72;
+        }
+        .upload-area .upload-sub {
+            font-size: 12px;
+            color: #888;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+        .upload-preview-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 10px auto;
+        }
+        .upload-preview-wrapper img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 3px solid #28a745;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            display: block;
+        }
+        .upload-preview-wrapper .remove-img-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+        .upload-preview-wrapper .remove-img-btn:hover {
+            transform: scale(1.1);
+            background: #c82333;
+        }
+        .upload-area .file-input-hidden {
             display: none;
         }
 
-        /* ===== Update screen new design ===== */
+        /* ===== PROOF UPLOAD SECTION IN TASK DETAIL ===== */
+        .proof-upload-section {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8edf5;
+            margin: 12px 0;
+        }
+        .proof-upload-section .upload-area {
+            margin: 0;
+        }
+        .proof-upload-section .upload-preview-wrapper img {
+            width: 100px;
+            height: 100px;
+        }
+
+        /* ===== REFERRAL BONUS HIDDEN ===== */
+        .referral-bonus-hint {
+            display: none !important;
+        }
+
+        /* ===== TASK LEFT SLOTS REAL-TIME ===== */
+        .task-slots-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #e8f0fe;
+            color: #1e3c72;
+        }
+        .task-slots-badge.few {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .task-slots-badge.none {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ===== ADMIN SETTINGS CARD ===== */
+        #adminSettingsCard {
+            border: 2px solid #ffc107;
+        }
+
         .update-screen {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             min-height: 100vh;
@@ -1757,7 +1915,7 @@
             font-size: 13px;
             opacity: 0.5;
         }
-        /* Maintenance screen */
+
         .maintenance-screen {
             background: linear-gradient(135deg, #2c3e50, #34495e);
             min-height: 100vh;
@@ -1788,61 +1946,6 @@
             font-size: 16px;
             opacity: 0.85;
             max-width: 300px;
-        }
-
-        /* ===== Admin settings card visible only for admin ===== */
-        #adminSettingsCard {
-            border: 2px solid #ffc107;
-        }
-
-        /* ===== IMGBB INPUT VALIDATION STYLES ===== */
-        #proofImgbbInput.valid {
-            border-color: #28a745;
-            background: #f0fff4;
-        }
-        #proofImgbbInput.invalid {
-            border-color: #dc3545;
-            background: #fff5f5;
-        }
-        .imgbb-validation-msg {
-            font-size: 12px;
-            margin-top: 4px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: none;
-        }
-        .imgbb-validation-msg.valid {
-            display: block;
-            color: #28a745;
-            background: #e8f5e9;
-        }
-        .imgbb-validation-msg.invalid {
-            display: block;
-            color: #dc3545;
-            background: #f8d7da;
-        }
-
-        /* ===== UPLOAD AREA ===== */
-        .upload-area {
-            border: 2px dashed #1e3c72;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            background: #f8f9fa;
-            margin: 10px 0;
-            color: #1e3c72;
-            font-weight: 600;
-        }
-        .upload-area:hover {
-            background: #e8f0fe;
-            border-color: #2a5298;
-        }
-        .upload-area i {
-            font-size: 28px;
-            display: block;
-            margin-bottom: 6px;
         }
 
         /* ===== TASK COMPLETED HIDDEN ===== */
@@ -1891,6 +1994,46 @@
         .referral-progress-badge.claimed {
             background: #c3e6cb;
             color: #155724;
+        }
+
+        /* ===== SUBMIT BUTTON DISABLED STATE ===== */
+        .btn-submit-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .btn-submit-disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ===== SUBMISSION STATUS INDICATOR IN TASK LIST ===== */
+        .task-submitted-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .task-pending-badge {
+            background: #ffc107;
+            color: #333;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .task-full-badge {
+            background: #dc3545;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
         }
     </style>
 </head>
@@ -2034,9 +2177,6 @@
                         <span class="badge hidden" id="unreadBadge">0</span>
                     </div>
                 </div>
-                <div class="offline-indicator" id="offlineIndicator">
-                    <i class="fas fa-wifi-slash"></i> You are offline. Data will sync when online.
-                </div>
             </div>
             <div class="card wallet-card"><i class="fas fa-coins" style="font-size:30px"></i>
                 <div class="coin-amount"><span id="walletCoins">0</span> Coins</div>
@@ -2074,7 +2214,8 @@
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
                     <div class="referral-code"><span><i class="fas fa-code-branch"></i> <strong id="referralCode">123456</strong></span><button class="copy-btn" onclick="copyReferralCode()">Copy</button></div>
-                    <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins <small style="color:#666;font-size:11px;display:block;">(Bonus after 7 approved tasks)</small></div>
+                    <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins</div>
+                    <!-- Hidden bonus hint removed -->
                     <div class="referral-stats">
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
                         <div><div id="referralEarnings">0</div><div>Earnings</div></div>
@@ -2091,9 +2232,8 @@
                 </div>
                 <div class="card" id="adminSettingsCard" style="display:none;">
                     <h3>⚙️ Admin Settings</h3>
-                    <label style="font-size:13px; font-weight:600;">Tutorial Video URL (YouTube)</label>
-                    <input type="text" id="adminTutorialUrl" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;">
-                    <button class="btn btn-sm" onclick="updateTutorialVideo()" style="margin-top:8px;">Update</button>
+                    <!-- Tutorial video removed -->
+                    <p style="color:#999;font-size:12px;">Admin panel coming soon.</p>
                 </div>
             </div>
             <div class="bottom-nav">
@@ -2135,7 +2275,8 @@
             <input type="text" id="depositTid" placeholder="TID" />
             <div class="upload-area" onclick="document.getElementById('depositProofInput').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
-                Upload Screenshot
+                <div class="upload-text">Upload Screenshot</div>
+                <div class="upload-sub">Tap to select image</div>
             </div>
             <input type="file" id="depositProofInput" accept="image/*" style="display:none" />
             <div id="depositPreview"></div>
@@ -2248,22 +2389,30 @@
             <div class="card"><h3>Steps</h3><div id="taskDetailSteps"></div></div>
             <div class="card"><h3>Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
             <div class="card">
-                <h3 id="proofSectionTitle">Submit Proof (ImgBB Link)</h3>
+                <h3 id="proofSectionTitle">Submit Proof</h3>
+
+                <!-- ===== IMAGE PROOF AREA - IMPROVED UPLOAD ===== -->
                 <div id="imageProofArea">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                        <label style="font-weight:600; color:#1e3c72; font-size:14px;">📹 Tutorial Video</label>
-                        <a href="#" id="tutorialVideoLink" target="_blank" style="background:#ff0000; color:white; padding:2px 12px; border-radius:12px; text-decoration:none; font-size:12px; font-weight:bold;">Watch</a>
+                    <div class="proof-upload-section">
+                        <div class="upload-area" id="taskProofUploadArea" onclick="document.getElementById('taskProofInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="upload-text">Upload Proof Image</div>
+                            <div class="upload-sub">Tap to select image (JPG, PNG)</div>
+                        </div>
+                        <input type="file" id="taskProofInput" accept="image/*" style="display:none" />
+                        <div id="taskProofPreview" style="margin-top:10px; text-align:center;"></div>
+                        <div style="font-size:12px; color:#888; margin-top:6px; text-align:center;">✅ Upload a clear screenshot as proof</div>
                     </div>
-                    <input type="text" id="proofImgbbInput" placeholder="Paste ImgBB link: https://i.ibb.co/xxxxx or just xxxxx" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; font-size:14px;">
-                    <div id="imgbbValidationMsg" class="imgbb-validation-msg"></div>
-                    <div style="font-size:12px; color:#666; margin-top:4px;">✅ Must contain <strong>i.ibb.co</strong> — Example: 4Yf8k2M/image.jpg or full link https://i.ibb.co/4Yf8k2M/image.jpg</div>
-                    <div id="proofImgbbPreview" style="margin-top:10px;"></div>
                 </div>
+
+                <!-- ===== TEXT PROOF AREA ===== -->
                 <div id="textProofArea" style="display:none;">
                     <textarea id="proofTextInput" class="proof-textarea" placeholder="Enter your proof details here..."></textarea>
                     <div style="font-size:12px; color:#666; margin-top:4px;">Please provide detailed proof text.</div>
                 </div>
+
                 <button class="btn" onclick="submitProof()" id="submitProofBtn">Submit Task</button>
+                <div id="taskSubmitStatus" style="margin-top:8px; font-size:13px; color:#666; text-align:center;"></div>
             </div>
         </div>
     </div>
@@ -2320,6 +2469,10 @@
         let isAdmin = false;
         let allReferrals = [];
 
+        // Task proof image upload
+        let taskProofImage = null;
+        let taskProofImageData = null;
+
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
             tiktok: { minMembers: 10, minCoins: 5 },
@@ -2333,25 +2486,12 @@
         let minWithdraw = 1000;
 
         // ============================================================
-        // CONNECTION STATE
+        // CONNECTION STATE - REMOVED OFFLINE INDICATOR
         // ============================================================
         const connectedRef = db.ref('.info/connected');
         connectedRef.on('value', (snap) => {
             isOnline = snap.val() === true;
-            const indicator = document.getElementById('offlineIndicator');
-            const mainScreen = document.getElementById('mainScreen');
-            if (currentUser && mainScreen && mainScreen.classList.contains('active')) {
-                if (!isOnline) {
-                    indicator.classList.add('show');
-                    if (!window._offlineToastShown) { showToast('📴 You are offline.');
-                        window._offlineToastShown = true; }
-                } else {
-                    indicator.classList.remove('show');
-                    window._offlineToastShown = false;
-                }
-            } else {
-                indicator.classList.remove('show');
-            }
+            // Offline indicator removed per user request
         });
 
         // ============================================================
@@ -2369,11 +2509,10 @@
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            window._offlineToastShown = false;
         }
 
         function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
-                '<' ? '&lt;' : '&gt;')); }
+                '<' ? '&lt;' : m === '>' ? '&gt;' : '')); }
 
         function generateReferralCode() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
@@ -2561,7 +2700,6 @@
                 };
                 await db.ref(`users/${currentUser.uid}`).set(currentUserData);
 
-                // If referred, create referral record with locked bonus
                 if (referredBy) {
                     const currentReferralBonus = await getReferralBonusAmount();
                     await db.ref('referrals').push({
@@ -2574,7 +2712,6 @@
                         bonusClaimed: false,
                         bonusClaimedAt: null
                     });
-                    // Increment referrer's totalReferrals count (no coins yet)
                     const currentRefs = (await db.ref(`users/${referredBy}/totalReferrals`).once('value')).val() || 0;
                     await db.ref(`users/${referredBy}/totalReferrals`).set(currentRefs + 1);
                 }
@@ -2584,7 +2721,6 @@
             updateUI();
             loadReferralData();
             loadDailyRewardGrid();
-            loadTutorialVideo();
             loadBankDetails();
             if (isAdmin) {
                 document.getElementById('adminSettingsCard').style.display = 'block';
@@ -2611,32 +2747,6 @@
 
         async function getSignupBonusAmount() { try { const snap = await db.ref('settings/signupBonus').once(
                 'value'); return snap.exists() ? snap.val() : 50; } catch (e) { return 50; } }
-
-        // ============================================================
-        // TUTORIAL VIDEO
-        // ============================================================
-        async function loadTutorialVideo() {
-            try {
-                const snap = await db.ref('settings/tutorialVideo').once('value');
-                const url = snap.val() || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-                document.getElementById('tutorialVideoLink').href = url;
-            } catch (e) {
-                document.getElementById('tutorialVideoLink').href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-            }
-        }
-
-        async function updateTutorialVideo() {
-            const url = document.getElementById('adminTutorialUrl').value.trim();
-            if (!url) { showToast("Please enter a URL"); return; }
-            try {
-                await db.ref('settings/tutorialVideo').set(url);
-                showToast("✅ Tutorial video updated!");
-                document.getElementById('adminTutorialUrl').value = '';
-                loadTutorialVideo();
-            } catch (e) {
-                showToast('Error: ' + e.message);
-            }
-        }
 
         // ============================================================
         // BANK DETAILS
@@ -2779,7 +2889,6 @@
                 allReferrals = [];
                 for (let id in list) {
                     let item = list[id];
-                    // Ensure all fields exist
                     if (item.bonusLocked === undefined) item.bonusLocked = 100;
                     if (item.tasksCompleted === undefined) item.tasksCompleted = 0;
                     if (item.bonusClaimed === undefined) item.bonusClaimed = false;
@@ -2787,13 +2896,11 @@
                 }
                 allReferrals.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-                // Count total referrals and earnings (claimed only)
                 let count = allReferrals.length;
                 let earnings = allReferrals.filter(r => r.bonusClaimed).reduce((sum, r) => sum + (r.bonusLocked || 0), 0);
                 document.getElementById('totalReferrals').innerText = count;
                 document.getElementById('referralEarnings').innerText = earnings;
 
-                // Also update userData's referralEarnings for display
                 if (currentUserData) {
                     currentUserData.referralEarnings = earnings;
                 }
@@ -2834,13 +2941,13 @@
                 let actionHtml = '';
                 if (isComplete && !isClaimed) {
                     actionHtml =
-                        `<button class="btn btn-claim btn-sm" onclick="claimReferralBonus('${item.id}')">🎁 Claim Bonus</button>`;
+                        `<button class="btn btn-claim btn-sm" onclick="claimReferralBonus('${item.id}')"><i class="fas fa-gift"></i> Claim Bonus</button>`;
                 } else if (isClaimed) {
                     actionHtml =
                         `<span style="color:#28a745;font-weight:600;font-size:13px;">✅ Claimed</span>`;
                 } else {
                     actionHtml =
-                        `<span style="color:#999;font-size:12px;">⏳ ${totalNeeded - tasksDone} more tasks</span>`;
+                        `<span style="color:#999;font-size:12px;">⏳ ${totalNeeded - tasksDone} more</span>`;
                 }
 
                 html += `
@@ -2890,9 +2997,8 @@
             modal.style.display = 'flex';
         }
 
-        // ===== CLAIM REFERRAL BONUS =====
         async function claimReferralBonus(referralId) {
-            if (!confirm('Claim bonus for this referral? The bonus amount is locked at the time they joined.')) return;
+            if (!confirm('Claim bonus for this referral?')) return;
 
             try {
                 const snap = await db.ref(`referrals/${referralId}`).once('value');
@@ -2910,15 +3016,12 @@
                     return;
                 }
 
-                // Add bonus to referrer's wallet
                 const currentCoins = (await db.ref(`users/${referrerId}/coins`).once('value')).val() || 0;
                 await db.ref(`users/${referrerId}/coins`).set(currentCoins + bonusAmount);
 
-                // Mark as claimed
                 await db.ref(`referrals/${referralId}/bonusClaimed`).set(true);
                 await db.ref(`referrals/${referralId}/bonusClaimedAt`).set(Date.now());
 
-                // Update user data
                 if (currentUserData) {
                     currentUserData.coins = (currentUserData.coins || 0) + bonusAmount;
                     currentUserData.referralEarnings = (currentUserData.referralEarnings || 0) + bonusAmount;
@@ -2933,16 +3036,13 @@
             }
         }
 
-        // ===== UPDATE REFERRAL TASK PROGRESS =====
         async function updateReferralProgress(userId) {
             if (!userId) return;
             try {
-                // Find referral record where referredUserId = userId
                 const snap = await db.ref('referrals').orderByChild('referredUserId').equalTo(userId).once('value');
                 const refs = snap.val();
                 if (!refs) return;
 
-                // Count approved tasks for this user
                 const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(userId).once('value');
                 const subs = subSnap.val() || {};
                 let approvedCount = 0;
@@ -2952,10 +3052,9 @@
                     }
                 }
 
-                // Update all referral records for this user (should be only one)
                 for (let refId in refs) {
                     const ref = refs[refId];
-                    if (ref.bonusClaimed) continue; // Skip if already claimed
+                    if (ref.bonusClaimed) continue;
                     if (ref.tasksCompleted !== approvedCount) {
                         await db.ref(`referrals/${refId}/tasksCompleted`).set(approvedCount);
                     }
@@ -2976,67 +3075,93 @@
         }
 
         // ============================================================
-        // IMGBB LIVE PREVIEW WITH STRICT VALIDATION
+        // TASK PROOF - IMAGE UPLOAD (replaces ImgBB link)
         // ============================================================
-        function setupImgbbLivePreview() {
-            const input = document.getElementById('proofImgbbInput');
-            const preview = document.getElementById('proofImgbbPreview');
-            const msg = document.getElementById('imgbbValidationMsg');
+        function setupTaskProofUpload() {
+            const input = document.getElementById('taskProofInput');
+            const preview = document.getElementById('taskProofPreview');
+            const uploadArea = document.getElementById('taskProofUploadArea');
+
             if (!input || !preview) return;
 
-            input.addEventListener('input', function() {
-                let raw = this.value.trim();
-                if (!raw) {
-                    preview.innerHTML = '';
-                    msg.className = 'imgbb-validation-msg';
-                    msg.textContent = '';
-                    this.className = '';
-                    return;
+            // Click on upload area triggers file input
+            uploadArea.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'BUTTON' && !e.target.closest('.remove-img-btn')) {
+                    input.click();
                 }
-
-                // Must contain i.ibb.co
-                if (!raw.includes('i.ibb.co')) {
-                    this.className = 'invalid';
-                    msg.className = 'imgbb-validation-msg invalid';
-                    msg.textContent = '❌ Invalid ImgBB link. Must contain i.ibb.co';
-                    preview.innerHTML =
-                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ link is not Valid — must contain i.ibb.co</div>`;
-                    return;
-                }
-
-                // Build full link if needed
-                let finalLink = raw;
-                if (!raw.startsWith('http://') && !raw.startsWith('https://')) {
-                    finalLink = 'https://' + raw;
-                }
-
-                // Validate it's a proper ImgBB link
-                if (!finalLink.includes('i.ibb.co')) {
-                    this.className = 'invalid';
-                    msg.className = 'imgbb-validation-msg invalid';
-                    msg.textContent = '❌ link is not Valid';
-                    preview.innerHTML =
-                        `<div style="color:#dc3545; font-size:13px; padding:8px; background:#f8d7da; border-radius:8px;">❌ link is not Valid</div>`;
-                    return;
-                }
-
-                // Valid - show preview
-                this.className = 'valid';
-                msg.className = 'imgbb-validation-msg valid';
-                msg.textContent = '✅ Valid ImgBB link!';
-
-                preview.innerHTML = `
-                            <img src="${finalLink}" 
-                                 style="width:120px; height:120px; object-fit:cover; border-radius:12px; border:3px solid #28a745; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:8px auto;" 
-                                 onerror="this.style.display='none'; document.getElementById('imgbbPreviewError').style.display='block';"
-                                 onload="document.getElementById('imgbbPreviewError').style.display='none'; this.style.display='block';"
-                                 alt="Preview">
-                            <div id="imgbbPreviewError" style="display:none; color:#dc3545; font-size:13px; text-align:center; padding:8px; background:#f8d7da; border-radius:8px;">
-                                ❌ Invalid image link. Please check the link.
-                            </div>
-                            <div style="text-align:center; font-size:12px; color:#666; margin-top:4px;">✅ Valid ImgBB link - ready to submit</div>
-                        `;
             });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    handleTaskProofFile(files[0]);
+                } else {
+                    showToast('Please drop an image file.');
+                }
+            });
+
+            input.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    handleTaskProofFile(this.files[0]);
+                }
+            });
+        }
+
+        function handleTaskProofFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Please select an image file.');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Image too large. Max 5MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                taskProofImageData = dataUrl;
+                taskProofImage = file;
+                showTaskProofPreview(dataUrl);
+                showToast('✅ Image uploaded successfully!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showTaskProofPreview(dataUrl) {
+            const preview = document.getElementById('taskProofPreview');
+            preview.innerHTML = `
+                        <div class="upload-preview-wrapper">
+                            <img src="${dataUrl}" alt="Proof preview">
+                            <button class="remove-img-btn" onclick="removeTaskProofImage()">✕</button>
+                        </div>
+                        <div style="font-size:12px; color:#28a745; margin-top:4px;">✅ Image ready for submission</div>
+                    `;
+            const uploadArea = document.getElementById('taskProofUploadArea');
+            uploadArea.style.borderColor = '#28a745';
+            uploadArea.style.background = '#f0fff4';
+        }
+
+        function removeTaskProofImage() {
+            taskProofImage = null;
+            taskProofImageData = null;
+            document.getElementById('taskProofPreview').innerHTML = '';
+            document.getElementById('taskProofInput').value = '';
+            const uploadArea = document.getElementById('taskProofUploadArea');
+            uploadArea.style.borderColor = '#1e3c72';
+            uploadArea.style.background = '#f8faff';
+            showToast('Image removed');
         }
 
         // ============================================================
@@ -3074,9 +3199,25 @@
                     const officialSnap = await db.ref('tasks/official').limitToFirst(50).once('value');
                     const officialData = officialSnap.val() || {};
                     for (let [id, t] of Object.entries(officialData)) {
-                        cachedOfficialTasks.push({ id, type: 'official', title: t.title, desc: t.description || '',
-                            steps: t.steps || '', link: t.link || '#', reward: t.reward, left: t.left || 0,
-                            platform: 'official', creatorId: 'admin', timestamp: t.createdAt || 0 });
+                        // Calculate remaining slots
+                        const counts = countMap[id] || { approved: 0, pending: 0, pendingReject: 0 };
+                        const filled = counts.approved + counts.pending + counts.pendingReject;
+                        const maxLimit = t.maxLimit || t.left || 0;
+                        const remaining = Math.max(0, maxLimit - filled);
+                        cachedOfficialTasks.push({
+                            id,
+                            type: 'official',
+                            title: t.title,
+                            desc: t.description || '',
+                            steps: t.steps || '',
+                            link: t.link || '#',
+                            reward: t.reward,
+                            left: remaining,
+                            maxLimit: maxLimit,
+                            platform: 'official',
+                            creatorId: 'admin',
+                            timestamp: t.createdAt || 0
+                        });
                     }
                     cachedOfficialTasks.sort((a, b) => b.timestamp - a.timestamp);
                 } catch (e) {
@@ -3124,6 +3265,10 @@
                 updateTaskCounts();
                 displayFilteredTasks();
                 displayOfficialTasks();
+
+                // Set up real-time listeners for task slots (race condition fix)
+                setupTaskSlotListeners();
+
             } catch (err) {
                 console.error(err);
                 document.getElementById('allTasksList').innerHTML =
@@ -3133,6 +3278,109 @@
             }
         }
 
+        // ============================================================
+        // RACE CONDITION FIX: REAL-TIME SLOT LISTENERS (Firebase)
+        // ============================================================
+        // یہ فنکشن ہر ٹاسک کے لیے ریئل ٹائم لسٹنر لگاتا ہے تاکہ جب کوئی
+        // دوسرا صارف سبمٹ کرے تو باقی سب کو فوری اپ ڈیٹ مل جائے۔
+        // ============================================================
+        let taskSlotListeners = {};
+
+        function setupTaskSlotListeners() {
+            // Remove old listeners to avoid duplicates
+            for (let key in taskSlotListeners) {
+                if (taskSlotListeners[key]) {
+                    taskSlotListeners[key]();
+                    delete taskSlotListeners[key];
+                }
+            }
+
+            // Listen for changes in task_submissions to update counts
+            const subRef = db.ref('task_submissions');
+            const listener = subRef.on('value', (snap) => {
+                const allSubs = snap.val() || {};
+                const countMap = {};
+                for (let id in allSubs) {
+                    const s = allSubs[id];
+                    if (s.adminDeleted) continue;
+                    const taskId = s.taskId;
+                    if (!countMap[taskId]) countMap[taskId] = { approved: 0, pending: 0, pendingReject: 0 };
+                    if (s.status === 'approved') countMap[taskId].approved++;
+                    else if (s.status === 'pending') countMap[taskId].pending++;
+                    else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
+                }
+
+                // Update official tasks left counts
+                if (cachedOfficialTasks) {
+                    for (let task of cachedOfficialTasks) {
+                        const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
+                        const filled = counts.approved + counts.pending + counts.pendingReject;
+                        const maxLimit = task.maxLimit || 0;
+                        const remaining = Math.max(0, maxLimit - filled);
+                        task.left = remaining;
+                    }
+                    displayOfficialTasks();
+                }
+
+                // Update user tasks left counts
+                if (cachedUserTasks) {
+                    for (let task of cachedUserTasks) {
+                        const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
+                        const filled = counts.approved + counts.pending + counts.pendingReject;
+                        const required = task.requiredUsers || 0;
+                        const remaining = required - filled;
+                        task.left = Math.max(0, remaining);
+                    }
+                    displayFilteredTasks();
+                    updateTaskCounts();
+                }
+
+                // Update task detail modal if open
+                if (currentTask) {
+                    updateTaskDetailSlots(currentTask.id);
+                }
+            });
+
+            taskSlotListeners['submissions'] = () => subRef.off('value', listener);
+        }
+
+        function updateTaskDetailSlots(taskId) {
+            // Check if the task detail is showing this task
+            const modal = document.getElementById('taskDetailModal');
+            if (modal.style.display !== 'block') return;
+
+            // Find the task in cached lists
+            let task = null;
+            if (cachedUserTasks) {
+                task = cachedUserTasks.find(t => t.id === taskId);
+            }
+            if (!task && cachedOfficialTasks) {
+                task = cachedOfficialTasks.find(t => t.id === taskId);
+            }
+
+            if (task) {
+                const statusDiv = document.getElementById('taskSubmitStatus');
+                if (task.left <= 0) {
+                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">❌ Task slots are full!</span>';
+                    const submitBtn = document.getElementById('submitProofBtn');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('btn-submit-disabled');
+                    submitBtn.innerText = 'Full';
+                } else {
+                    statusDiv.innerHTML =
+                    `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
+                    const submitBtn = document.getElementById('submitProofBtn');
+                    if (!submitBtn.disabled) {
+                        submitBtn.classList.remove('btn-submit-disabled');
+                        submitBtn.innerText = 'Submit Task';
+                    }
+                }
+            }
+        }
+
+        // ============================================================
+        // TASK DISPLAY FUNCTIONS
+        // ============================================================
         function updateTaskCounts() {
             const counts = { all: 0, youtube: 0, tiktok: 0, instagram: 0, whatsapp: 0, download: 0, other: 0 };
             if (cachedUserTasks) {
@@ -3196,9 +3444,17 @@
                 let proofBadge = t.proofType === 'text' ?
                     '<span class="proof-type-badge text" style="font-size:9px;">📝 Text</span>' :
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
+
+                let slotsBadge = '';
+                if (t.left <= 3) {
+                    slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
+                } else {
+                    slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
+                }
+
                 allHtml +=
                     `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapeHtml(t.title)}','${escapeHtml(t.desc)}','${escapeHtml(t.steps)}','${t.link}',${t.reward},'${t.creatorId}','${t.proofType}')">
-                                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>🎯 ${t.left} slots left</small></div><div>+${t.reward}</div>
+                                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                             </div>`;
             }
             document.getElementById('allTasksList').innerHTML = allHtml ||
@@ -3213,10 +3469,32 @@
             }
             let officialHtml = '';
             for (let t of cachedOfficialTasks) {
-                if (userSubmissionsMap[t.id] || t.left <= 0) continue;
+                if (userSubmissionsMap[t.id]) {
+                    // User already submitted - show as pending/submitted
+                    officialHtml +=
+                        `<div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
+                                    <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
+                                    <div>+${t.reward}</div>
+                                </div>`;
+                    continue;
+                }
+                if (t.left <= 0) {
+                    officialHtml +=
+                        `<div class="task-item" style="opacity:0.5;border-left-color:#dc3545;cursor:default;">
+                                    <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-full-badge">❌ Full</span></small></div>
+                                    <div>+${t.reward}</div>
+                                </div>`;
+                    continue;
+                }
+                let slotsBadge = '';
+                if (t.left <= 3) {
+                    slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
+                } else {
+                    slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
+                }
                 officialHtml +=
                     `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapeHtml(t.title)}','${escapeHtml(t.desc)}','${escapeHtml(t.steps)}','${t.link}',${t.reward},'${t.creatorId}','image')">
-                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>🎯 ${t.left} left</small></div><div>+${t.reward}</div>
+                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                             </div>`;
             }
             document.getElementById('officialTasksList').innerHTML = officialHtml ||
@@ -3240,11 +3518,24 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT (with strict ImgBB validation)
+        // TASK DETAIL & SUBMIT (with race condition fix & image upload)
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
             if (userSubmissionsMap[id]) { showToast("Already submitted"); return; }
+
+            // Check if task still has slots
+            let task = null;
+            if (type === 'official') {
+                task = cachedOfficialTasks?.find(t => t.id === id);
+            } else {
+                task = cachedUserTasks?.find(t => t.id === id);
+            }
+            if (task && task.left <= 0) {
+                showToast("❌ Task slots are full!");
+                return;
+            }
+
             currentTask = { id, type, title, desc, steps, link, reward, proofType: proofType || 'image' };
             document.getElementById('taskDetailTitle').innerText = title;
             document.getElementById('taskDetailReward').innerHTML = `+${reward} coins`;
@@ -3258,15 +3549,31 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
-            document.getElementById('proofImgbbInput').value = '';
-            document.getElementById('proofImgbbPreview').innerHTML = '';
+            // Reset proof image
+            removeTaskProofImage();
             document.getElementById('proofTextInput').value = '';
             proofTextValue = '';
-            const msg = document.getElementById('imgbbValidationMsg');
-            if (msg) { msg.className = 'imgbb-validation-msg';
-                msg.textContent = ''; }
-            const input = document.getElementById('proofImgbbInput');
-            if (input) input.className = '';
+
+            // Reset submit button
+            const submitBtn = document.getElementById('submitProofBtn');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('btn-submit-disabled');
+            submitBtn.innerText = 'Submit Task';
+            document.getElementById('taskSubmitStatus').innerHTML = '';
+
+            // Show slot info
+            if (task) {
+                const statusDiv = document.getElementById('taskSubmitStatus');
+                if (task.left > 0) {
+                    statusDiv.innerHTML =
+                        `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
+                } else {
+                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">❌ Task slots are full!</span>';
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('btn-submit-disabled');
+                    submitBtn.innerText = 'Full';
+                }
+            }
 
             if (currentTask.proofType === 'text') {
                 document.getElementById('imageProofArea').style.display = 'none';
@@ -3274,22 +3581,86 @@
             } else {
                 document.getElementById('imageProofArea').style.display = 'block';
                 document.getElementById('textProofArea').style.display = 'none';
-                setupImgbbLivePreview();
+                // Reset the upload area
+                const uploadArea = document.getElementById('taskProofUploadArea');
+                uploadArea.style.borderColor = '#1e3c72';
+                uploadArea.style.background = '#f8faff';
             }
             document.getElementById('taskDetailModal').style.display = 'block';
         };
 
-        function closeTaskDetail() { document.getElementById('taskDetailModal').style.display = 'none';
-            currentTask = null; }
+        function closeTaskDetail() {
+            document.getElementById('taskDetailModal').style.display = 'none';
+            currentTask = null;
+            removeTaskProofImage();
+        }
 
+        // ============================================================
+        // SUBMIT PROOF - WITH RACE CONDITION FIX (Firebase Transaction)
+        // ============================================================
+        // یہ فنکشن Firebase Transaction کا استعمال کرتا ہے تاکہ
+        // ایک وقت میں صرف ایک صارف سبمٹ کر سکے۔ یہ ریس کنڈیشن کو روکتا ہے۔
+        // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
 
-            if (currentTask.proofType === 'text') {
-                const proofText = document.getElementById('proofTextInput').value.trim();
-                if (!proofText) { showToast("Please enter your proof text."); return; }
-                if (proofText.length < 3) { showToast("Please provide at least 3 characters."); return; }
-                try {
+            const submitBtn = document.getElementById('submitProofBtn');
+            // Disable button to prevent double-click
+            if (submitBtn.disabled) return;
+            submitBtn.disabled = true;
+            submitBtn.classList.add('btn-loading');
+            submitBtn.innerText = 'Submitting...';
+
+            try {
+                // --- TEXT PROOF ---
+                if (currentTask.proofType === 'text') {
+                    const proofText = document.getElementById('proofTextInput').value.trim();
+                    if (!proofText) { showToast("Please enter your proof text.");
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task'; return; }
+                    if (proofText.length < 3) { showToast("Please provide at least 3 characters.");
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task'; return; }
+
+                    // Use transaction to atomically decrement slot
+                    const taskRef = currentTask.type === 'official' ?
+                        db.ref(`tasks/official/${currentTask.id}`) :
+                        db.ref(`tasks/user/${currentTask.id}`);
+
+                    const result = await taskRef.transaction((currentData) => {
+                        if (!currentData) return currentData;
+                        // For official tasks: use maxLimit, for user tasks: use requiredUsers
+                        const limit = currentTask.type === 'official' ?
+                            (currentData.maxLimit || 0) :
+                            (currentData.requiredUsers || 0);
+                        const filled = currentData.completed || 0;
+                        const pending = currentData.pending || 0;
+                        const pendingReject = currentData.pendingReject || 0;
+                        const totalFilled = filled + pending + pendingReject;
+                        if (totalFilled >= limit) {
+                            // Slot full - abort
+                            return undefined;
+                        }
+                        // Increment pending count
+                        if (currentTask.type === 'official') {
+                            currentData.pending = (currentData.pending || 0) + 1;
+                        } else {
+                            currentData.pending = (currentData.pending || 0) + 1;
+                        }
+                        return currentData;
+                    });
+
+                    if (result.committed === false || result.snapshot === null) {
+                        showToast("❌ Task slots are full! Please try again.");
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
+
+                    // Save submission
                     await db.ref('task_submissions').push({
                         userId: currentUser.uid,
                         username: currentUserData.username,
@@ -3303,84 +3674,116 @@
                         timestamp: Date.now(),
                         reward: currentTask.reward
                     });
+
                     userSubmissionsMap[currentTask.id] = true;
                     showToast(`✅ Text proof submitted!`);
                     closeTaskDetail();
                     tasksLoaded = false;
                     await loadAllTasks();
                     await loadMySubmissions();
-                } catch (err) { showToast('Error: ' + err.message); }
-                return;
-            }
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.innerText = 'Submit Task';
+                    return;
+                }
 
-            // IMAGE proof - strict ImgBB validation
-            const input = document.getElementById('proofImgbbInput');
-            let rawLink = input.value.trim();
-            if (!rawLink) { showToast("Please paste your ImgBB link or ID."); return; }
+                // --- IMAGE PROOF ---
+                if (!taskProofImageData) {
+                    showToast("Please upload a proof image.");
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.innerText = 'Submit Task';
+                    return;
+                }
 
-            // Must contain i.ibb.co
-            if (!rawLink.includes('i.ibb.co')) {
-                showToast("❌ link is not Valid — must contain i.ibb.co");
-                input.className = 'invalid';
-                const msg = document.getElementById('imgbbValidationMsg');
-                if (msg) { msg.className = 'imgbb-validation-msg invalid';
-                    msg.textContent = '❌ link is not Valid'; }
-                return;
-            }
+                // Upload image using the existing upload system
+                const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
+                let uploadedUrl;
+                try {
+                    uploadedUrl = await uploadImage(taskProofImageData);
+                } catch (uploadErr) {
+                    hideLoadingOverlay(interval);
+                    showToast('Upload failed: ' + uploadErr.message);
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.innerText = 'Submit Task';
+                    return;
+                }
+                hideLoadingOverlay(interval);
 
-            let finalLink = rawLink;
-            if (!rawLink.startsWith('http://') && !rawLink.startsWith('https://')) {
-                finalLink = 'https://' + rawLink;
-            }
+                if (!uploadedUrl) {
+                    showToast('Upload failed, please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.innerText = 'Submit Task';
+                    return;
+                }
 
-            // Final check
-            if (!finalLink.includes('i.ibb.co')) {
-                showToast("❌ link is not Valid");
-                input.className = 'invalid';
-                const msg = document.getElementById('imgbbValidationMsg');
-                if (msg) { msg.className = 'imgbb-validation-msg invalid';
-                    msg.textContent = '❌ link is not Valid'; }
-                return;
-            }
+                // Use transaction to atomically decrement slot
+                const taskRef = currentTask.type === 'official' ?
+                    db.ref(`tasks/official/${currentTask.id}`) :
+                    db.ref(`tasks/user/${currentTask.id}`);
 
-            // Validate image loads
-            try {
-                const imgCheck = new Image();
-                imgCheck.onload = async function() {
-                    try {
-                        await db.ref('task_submissions').push({
-                            userId: currentUser.uid,
-                            username: currentUserData.username,
-                            taskId: currentTask.id,
-                            taskTitle: currentTask.title,
-                            taskType: currentTask.type,
-                            proofType: 'image',
-                            images: [finalLink],
-                            proofText: '',
-                            status: 'pending',
-                            timestamp: Date.now(),
-                            reward: currentTask.reward,
-                            proofLink: finalLink
-                        });
-                        userSubmissionsMap[currentTask.id] = true;
-                        showToast(`✅ Image proof submitted!`);
-                        closeTaskDetail();
-                        tasksLoaded = false;
-                        await loadAllTasks();
-                        await loadMySubmissions();
-                    } catch (err) { showToast('Error: ' + err.message); }
-                };
-                imgCheck.onerror = function() {
-                    showToast("❌ link is not Valid — image not found");
-                    input.className = 'invalid';
-                    const msg = document.getElementById('imgbbValidationMsg');
-                    if (msg) { msg.className = 'imgbb-validation-msg invalid';
-                        msg.textContent = '❌ link is not Valid — image not found'; }
-                };
-                imgCheck.src = finalLink;
-            } catch (e) {
-                showToast("❌ link is not Valid");
-                input.className = 'invalid';
+                const result = await taskRef.transaction((currentData) => {
+                    if (!currentData) return currentData;
+                    const limit = currentTask.type === 'official' ?
+                        (currentData.maxLimit || 0) :
+                        (currentData.requiredUsers || 0);
+                    const filled = currentData.completed || 0;
+                    const pending = currentData.pending || 0;
+                    const pendingReject = currentData.pendingReject || 0;
+                    const totalFilled = filled + pending + pendingReject;
+                    if (totalFilled >= limit) {
+                        return undefined;
+                    }
+                    if (currentTask.type === 'official') {
+                        currentData.pending = (currentData.pending || 0) + 1;
+                    } else {
+                        currentData.pending = (currentData.pending || 0) + 1;
+                    }
+                    return currentData;
+                });
+
+                if (result.committed === false || result.snapshot === null) {
+                    showToast("❌ Task slots are full! Please try again.");
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.innerText = 'Submit Task';
+                    return;
+                }
+
+                // Save submission
+                await db.ref('task_submissions').push({
+                    userId: currentUser.uid,
+                    username: currentUserData.username,
+                    taskId: currentTask.id,
+                    taskTitle: currentTask.title,
+                    taskType: currentTask.type,
+                    proofType: 'image',
+                    images: [uploadedUrl],
+                    proofText: '',
+                    status: 'pending',
+                    timestamp: Date.now(),
+                    reward: currentTask.reward,
+                    proofLink: uploadedUrl
+                });
+
+                userSubmissionsMap[currentTask.id] = true;
+                showToast(`✅ Image proof submitted!`);
+                closeTaskDetail();
+                tasksLoaded = false;
+                await loadAllTasks();
+                await loadMySubmissions();
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.innerText = 'Submit Task';
+
+            } catch (err) {
+                console.error('Submit error:', err);
+                showToast('Error: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.innerText = 'Submit Task';
             }
         }
 
@@ -3787,7 +4190,7 @@
                 });
             }
             toggleProofTypeFields();
-            setupImgbbLivePreview();
+            setupTaskProofUpload();
         });
 
         async function submitRejectReason() {
@@ -3847,7 +4250,6 @@
                         await db.ref(`tasks/user/${taskId}/completedAt`).set(Date.now());
                     }
                 }
-                // Update referral progress for the worker
                 await updateReferralProgress(workerId);
                 showToast('Approved! Worker earned +' + reward + ' coins.');
                 refreshAfterAction(taskId);
@@ -3943,7 +4345,7 @@
                             uploadImage(compressed).then(url => {
                                 depositImage = url;
                                 document.getElementById('depositPreview').innerHTML =
-                                    `<img src="${depositImage}" class="preview-img">`;
+                                    `<div class="upload-preview-wrapper"><img src="${depositImage}" class="preview-img"><button class="remove-img-btn" onclick="removeDepositImage()">✕</button></div>`;
                             }).catch(e => {
                                 showToast("Upload failed: " + e.message);
                                 depositImage = null;
@@ -3955,6 +4357,12 @@
                 r.readAsDataURL(f);
             }
         });
+
+        function removeDepositImage() {
+            depositImage = null;
+            document.getElementById('depositPreview').innerHTML = '';
+            document.getElementById('depositProofInput').value = '';
+        }
 
         async function requestDeposit() {
             let amt = parseInt(document.getElementById('depositAmount').value);
@@ -4001,8 +4409,11 @@
                 arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 let html =
                     '<table class="history-table"><thead><tr><th>Amount</th><th>Method</th><th>TID</th><th>Status</th><th>Date</th></tr></thead><tbody>';
-                for (let it of arr) html +=
-                    `<tr><td>${it.amount} coins</td><td>${it.method||'Easypaisa'}</td><td>${it.tid||'-'}</td><td><span class="badge-${it.status}">${it.status}</span></td><td>${new Date(it.timestamp).toLocaleString()}</td></tr>`;
+                for (let it of arr) {
+                    let statusClass = it.status || 'pending';
+                    html +=
+                        `<tr><td><span class="amount-positive">${it.amount} coins</span></td><td>${it.method||'Easypaisa'}</td><td>${it.tid||'-'}</td><td><span class="status-badge ${statusClass}">${statusClass}</span></td><td>${new Date(it.timestamp).toLocaleString()}</td></tr>`;
+                }
                 html += '</tbody></table>';
                 document.getElementById('depositHistoryList').innerHTML = html || '<p>No deposits</p>';
                 document.getElementById('depositHistoryModal').style.display = 'flex';
@@ -4074,8 +4485,11 @@
                 arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 let html =
                     '<table class="history-table"><thead><tr><th>Amount</th><th>Method</th><th>Account</th><th>Status</th><th>Date</th></tr></thead><tbody>';
-                for (let it of arr) html +=
-                    `<tr><td>${it.amount} coins</td><td>${it.method}</td><td>${it.account} (${it.accountName})</td><td><span class="badge-${it.status}">${it.status}</span></td><td>${new Date(it.timestamp).toLocaleString()}</td></tr>`;
+                for (let it of arr) {
+                    let statusClass = it.status || 'pending';
+                    html +=
+                        `<tr><td><span class="amount-negative">${it.amount} coins</span></td><td>${it.method}</td><td>${it.account} (${it.accountName})</td><td><span class="status-badge ${statusClass}">${statusClass}</span></td><td>${new Date(it.timestamp).toLocaleString()}</td></tr>`;
+                }
                 html += '</tbody></table>';
                 document.getElementById('withdrawHistoryList').innerHTML = html || '<p>No withdrawals</p>';
                 document.getElementById('withdrawHistoryModal').style.display = 'flex';
@@ -4332,8 +4746,7 @@
             if (section === 'tasks') loadTasks();
             if (section === 'earn') loadMySubmissions();
             if (section === 'invite') loadReferralData();
-            if (section === 'profile') { loadDailyRewardGrid();
-                loadTutorialVideo(); }
+            if (section === 'profile') { loadDailyRewardGrid(); }
         }
 
         async function loadTasks() { if (!tasksLoaded) await loadAllTasks();
@@ -4385,7 +4798,6 @@
                     }
                 });
             });
-            // Watch for referral progress updates
             db.ref('task_submissions').on('child_changed', (snap) => {
                 const data = snap.val();
                 if (data && data.status === 'approved' && data.userId) {
@@ -4499,10 +4911,8 @@
                         loadDailyRewardGrid();
                         loadBonusAndCommissionSettings();
                         loadMailBox();
-                        loadTutorialVideo();
                         setupRealtimeListeners();
                         loadMaintenanceAndUpdate();
-                        // Update referral progress for all referred users on load
                         if (currentUser) {
                             db.ref('referrals').orderByChild('referredBy').equalTo(currentUser.uid).once('value')
                                 .then(snap => {
@@ -4529,6 +4939,13 @@
                 cachedOfficialTasks = null;
                 tasksLoaded = false;
                 isAdmin = false;
+                // Remove any task slot listeners
+                for (let key in taskSlotListeners) {
+                    if (taskSlotListeners[key]) {
+                        taskSlotListeners[key]();
+                        delete taskSlotListeners[key];
+                    }
+                }
                 updateLoader(100, 'Please sign in');
                 setTimeout(finishLoading, 300);
             }
@@ -4547,7 +4964,7 @@
             toggleProofTypeFields();
             mailBannerShown = false;
             document.getElementById('newMailBanner').style.display = 'none';
-            setupImgbbLivePreview();
+            setupTaskProofUpload();
             loadBankDetails();
         });
 
@@ -4596,10 +5013,11 @@
         window.copyReferralCode = copyReferralCode;
         window.openAllSubmissionsModal = openAllSubmissionsModal;
         window.openAllReferralsModal = openAllReferralsModal;
-        window.updateTutorialVideo = updateTutorialVideo;
-        window.setupImgbbLivePreview = setupImgbbLivePreview;
         window.claimReferralBonus = claimReferralBonus;
         window.updateReferralProgress = updateReferralProgress;
+        window.removeTaskProofImage = removeTaskProofImage;
+        window.removeDepositImage = removeDepositImage;
+        window.setupTaskProofUpload = setupTaskProofUpload;
     </script>
 </body>
 </html>
