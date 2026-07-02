@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Task Expert - User Panel</title>
 
-    <!-- ===== NO CACHE ===== -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -382,15 +381,15 @@
         /* ===== CARDS ===== */
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #eee;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f0f2f5;
             transition: 0.3s;
         }
         .card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
         }
         .wallet-card {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -428,7 +427,7 @@
             color: #333;
         }
         .btn-sm {
-            padding: 6px 12px;
+            padding: 6px 14px;
             font-size: 12px;
         }
         .btn-success {
@@ -635,11 +634,11 @@
         }
         .modal-content {
             background: white;
-            padding: 20px;
-            border-radius: 20px;
-            max-width: 350px;
-            width: 90%;
-            max-height: 80vh;
+            padding: 24px;
+            border-radius: 24px;
+            max-width: 380px;
+            width: 92%;
+            max-height: 85vh;
             overflow-y: auto;
             position: relative;
             animation: modalFadeIn 0.3s ease;
@@ -647,7 +646,7 @@
         @keyframes modalFadeIn {
             from {
                 opacity: 0;
-                transform: scale(0.9);
+                transform: scale(0.92);
             }
             to {
                 opacity: 1;
@@ -696,6 +695,7 @@
             padding: 20px;
             position: sticky;
             top: 0;
+            z-index: 5;
         }
         .step-box {
             background: #f8f9fa;
@@ -726,9 +726,9 @@
 
         /* ===== REFERRAL ===== */
         .referral-code {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 10px;
+            background: #f0f2f5;
+            padding: 12px 16px;
+            border-radius: 12px;
             text-align: center;
             font-family: monospace;
             font-size: 18px;
@@ -736,15 +736,17 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 10px;
         }
         .copy-btn {
             background: #1e3c72;
             color: white;
             border: none;
-            padding: 5px 12px;
+            padding: 5px 14px;
             border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
+            font-size: 13px;
         }
         .copy-btn:hover {
             transform: scale(1.05);
@@ -795,6 +797,67 @@
             margin: 0;
         }
 
+        /* ===== REFERRAL SHARE CARD ===== */
+        .referral-share-card {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            border: 2px solid #f7971e;
+            text-align: center;
+        }
+        .referral-share-card .fire-icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .referral-share-card .share-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e3c72;
+            margin-bottom: 4px;
+        }
+        .referral-share-card .share-desc {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .referral-share-card .share-link {
+            background: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            word-break: break-all;
+            color: #1e3c72;
+            font-weight: 600;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .referral-share-card .share-link .share-link-text {
+            font-size: 12px;
+            flex: 1;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .referral-share-card .share-link .copy-btn-sm {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .referral-share-card .share-link .copy-btn-sm:hover {
+            background: #2a5298;
+        }
+
         /* ===== DAILY REWARD ===== */
         .daily-grid {
             display: grid;
@@ -809,6 +872,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: 0.3s;
+            font-size: 12px;
         }
         .daily-day:hover {
             transform: scale(1.05);
@@ -1104,38 +1168,53 @@
         textarea,
         select {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            padding: 12px 14px;
+            margin: 6px 0;
+            border: 1.5px solid #e0e4ea;
+            border-radius: 12px;
             font-size: 14px;
             transition: 0.2s;
+            background: #fafbfc;
         }
         input:focus,
         textarea:focus,
         select:focus {
             outline: none;
             border-color: #1e3c72;
-            box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.08);
+            background: #fff;
+        }
+        label.input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-top: 8px;
+            margin-bottom: 2px;
         }
         .badge-pending {
             background: #ffc107;
             color: #333;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 12px;
+            font-weight: 600;
         }
         .badge-approved {
             background: #28a745;
             color: white;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
         .badge-rejected {
             background: #dc3545;
             color: white;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
         table {
             width: 100%;
@@ -1830,11 +1909,6 @@
             height: 100px;
         }
 
-        /* ===== REFERRAL BONUS HIDDEN ===== */
-        .referral-bonus-hint {
-            display: none !important;
-        }
-
         /* ===== TASK LEFT SLOTS REAL-TIME ===== */
         .task-slots-badge {
             display: inline-block;
@@ -2035,6 +2109,139 @@
             font-weight: 600;
             margin-left: 8px;
         }
+
+        /* ===== MY TASK DETAILS - IMPROVED DESIGN ===== */
+        .my-task-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #eef0f4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: 0.3s;
+        }
+        .my-task-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+        .my-task-card .task-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 4px;
+        }
+        .my-task-card .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            font-size: 13px;
+            color: #555;
+            margin: 6px 0;
+        }
+        .my-task-card .task-meta .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .my-task-card .task-meta .meta-item i {
+            color: #1e3c72;
+            font-size: 14px;
+        }
+        .my-task-card .task-progress {
+            background: #eef0f4;
+            border-radius: 8px;
+            height: 6px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        .my-task-card .task-progress .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            border-radius: 8px;
+            transition: width 0.6s ease;
+        }
+        .my-task-card .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .my-task-card .task-status-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .my-task-card .task-status-badge.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .my-task-card .task-status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .my-task-card .task-status-badge.active {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        /* ===== WITHDRAW - IMPROVED DESIGN ===== */
+        .withdraw-card {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8edf5;
+            margin-bottom: 12px;
+        }
+        .withdraw-card .balance-display {
+            text-align: center;
+            padding: 12px 0;
+        }
+        .withdraw-card .balance-display .amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e3c72;
+        }
+        .withdraw-card .balance-display .label {
+            font-size: 14px;
+            color: #888;
+        }
+        .withdraw-card .fee-info {
+            background: #eef4ff;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #1e3c72;
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        /* ===== DEPOSIT - IMPROVED DESIGN ===== */
+        .deposit-card {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e8edf5;
+            margin-bottom: 12px;
+        }
+        .deposit-card .bank-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eef0f4;
+            font-size: 14px;
+        }
+        .deposit-card .bank-detail:last-child {
+            border-bottom: none;
+        }
+        .deposit-card .bank-detail .bank-label {
+            font-weight: 600;
+            color: #555;
+        }
+        .deposit-card .bank-detail .bank-value {
+            color: #1e3c72;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -2213,9 +2420,18 @@
             </div>
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
+                    <!-- ===== REFERRAL SHARE CARD ===== -->
+                    <div class="referral-share-card">
+                        <span class="fire-icon">🔥</span>
+                        <div class="share-title">Earn Daily Money From Home!</div>
+                        <div class="share-desc">Complete simple tasks &amp; start earning 💰</div>
+                        <div class="share-link">
+                            <span class="share-link-text" id="shareLinkDisplay">https://taskexpertapp.pages.dev/?ref=123456</span>
+                            <button class="copy-btn-sm" onclick="copyShareLink()"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
                     <div class="referral-code"><span><i class="fas fa-code-branch"></i> <strong id="referralCode">123456</strong></span><button class="copy-btn" onclick="copyReferralCode()">Copy</button></div>
                     <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins</div>
-                    <!-- Hidden bonus hint removed -->
                     <div class="referral-stats">
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
                         <div><div id="referralEarnings">0</div><div>Earnings</div></div>
@@ -2232,7 +2448,6 @@
                 </div>
                 <div class="card" id="adminSettingsCard" style="display:none;">
                     <h3>⚙️ Admin Settings</h3>
-                    <!-- Tutorial video removed -->
                     <p style="color:#999;font-size:12px;">Admin panel coming soon.</p>
                 </div>
             </div>
@@ -2260,43 +2475,56 @@
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openDepositHistory()"><i class="fas fa-history"></i></div>
-            <h3>Deposit Coins</h3>
-            <p>1000 Coins = 100 PKR</p>
-            <div class="card">
-                <p>Easypaisa: <span id="bankEasypaisa">Loading...</span></p>
-                <p>JazzCash: <span id="bankJazzCash">Loading...</span></p>
+            <h3>💳 Deposit Coins</h3>
+            <p style="color:#666;font-size:14px;">1000 Coins = 100 PKR</p>
+            <div class="deposit-card">
+                <div class="bank-detail"><span class="bank-label">🏦 Easypaisa</span><span class="bank-value" id="bankEasypaisa">Loading...</span></div>
+                <div class="bank-detail"><span class="bank-label">🏦 JazzCash</span><span class="bank-value" id="bankJazzCash">Loading...</span></div>
             </div>
-            <div class="info-text" id="depositBonusInfo">Deposit Bonus: Loading...</div>
-            <input type="number" id="depositAmount" placeholder="Amount" />
+            <div class="info-text" id="depositBonusInfo">🎁 Deposit Bonus: Loading...</div>
+            <label class="input-label">Amount (Coins)</label>
+            <input type="number" id="depositAmount" placeholder="e.g. 1000" />
+            <label class="input-label">Payment Method</label>
             <select id="paymentMethod">
                 <option value="Easypaisa">Easypaisa</option>
                 <option value="JazzCash">JazzCash</option>
             </select>
-            <input type="text" id="depositTid" placeholder="TID" />
+            <label class="input-label">TID (Transaction ID)</label>
+            <input type="text" id="depositTid" placeholder="Enter TID" />
+            <label class="input-label">📸 Upload Screenshot</label>
             <div class="upload-area" onclick="document.getElementById('depositProofInput').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <div class="upload-text">Upload Screenshot</div>
-                <div class="upload-sub">Tap to select image</div>
+                <div class="upload-text">Tap to select image</div>
+                <div class="upload-sub">JPG, PNG • Max 5MB</div>
             </div>
             <input type="file" id="depositProofInput" accept="image/*" style="display:none" />
             <div id="depositPreview"></div>
-            <button class="btn" onclick="requestDeposit()" id="depositSubmitBtn">Submit</button>
-            <button class="btn btn-danger" onclick="closeModal('depositModal')">Cancel</button>
+            <button class="btn" onclick="requestDeposit()" id="depositSubmitBtn" style="width:100%;margin-top:8px;">Submit Deposit</button>
+            <button class="btn btn-danger" onclick="closeModal('depositModal')" style="width:100%;">Cancel</button>
         </div>
     </div>
 
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openWithdrawHistory()"><i class="fas fa-history"></i></div>
-            <h3>Withdraw Coins</h3>
-            <p>Withdrawable: <strong id="withdrawableBalance">0</strong></p>
-            <div class="info-text" id="withdrawCommissionInfo">Fee: Loading...</div>
-            <input type="number" id="withdrawAmount" placeholder="Amount" />
+            <h3>💸 Withdraw Coins</h3>
+            <div class="withdraw-card">
+                <div class="balance-display">
+                    <div class="label">Withdrawable Balance</div>
+                    <div class="amount" id="withdrawableBalance">0</div>
+                </div>
+                <div class="fee-info" id="withdrawCommissionInfo">💸 Fee: 0% (deducted on approval)</div>
+            </div>
+            <label class="input-label">Amount (Coins)</label>
+            <input type="number" id="withdrawAmount" placeholder="e.g. 1000" />
+            <label class="input-label">Withdraw Method</label>
             <select id="withdrawMethod"><option>Easypaisa</option><option>JazzCash</option></select>
-            <input type="text" id="withdrawAccount" placeholder="Account" />
-            <input type="text" id="withdrawName" placeholder="Name" />
-            <button class="btn" onclick="requestWithdraw()" id="withdrawSubmitBtn">Submit</button>
-            <button class="btn btn-danger" onclick="closeModal('withdrawModal')">Cancel</button>
+            <label class="input-label">Account Number</label>
+            <input type="text" id="withdrawAccount" placeholder="Enter account number" />
+            <label class="input-label">Account Holder Name</label>
+            <input type="text" id="withdrawName" placeholder="Enter full name" />
+            <button class="btn" onclick="requestWithdraw()" id="withdrawSubmitBtn" style="width:100%;margin-top:8px;">Submit Withdrawal</button>
+            <button class="btn btn-danger" onclick="closeModal('withdrawModal')" style="width:100%;">Cancel</button>
         </div>
     </div>
 
@@ -2304,7 +2532,7 @@
     <div id="createTaskModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openMyPostedTasks()"><i class="fas fa-history"></i></div>
-            <h3>Create Your Task</h3>
+            <h3>➕ Create Your Task</h3>
             <div class="commission-info">20% commission deducted</div>
             <div class="platform-selector" id="platformSelector">
                 <div data-platform="youtube" class="platform-card"><i class="fab fa-youtube"></i><span>YouTube</span></div>
@@ -2326,23 +2554,27 @@
                 </div>
                 <div style="font-size:12px; color:#666;">Choose how users will submit proof for this task.</div>
             </div>
-            <input type="text" id="taskTitle" placeholder="Task Title" />
-            <textarea id="taskDesc" rows="2" placeholder="Description"></textarea>
-            <textarea id="taskSteps" rows="2" placeholder="Steps (one per line)"></textarea>
-            <input type="text" id="taskLink" placeholder="Link" />
+            <label class="input-label">Task Title</label>
+            <input type="text" id="taskTitle" placeholder="Enter task title" />
+            <label class="input-label">Description</label>
+            <textarea id="taskDesc" rows="2" placeholder="Describe the task"></textarea>
+            <label class="input-label">Steps (one per line)</label>
+            <textarea id="taskSteps" rows="2" placeholder="Step 1: ..."></textarea>
+            <label class="input-label">Link</label>
+            <input type="text" id="taskLink" placeholder="https://..." />
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <div style="flex:1;min-width:120px;">
-                    <label style="font-size:12px;font-weight:500;color:#555;">Coins/User</label>
+                    <label class="input-label">Coins/User</label>
                     <input type="number" id="taskCoins" min="1" placeholder="e.g. 5" />
                 </div>
                 <div style="flex:1;min-width:120px;">
-                    <label style="font-size:12px;font-weight:500;color:#555;">Members</label>
+                    <label class="input-label">Members</label>
                     <input type="number" id="taskMembers" min="1" placeholder="e.g. 10" />
                 </div>
             </div>
             <div class="info-text">Total Cost: <strong id="totalCostPreview">0</strong> coins</div>
-            <button class="btn" onclick="submitTaskRequest()" id="taskSubmitBtn">Submit Request</button>
-            <button class="btn btn-danger" onclick="closeModal('createTaskModal')">Cancel</button>
+            <button class="btn" onclick="submitTaskRequest()" id="taskSubmitBtn" style="width:100%;">Submit Request</button>
+            <button class="btn btn-danger" onclick="closeModal('createTaskModal')" style="width:100%;">Cancel</button>
         </div>
     </div>
 
@@ -2351,7 +2583,7 @@
         <div class="modal-content">
             <h3>📋 All Submissions</h3>
             <div id="allSubmissionsList"></div>
-            <button class="btn btn-danger" onclick="closeModal('allSubmissionsModal')">Close</button>
+            <button class="btn btn-danger" onclick="closeModal('allSubmissionsModal')" style="width:100%;">Close</button>
         </div>
     </div>
 
@@ -2360,38 +2592,36 @@
         <div class="modal-content">
             <h3>👥 All Referrals</h3>
             <div id="allReferralsList"></div>
-            <button class="btn btn-danger" onclick="closeModal('allReferralsModal')">Close</button>
+            <button class="btn btn-danger" onclick="closeModal('allReferralsModal')" style="width:100%;">Close</button>
         </div>
     </div>
 
     <div id="depositHistoryModal" class="modal">
-        <div class="modal-content"><h3>Deposit History</h3><div id="depositHistoryList"></div><button class="btn btn-danger" onclick="closeModal('depositHistoryModal')">Close</button></div>
+        <div class="modal-content"><h3>📜 Deposit History</h3><div id="depositHistoryList"></div><button class="btn btn-danger" onclick="closeModal('depositHistoryModal')" style="width:100%;">Close</button></div>
     </div>
     <div id="withdrawHistoryModal" class="modal">
-        <div class="modal-content"><h3>Withdraw History</h3><div id="withdrawHistoryList"></div><button class="btn btn-danger" onclick="closeModal('withdrawHistoryModal')">Close</button></div>
+        <div class="modal-content"><h3>📜 Withdraw History</h3><div id="withdrawHistoryList"></div><button class="btn btn-danger" onclick="closeModal('withdrawHistoryModal')" style="width:100%;">Close</button></div>
     </div>
     <div id="mailModal" class="modal">
-        <div class="modal-content"><h3>📬 Mail Box</h3><div id="mailList"></div><button class="btn btn-danger" onclick="closeModal('mailModal')">Close</button></div>
+        <div class="modal-content"><h3>📬 Mail Box</h3><div id="mailList"></div><button class="btn btn-danger" onclick="closeModal('mailModal')" style="width:100%;">Close</button></div>
     </div>
     <div id="myPostedTasksModal" class="modal">
-        <div class="modal-content" style="max-width:400px"><h3>My Posted Tasks</h3><div id="myPostedTasksList"></div><button class="btn btn-danger" onclick="closeModal('myPostedTasksModal')">Close</button></div>
+        <div class="modal-content" style="max-width:400px"><h3>📋 My Posted Tasks</h3><div id="myPostedTasksList"></div><button class="btn btn-danger" onclick="closeModal('myPostedTasksModal')" style="width:100%;">Close</button></div>
     </div>
     <div id="myTaskDetailsScreen" class="my-task-details-screen">
-        <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeMyTaskDetails()"></i><h2>My Task Details</h2></div>
-        <div class="task-detail-body" id="myTaskDetailBody"></div>
+        <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeMyTaskDetails()"></i><h2>📋 My Task Details</h2></div>
+        <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
     <!-- ===== TASK DETAIL MODAL ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
-        <div class="task-detail-body">
-            <div class="card"><h3>Description</h3><p id="taskDetailDesc"></p></div>
-            <div class="card"><h3>Steps</h3><div id="taskDetailSteps"></div></div>
-            <div class="card"><h3>Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
+        <div class="task-detail-body" style="padding:16px;">
+            <div class="card"><h3>📝 Description</h3><p id="taskDetailDesc"></p></div>
+            <div class="card"><h3>📋 Steps</h3><div id="taskDetailSteps"></div></div>
+            <div class="card"><h3>🔗 Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
             <div class="card">
-                <h3 id="proofSectionTitle">Submit Proof</h3>
-
-                <!-- ===== IMAGE PROOF AREA - IMPROVED UPLOAD ===== -->
+                <h3 id="proofSectionTitle">📤 Submit Proof</h3>
                 <div id="imageProofArea">
                     <div class="proof-upload-section">
                         <div class="upload-area" id="taskProofUploadArea" onclick="document.getElementById('taskProofInput').click()">
@@ -2404,21 +2634,18 @@
                         <div style="font-size:12px; color:#888; margin-top:6px; text-align:center;">✅ Upload a clear screenshot as proof</div>
                     </div>
                 </div>
-
-                <!-- ===== TEXT PROOF AREA ===== -->
                 <div id="textProofArea" style="display:none;">
                     <textarea id="proofTextInput" class="proof-textarea" placeholder="Enter your proof details here..."></textarea>
                     <div style="font-size:12px; color:#666; margin-top:4px;">Please provide detailed proof text.</div>
                 </div>
-
-                <button class="btn" onclick="submitProof()" id="submitProofBtn">Submit Task</button>
+                <button class="btn" onclick="submitProof()" id="submitProofBtn" style="width:100%;">Submit Task</button>
                 <div id="taskSubmitStatus" style="margin-top:8px; font-size:13px; color:#666; text-align:center;"></div>
             </div>
         </div>
     </div>
 
     <div id="submissionDetailModal" class="modal">
-        <div class="modal-content"><h3>Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')">Close</button></div>
+        <div class="modal-content"><h3>📄 Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')" style="width:100%;">Close</button></div>
     </div>
     <div id="toast" class="toast"></div>
 
@@ -2469,7 +2696,6 @@
         let isAdmin = false;
         let allReferrals = [];
 
-        // Task proof image upload
         let taskProofImage = null;
         let taskProofImageData = null;
 
@@ -2486,12 +2712,11 @@
         let minWithdraw = 1000;
 
         // ============================================================
-        // CONNECTION STATE - REMOVED OFFLINE INDICATOR
+        // CONNECTION STATE
         // ============================================================
         const connectedRef = db.ref('.info/connected');
         connectedRef.on('value', (snap) => {
             isOnline = snap.val() === true;
-            // Offline indicator removed per user request
         });
 
         // ============================================================
@@ -2727,6 +2952,8 @@
             } else {
                 document.getElementById('adminSettingsCard').style.display = 'none';
             }
+            // Update share link
+            updateShareLink();
         }
 
         function updateUI() {
@@ -2740,6 +2967,13 @@
             document.getElementById('profileCoins').innerText = currentUserData.coins;
             document.getElementById('referralCode').innerText = currentUserData.referralCode;
             updateEarningsDisplay();
+            updateShareLink();
+        }
+
+        function updateShareLink() {
+            const code = currentUserData?.referralCode || '123456';
+            const link = `https://taskexpertapp.pages.dev/?ref=${code}`;
+            document.getElementById('shareLinkDisplay').innerText = link;
         }
 
         async function getReferralBonusAmount() { try { const snap = await db.ref('settings/referralBonus').once(
@@ -3075,7 +3309,7 @@
         }
 
         // ============================================================
-        // TASK PROOF - IMAGE UPLOAD (replaces ImgBB link)
+        // TASK PROOF - IMAGE UPLOAD
         // ============================================================
         function setupTaskProofUpload() {
             const input = document.getElementById('taskProofInput');
@@ -3084,14 +3318,12 @@
 
             if (!input || !preview) return;
 
-            // Click on upload area triggers file input
             uploadArea.addEventListener('click', function(e) {
                 if (e.target.tagName !== 'BUTTON' && !e.target.closest('.remove-img-btn')) {
                     input.click();
                 }
             });
 
-            // Drag and drop
             uploadArea.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 this.classList.add('dragover');
@@ -3161,7 +3393,6 @@
             const uploadArea = document.getElementById('taskProofUploadArea');
             uploadArea.style.borderColor = '#1e3c72';
             uploadArea.style.background = '#f8faff';
-            showToast('Image removed');
         }
 
         // ============================================================
@@ -3199,7 +3430,6 @@
                     const officialSnap = await db.ref('tasks/official').limitToFirst(50).once('value');
                     const officialData = officialSnap.val() || {};
                     for (let [id, t] of Object.entries(officialData)) {
-                        // Calculate remaining slots
                         const counts = countMap[id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         const maxLimit = t.maxLimit || t.left || 0;
@@ -3265,8 +3495,6 @@
                 updateTaskCounts();
                 displayFilteredTasks();
                 displayOfficialTasks();
-
-                // Set up real-time listeners for task slots (race condition fix)
                 setupTaskSlotListeners();
 
             } catch (err) {
@@ -3281,13 +3509,9 @@
         // ============================================================
         // RACE CONDITION FIX: REAL-TIME SLOT LISTENERS (Firebase)
         // ============================================================
-        // یہ فنکشن ہر ٹاسک کے لیے ریئل ٹائم لسٹنر لگاتا ہے تاکہ جب کوئی
-        // دوسرا صارف سبمٹ کرے تو باقی سب کو فوری اپ ڈیٹ مل جائے۔
-        // ============================================================
         let taskSlotListeners = {};
 
         function setupTaskSlotListeners() {
-            // Remove old listeners to avoid duplicates
             for (let key in taskSlotListeners) {
                 if (taskSlotListeners[key]) {
                     taskSlotListeners[key]();
@@ -3295,7 +3519,6 @@
                 }
             }
 
-            // Listen for changes in task_submissions to update counts
             const subRef = db.ref('task_submissions');
             const listener = subRef.on('value', (snap) => {
                 const allSubs = snap.val() || {};
@@ -3310,7 +3533,6 @@
                     else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
                 }
 
-                // Update official tasks left counts
                 if (cachedOfficialTasks) {
                     for (let task of cachedOfficialTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
@@ -3322,7 +3544,6 @@
                     displayOfficialTasks();
                 }
 
-                // Update user tasks left counts
                 if (cachedUserTasks) {
                     for (let task of cachedUserTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
@@ -3335,7 +3556,6 @@
                     updateTaskCounts();
                 }
 
-                // Update task detail modal if open
                 if (currentTask) {
                     updateTaskDetailSlots(currentTask.id);
                 }
@@ -3345,11 +3565,9 @@
         }
 
         function updateTaskDetailSlots(taskId) {
-            // Check if the task detail is showing this task
             const modal = document.getElementById('taskDetailModal');
             if (modal.style.display !== 'block') return;
 
-            // Find the task in cached lists
             let task = null;
             if (cachedUserTasks) {
                 task = cachedUserTasks.find(t => t.id === taskId);
@@ -3368,7 +3586,7 @@
                     submitBtn.innerText = 'Full';
                 } else {
                     statusDiv.innerHTML =
-                    `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
+                        `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
                     const submitBtn = document.getElementById('submitProofBtn');
                     if (!submitBtn.disabled) {
                         submitBtn.classList.remove('btn-submit-disabled');
@@ -3461,6 +3679,9 @@
                 '<p style="color:#666;text-align:center;padding:20px;">✨ No tasks available for this platform.</p>';
         }
 
+        // ============================================================
+        // OFFICIAL TASKS - NOW HIDE COMPLETELY LIKE USER TASKS
+        // ============================================================
         function displayOfficialTasks() {
             if (!cachedOfficialTasks || cachedOfficialTasks.length === 0) {
                 document.getElementById('officialTasksList').innerHTML =
@@ -3468,24 +3689,20 @@
                 return;
             }
             let officialHtml = '';
-            for (let t of cachedOfficialTasks) {
-                if (userSubmissionsMap[t.id]) {
-                    // User already submitted - show as pending/submitted
-                    officialHtml +=
-                        `<div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
-                                    <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
-                                    <div>+${t.reward}</div>
-                                </div>`;
-                    continue;
-                }
-                if (t.left <= 0) {
-                    officialHtml +=
-                        `<div class="task-item" style="opacity:0.5;border-left-color:#dc3545;cursor:default;">
-                                    <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-full-badge">❌ Full</span></small></div>
-                                    <div>+${t.reward}</div>
-                                </div>`;
-                    continue;
-                }
+            // Filter out tasks that user has already submitted OR slots are full
+            const available = cachedOfficialTasks.filter(t => {
+                if (userSubmissionsMap[t.id]) return false;
+                if (t.left <= 0) return false;
+                return true;
+            });
+
+            if (available.length === 0) {
+                document.getElementById('officialTasksList').innerHTML =
+                    '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
+                return;
+            }
+
+            for (let t of available) {
                 let slotsBadge = '';
                 if (t.left <= 3) {
                     slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
@@ -3524,7 +3741,6 @@
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
             if (userSubmissionsMap[id]) { showToast("Already submitted"); return; }
 
-            // Check if task still has slots
             let task = null;
             if (type === 'official') {
                 task = cachedOfficialTasks?.find(t => t.id === id);
@@ -3540,7 +3756,8 @@
             document.getElementById('taskDetailTitle').innerText = title;
             document.getElementById('taskDetailReward').innerHTML = `+${reward} coins`;
             let proofTypeLabel = currentTask.proofType === 'text' ? '📝 Text Proof' : '🖼️ Image Proof';
-            document.getElementById('proofSectionTitle').innerHTML = `Submit Proof <span style="font-size:12px;color:#666;font-weight:normal;">(${proofTypeLabel})</span>`;
+            document.getElementById('proofSectionTitle').innerHTML =
+                `📤 Submit Proof <span style="font-size:12px;color:#666;font-weight:normal;">(${proofTypeLabel})</span>`;
             document.getElementById('taskDetailDesc').innerHTML = desc.replace(/\n/g, '<br>');
             let stepsHtml = '';
             (steps || '').split('\n').forEach((s, i) => { if (s.trim()) stepsHtml +=
@@ -3549,19 +3766,16 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
-            // Reset proof image
             removeTaskProofImage();
             document.getElementById('proofTextInput').value = '';
             proofTextValue = '';
 
-            // Reset submit button
             const submitBtn = document.getElementById('submitProofBtn');
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-submit-disabled');
             submitBtn.innerText = 'Submit Task';
             document.getElementById('taskSubmitStatus').innerHTML = '';
 
-            // Show slot info
             if (task) {
                 const statusDiv = document.getElementById('taskSubmitStatus');
                 if (task.left > 0) {
@@ -3581,7 +3795,6 @@
             } else {
                 document.getElementById('imageProofArea').style.display = 'block';
                 document.getElementById('textProofArea').style.display = 'none';
-                // Reset the upload area
                 const uploadArea = document.getElementById('taskProofUploadArea');
                 uploadArea.style.borderColor = '#1e3c72';
                 uploadArea.style.background = '#f8faff';
@@ -3591,21 +3804,24 @@
 
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
+            // Clean up state to prevent "back without submit" errors
             currentTask = null;
             removeTaskProofImage();
+            document.getElementById('proofTextInput').value = '';
+            document.getElementById('taskSubmitStatus').innerHTML = '';
+            const submitBtn = document.getElementById('submitProofBtn');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('btn-submit-disabled');
+            submitBtn.innerText = 'Submit Task';
         }
 
         // ============================================================
         // SUBMIT PROOF - WITH RACE CONDITION FIX (Firebase Transaction)
         // ============================================================
-        // یہ فنکشن Firebase Transaction کا استعمال کرتا ہے تاکہ
-        // ایک وقت میں صرف ایک صارف سبمٹ کر سکے۔ یہ ریس کنڈیشن کو روکتا ہے۔
-        // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
 
             const submitBtn = document.getElementById('submitProofBtn');
-            // Disable button to prevent double-click
             if (submitBtn.disabled) return;
             submitBtn.disabled = true;
             submitBtn.classList.add('btn-loading');
@@ -3624,14 +3840,12 @@
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Submit Task'; return; }
 
-                    // Use transaction to atomically decrement slot
                     const taskRef = currentTask.type === 'official' ?
                         db.ref(`tasks/official/${currentTask.id}`) :
                         db.ref(`tasks/user/${currentTask.id}`);
 
                     const result = await taskRef.transaction((currentData) => {
                         if (!currentData) return currentData;
-                        // For official tasks: use maxLimit, for user tasks: use requiredUsers
                         const limit = currentTask.type === 'official' ?
                             (currentData.maxLimit || 0) :
                             (currentData.requiredUsers || 0);
@@ -3640,15 +3854,9 @@
                         const pendingReject = currentData.pendingReject || 0;
                         const totalFilled = filled + pending + pendingReject;
                         if (totalFilled >= limit) {
-                            // Slot full - abort
                             return undefined;
                         }
-                        // Increment pending count
-                        if (currentTask.type === 'official') {
-                            currentData.pending = (currentData.pending || 0) + 1;
-                        } else {
-                            currentData.pending = (currentData.pending || 0) + 1;
-                        }
+                        currentData.pending = (currentData.pending || 0) + 1;
                         return currentData;
                     });
 
@@ -3660,7 +3868,6 @@
                         return;
                     }
 
-                    // Save submission
                     await db.ref('task_submissions').push({
                         userId: currentUser.uid,
                         username: currentUserData.username,
@@ -3696,7 +3903,6 @@
                     return;
                 }
 
-                // Upload image using the existing upload system
                 const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                 let uploadedUrl;
                 try {
@@ -3719,7 +3925,6 @@
                     return;
                 }
 
-                // Use transaction to atomically decrement slot
                 const taskRef = currentTask.type === 'official' ?
                     db.ref(`tasks/official/${currentTask.id}`) :
                     db.ref(`tasks/user/${currentTask.id}`);
@@ -3736,11 +3941,7 @@
                     if (totalFilled >= limit) {
                         return undefined;
                     }
-                    if (currentTask.type === 'official') {
-                        currentData.pending = (currentData.pending || 0) + 1;
-                    } else {
-                        currentData.pending = (currentData.pending || 0) + 1;
-                    }
+                    currentData.pending = (currentData.pending || 0) + 1;
                     return currentData;
                 });
 
@@ -3752,7 +3953,6 @@
                     return;
                 }
 
-                // Save submission
                 await db.ref('task_submissions').push({
                     userId: currentUser.uid,
                     username: currentUserData.username,
@@ -3928,7 +4128,7 @@
         }
 
         // ============================================================
-        // MY POSTED TASKS, MY TASK DETAILS
+        // MY POSTED TASKS, MY TASK DETAILS (IMPROVED DESIGN)
         // ============================================================
         async function openMyPostedTasks() {
             try {
@@ -3963,6 +4163,9 @@
             await openMyTaskDetails(taskTitle);
         }
 
+        // ============================================================
+        // MY TASK DETAILS - IMPROVED DESIGN WITH PROGRESS BARS
+        // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
             try {
                 await cleanupCompletedTasks();
@@ -3971,7 +4174,7 @@
                 let tasks = userTasksSnap.val() || {};
                 let allSubsSnap = await db.ref('task_submissions').once('value');
                 let allSubs = allSubsSnap.val() || {};
-                let html = '<h3>Your Approved Tasks</h3>';
+                let html = '<h3 style="margin-bottom:12px;color:#1e3c72;">📋 Your Approved Tasks</h3>';
                 let hasTasks = false;
                 let taskIds = Object.keys(tasks);
                 taskIds.sort((a, b) => (tasks[b].timestamp || 0) - (tasks[a].timestamp || 0));
@@ -3981,8 +4184,6 @@
                         if (tasks[taskId].title === scrollToTaskTitle) { targetTaskId = taskId; break; }
                     }
                 }
-
-                let completedTaskIds = [];
 
                 for (let taskId of taskIds) {
                     let t = tasks[taskId];
@@ -4007,20 +4208,30 @@
                     subsForTask.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                     let required = t.requiredUsers || 0;
                     let isCompleted = (approvedCount >= required);
+                    let progressPct = Math.min(100, Math.round((approvedCount / required) * 100));
 
-                    if (isCompleted) {
-                        completedTaskIds.push(taskId);
-                        continue;
-                    }
+                    if (isCompleted) continue;
 
                     let isTarget = (targetTaskId === taskId);
-                    html +=
-                        `<div style="border-bottom:1px solid #ddd;padding:10px 0; ${isTarget ? 'background:#e8f0fe; border-radius:8px; padding:10px;' : ''}" data-taskid="${taskId}" id="task_${taskId}">
-                                    <div><strong>${escapeHtml(t.title)}</strong></div>
-                                    <div>Reward: ${t.rewardPerUser} coins/user</div>
-                                    <div>Completed: ${approvedCount}/${required} (Pending: ${pendingCount}, Pending Reject: ${pendingRejectCount}, Rejected: ${rejectedCount})</div>`;
+                    let statusBadge = progressPct >= 100 ? 'completed' : (approvedCount > 0 ? 'active' : 'pending');
+
+                    html += `
+                                <div class="my-task-card" ${isTarget ? 'style="border:2px solid #1e3c72;background:#f8faff;"' : ''} id="task_${taskId}">
+                                    <div class="task-title">${escapeHtml(t.title)}</div>
+                                    <div class="task-meta">
+                                        <span class="meta-item"><i class="fas fa-coins"></i> ${t.rewardPerUser} coins/user</span>
+                                        <span class="meta-item"><i class="fas fa-users"></i> ${approvedCount}/${required} completed</span>
+                                        <span class="task-status-badge ${statusBadge}">${statusBadge === 'completed' ? '✅ Done' : (statusBadge === 'active' ? '🔄 In Progress' : '⏳ Pending')}</span>
+                                    </div>
+                                    <div class="task-progress">
+                                        <div class="progress-fill" style="width:${progressPct}%;"></div>
+                                    </div>
+                                    <div style="font-size:12px;color:#888;margin:4px 0;">
+                                        Pending: ${pendingCount} | Pending Reject: ${pendingRejectCount} | Rejected: ${rejectedCount}
+                                    </div>`;
+
                     if (subsForTask.length > 0) {
-                        html += `<div style="margin-top:10px;"><strong>Submissions:</strong>`;
+                        html += `<div style="margin-top:8px;"><strong>Submissions:</strong>`;
                         let displaySubs = subsForTask.slice(0, 3);
                         for (let s of displaySubs) {
                             html += buildSubmissionHtml(s, taskId, t.rewardPerUser);
@@ -4031,27 +4242,27 @@
                                 `<button class="view-all-submissions-btn" onclick="viewTaskDetails('${taskId}')">📋 View All (${subsForTask.length} submissions)</button>`;
                         }
                     } else {
-                        html += `<div style="color:#999;font-size:12px;">No submissions yet.</div>`;
+                        html += `<div style="color:#999;font-size:12px;margin-top:6px;">No submissions yet.</div>`;
                     }
                     html +=
-                        `<button class="btn btn-sm" style="background:#764ba2;margin-top:5px;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
+                        `<div class="task-actions"><button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
+                    html += `</div>`;
                 }
 
-                if (!hasTasks) html += '<p>No approved tasks yet.</p>';
+                if (!hasTasks) html += '<p style="color:#666;">No approved tasks yet.</p>';
                 document.getElementById('myTaskDetailBody').innerHTML = html;
                 document.getElementById('myTaskDetailsScreen').style.display = 'block';
+
                 if (targetTaskId) {
                     setTimeout(() => {
                         const targetEl = document.getElementById(`task_${targetTaskId}`);
                         if (targetEl) {
                             targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            targetEl.style.backgroundColor = '#e8f0fe';
-                            targetEl.style.borderRadius = '8px';
-                            targetEl.style.padding = '10px';
+                            targetEl.style.border = '2px solid #1e3c72';
+                            targetEl.style.background = '#f0f6ff';
                             setTimeout(() => {
-                                targetEl.style.backgroundColor = '';
-                                targetEl.style.borderRadius = '';
-                                targetEl.style.padding = '';
+                                targetEl.style.border = '';
+                                targetEl.style.background = '';
                             }, 3000);
                         }
                     }, 300);
@@ -4305,7 +4516,7 @@
         }
 
         // ============================================================
-        // DEPOSIT
+        // DEPOSIT (IMPROVED)
         // ============================================================
         let depositImage = null;
 
@@ -4423,7 +4634,7 @@
         }
 
         // ============================================================
-        // WITHDRAW
+        // WITHDRAW (IMPROVED)
         // ============================================================
         function showWithdrawModal() {
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
@@ -4510,12 +4721,12 @@
                 document.getElementById('depositBonusInfo').innerText =
                     `🎁 Deposit Bonus: ${depositBonusPercent}% (extra on approval)`;
                 document.getElementById('withdrawCommissionInfo').innerText =
-                    `💸 Withdrawal Fee: ${withdrawCommissionPercent}% (deducted on approval)`;
+                    `💸 Fee: ${withdrawCommissionPercent}% (deducted on approval)`;
             } catch (e) {
                 depositBonusPercent = 0;
                 withdrawCommissionPercent = 0;
                 document.getElementById('depositBonusInfo').innerText = `🎁 Deposit Bonus: 0%`;
-                document.getElementById('withdrawCommissionInfo').innerText = `💸 Withdrawal Fee: 0%`;
+                document.getElementById('withdrawCommissionInfo').innerText = `💸 Fee: 0%`;
             }
         }
 
@@ -4808,7 +5019,7 @@
         }
 
         // ============================================================
-        // COPY REFERRAL CODE
+        // COPY FUNCTIONS
         // ============================================================
         function copyReferralCode() {
             const code = document.getElementById('referralCode').innerText;
@@ -4820,6 +5031,19 @@
                 document.execCommand('copy');
                 document.body.removeChild(input);
                 showToast('Referral code copied!');
+            });
+        }
+
+        function copyShareLink() {
+            const link = document.getElementById('shareLinkDisplay').innerText;
+            navigator.clipboard.writeText(link).then(() => showToast('Share link copied!')).catch(() => {
+                const input = document.createElement('input');
+                input.value = link;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('Share link copied!');
             });
         }
 
@@ -4939,7 +5163,6 @@
                 cachedOfficialTasks = null;
                 tasksLoaded = false;
                 isAdmin = false;
-                // Remove any task slot listeners
                 for (let key in taskSlotListeners) {
                     if (taskSlotListeners[key]) {
                         taskSlotListeners[key]();
@@ -5011,6 +5234,7 @@
         window.openImageModal = openImageModal;
         window.closeImageModal = closeImageModal;
         window.copyReferralCode = copyReferralCode;
+        window.copyShareLink = copyShareLink;
         window.openAllSubmissionsModal = openAllSubmissionsModal;
         window.openAllReferralsModal = openAllReferralsModal;
         window.claimReferralBonus = claimReferralBonus;
