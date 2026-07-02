@@ -1562,6 +1562,11 @@
             color: #dc3545;
         }
 
+        /* ===== FIX: REJECT MODAL ON TOP ===== */
+        #rejectReasonModal {
+            z-index: 9999 !important;
+        }
+
         /* ===== VIEW ALL BUTTON ===== */
         .view-all-btn {
             background: none;
@@ -2242,6 +2247,42 @@
             color: #1e3c72;
             font-weight: 500;
         }
+
+        /* ===== REJECT REASON MODAL - FROM reason.html ===== */
+        #rejectReasonModal .modal-content {
+            max-width: 380px;
+        }
+        #rejectReasonModal .reason-preview {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #333;
+            border-left: 4px solid #1e3c72;
+        }
+        #rejectReasonModal .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        #rejectReasonModal .char-counter.valid {
+            color: #28a745;
+        }
+        #rejectReasonModal .char-counter.invalid {
+            color: #dc3545;
+        }
+        #rejectReasonModal .reject-reason-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
     </style>
 </head>
 <body>
@@ -2300,7 +2341,7 @@
             <div class="mail-detail-content" id="mailDetailContent"></div>
         </div>
 
-        <!-- ===== REJECT REASON MODAL ===== -->
+        <!-- ===== REJECT REASON MODAL (copied from reason.html) ===== -->
         <div id="rejectReasonModal" class="modal">
             <div class="modal-content">
                 <h3>❌ Reject Submission</h3>
@@ -2420,17 +2461,17 @@
             </div>
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
-                    <!-- ===== REFERRAL SHARE CARD ===== -->
+                    <!-- ===== REFERRAL SHARE CARD with fire icon and specific text ===== -->
                     <div class="referral-share-card">
                         <span class="fire-icon">🔥</span>
                         <div class="share-title">Earn Daily Money From Home!</div>
                         <div class="share-desc">Complete simple tasks &amp; start earning 💰</div>
                         <div class="share-link">
-                            <span class="share-link-text" id="shareLinkDisplay">https://taskexpertapp.pages.dev/?ref=123456</span>
+                            <span class="share-link-text" id="shareLinkDisplay">https://taskexpertapp.pages.dev/?ref=910372</span>
                             <button class="copy-btn-sm" onclick="copyShareLink()"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>
-                    <div class="referral-code"><span><i class="fas fa-code-branch"></i> <strong id="referralCode">123456</strong></span><button class="copy-btn" onclick="copyReferralCode()">Copy</button></div>
+                    <div class="referral-code"><span><i class="fas fa-code-branch"></i> <strong id="referralCode">910372</strong></span><button class="copy-btn" onclick="copyReferralCode()">Copy</button></div>
                     <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins</div>
                     <div class="referral-stats">
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
@@ -2613,7 +2654,7 @@
         <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
-    <!-- ===== TASK DETAIL MODAL ===== -->
+    <!-- ===== TASK DETAIL MODAL - IMAGE UPLOAD ONLY (no ImgBB link) ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
         <div class="task-detail-body" style="padding:16px;">
@@ -2622,6 +2663,7 @@
             <div class="card"><h3>🔗 Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
             <div class="card">
                 <h3 id="proofSectionTitle">📤 Submit Proof</h3>
+                <!-- IMAGE PROOF - only upload area, no link input -->
                 <div id="imageProofArea">
                     <div class="proof-upload-section">
                         <div class="upload-area" id="taskProofUploadArea" onclick="document.getElementById('taskProofInput').click()">
@@ -2634,6 +2676,7 @@
                         <div style="font-size:12px; color:#888; margin-top:6px; text-align:center;">✅ Upload a clear screenshot as proof</div>
                     </div>
                 </div>
+                <!-- TEXT PROOF -->
                 <div id="textProofArea" style="display:none;">
                     <textarea id="proofTextInput" class="proof-textarea" placeholder="Enter your proof details here..."></textarea>
                     <div style="font-size:12px; color:#666; margin-top:4px;">Please provide detailed proof text.</div>
@@ -2737,7 +2780,7 @@
         }
 
         function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
-                '<' ? '&lt;' : m === '>' ? '&gt;' : '')); }
+                '<' ? '&lt;' : '&gt;')); }
 
         function generateReferralCode() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
@@ -2952,7 +2995,6 @@
             } else {
                 document.getElementById('adminSettingsCard').style.display = 'none';
             }
-            // Update share link
             updateShareLink();
         }
 
@@ -2971,7 +3013,7 @@
         }
 
         function updateShareLink() {
-            const code = currentUserData?.referralCode || '123456';
+            const code = currentUserData?.referralCode || '910372';
             const link = `https://taskexpertapp.pages.dev/?ref=${code}`;
             document.getElementById('shareLinkDisplay').innerText = link;
         }
@@ -3309,7 +3351,7 @@
         }
 
         // ============================================================
-        // TASK PROOF - IMAGE UPLOAD
+        // TASK PROOF - IMAGE UPLOAD (FIXED: single upload)
         // ============================================================
         function setupTaskProofUpload() {
             const input = document.getElementById('taskProofInput');
@@ -3318,12 +3360,14 @@
 
             if (!input || !preview) return;
 
+            // Click on upload area triggers file input
             uploadArea.addEventListener('click', function(e) {
                 if (e.target.tagName !== 'BUTTON' && !e.target.closest('.remove-img-btn')) {
                     input.click();
                 }
             });
 
+            // Drag and drop
             uploadArea.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 this.classList.add('dragover');
@@ -3347,6 +3391,8 @@
                 if (this.files && this.files.length > 0) {
                     handleTaskProofFile(this.files[0]);
                 }
+                // Reset input so same file can be re-uploaded
+                this.value = '';
             });
         }
 
@@ -3430,6 +3476,7 @@
                     const officialSnap = await db.ref('tasks/official').limitToFirst(50).once('value');
                     const officialData = officialSnap.val() || {};
                     for (let [id, t] of Object.entries(officialData)) {
+                        // Calculate remaining slots using maxLimit or left
                         const counts = countMap[id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         const maxLimit = t.maxLimit || t.left || 0;
@@ -3680,7 +3727,7 @@
         }
 
         // ============================================================
-        // OFFICIAL TASKS - NOW HIDE COMPLETELY LIKE USER TASKS
+        // OFFICIAL TASKS - FIXED: proper slot display
         // ============================================================
         function displayOfficialTasks() {
             if (!cachedOfficialTasks || cachedOfficialTasks.length === 0) {
@@ -3689,19 +3736,37 @@
                 return;
             }
             let officialHtml = '';
-            // Filter out tasks that user has already submitted OR slots are full
             const available = cachedOfficialTasks.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.left <= 0) return false;
                 return true;
             });
 
-            if (available.length === 0) {
-                document.getElementById('officialTasksList').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
-                return;
+            // Show submitted tasks with status
+            const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
+            for (let t of submitted) {
+                officialHtml +=
+                    `<div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
+                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
+                                <div>+${t.reward}</div>
+                            </div>`;
             }
 
+            // Show full tasks
+            const full = cachedOfficialTasks.filter(t => {
+                if (userSubmissionsMap[t.id]) return false;
+                if (t.left <= 0) return true;
+                return false;
+            });
+            for (let t of full) {
+                officialHtml +=
+                    `<div class="task-item" style="opacity:0.5;border-left-color:#dc3545;cursor:default;">
+                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-full-badge">❌ Full</span></small></div>
+                                <div>+${t.reward}</div>
+                            </div>`;
+            }
+
+            // Show available tasks
             for (let t of available) {
                 let slotsBadge = '';
                 if (t.left <= 3) {
@@ -3714,8 +3779,12 @@
                                 <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                             </div>`;
             }
-            document.getElementById('officialTasksList').innerHTML = officialHtml ||
-                '<p style="color:#666;text-align:center;padding:20px;">📢 No official tasks available.</p>';
+
+            if (!officialHtml) {
+                officialHtml =
+                    '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
+            }
+            document.getElementById('officialTasksList').innerHTML = officialHtml;
         }
 
         function filterTasksByPlatform(platform) {
@@ -3735,7 +3804,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT (with race condition fix & image upload)
+        // TASK DETAIL & SUBMIT (FIXED: single image upload)
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -3766,6 +3835,7 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
+            // Reset proof image
             removeTaskProofImage();
             document.getElementById('proofTextInput').value = '';
             proofTextValue = '';
@@ -3804,7 +3874,6 @@
 
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
-            // Clean up state to prevent "back without submit" errors
             currentTask = null;
             removeTaskProofImage();
             document.getElementById('proofTextInput').value = '';
@@ -3816,7 +3885,7 @@
         }
 
         // ============================================================
-        // SUBMIT PROOF - WITH RACE CONDITION FIX (Firebase Transaction)
+        // SUBMIT PROOF - FIXED: single upload flow
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -3894,7 +3963,7 @@
                     return;
                 }
 
-                // --- IMAGE PROOF ---
+                // --- IMAGE PROOF - FIXED: uses taskProofImageData directly ---
                 if (!taskProofImageData) {
                     showToast("Please upload a proof image.");
                     submitBtn.disabled = false;
@@ -3903,6 +3972,7 @@
                     return;
                 }
 
+                // Upload the image (only once)
                 const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                 let uploadedUrl;
                 try {
@@ -3925,6 +3995,7 @@
                     return;
                 }
 
+                // Transaction to decrement slot
                 const taskRef = currentTask.type === 'official' ?
                     db.ref(`tasks/official/${currentTask.id}`) :
                     db.ref(`tasks/user/${currentTask.id}`);
@@ -4128,7 +4199,7 @@
         }
 
         // ============================================================
-        // MY POSTED TASKS, MY TASK DETAILS (IMPROVED DESIGN)
+        // MY POSTED TASKS, MY TASK DETAILS
         // ============================================================
         async function openMyPostedTasks() {
             try {
@@ -4164,7 +4235,7 @@
         }
 
         // ============================================================
-        // MY TASK DETAILS - IMPROVED DESIGN WITH PROGRESS BARS
+        // MY TASK DETAILS - with reject reason display
         // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
             try {
@@ -4273,6 +4344,9 @@
             }
         }
 
+        // ============================================================
+        // BUILD SUBMISSION HTML - with reject reason display
+        // ============================================================
         function buildSubmissionHtml(s, taskId, rewardPerUser) {
             let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
                 'pending_reject' ? 'orange' : 'orange'));
@@ -4290,6 +4364,7 @@
                                             <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject</button>
                                         </div>`;
             }
+            // ===== REJECT REASON DISPLAY (from reason.html) =====
             let rejectReasonHtml = '';
             if (s.status === 'rejected' && s.rejectReason) {
                 rejectReasonHtml =
@@ -4355,7 +4430,7 @@
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
 
         // ============================================================
-        // REJECT LOGIC
+        // REJECT LOGIC (copied from reason.html)
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
             pendingRejectSubmissionId = submissionId;
@@ -4516,7 +4591,7 @@
         }
 
         // ============================================================
-        // DEPOSIT (IMPROVED)
+        // DEPOSIT
         // ============================================================
         let depositImage = null;
 
@@ -4634,7 +4709,7 @@
         }
 
         // ============================================================
-        // WITHDRAW (IMPROVED)
+        // WITHDRAW
         // ============================================================
         function showWithdrawModal() {
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
