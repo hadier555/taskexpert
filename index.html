@@ -1914,7 +1914,7 @@
             height: 100px;
         }
 
-        /* ===== TASK LEFT SLOTS REAL-TIME ===== */
+        /* ===== TASK LEFT SLOTS REAL-TIME (display only) ===== */
         .task-slots-badge {
             display: inline-block;
             padding: 2px 12px;
@@ -2075,7 +2075,7 @@
             color: #155724;
         }
 
-        /* ===== SUBMIT BUTTON DISABLED STATE ===== */
+        /* ===== SUBMIT BUTTON DISABLED STATE (only for full, but we removed block) ===== */
         .btn-submit-disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -2880,6 +2880,13 @@
         function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
                 '<' ? '&lt;' : '&gt;')); }
 
+        // === Escape for JavaScript string (to use in onclick) ===
+        function escapeJs(str) {
+            if (!str) return '';
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(
+                /\r/g, '\\r');
+        }
+
         function generateReferralCode() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
         function logout() { auth.signOut(); }
@@ -2895,7 +2902,7 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 
         // ============================================================
-        // AUTH FUNCTIONS - REMOVED OFFLINE CHECK
+        // AUTH FUNCTIONS - NO OFFLINE CHECK
         // ============================================================
         function showRegister() {
             document.getElementById('loginSection').style.display = 'none';
@@ -3622,7 +3629,7 @@
         }
 
         // ============================================================
-        // REAL-TIME SLOT LISTENERS
+        // REAL-TIME SLOT LISTENERS (display only)
         // ============================================================
         let taskSlotListeners = {};
 
@@ -3671,6 +3678,7 @@
                     updateTaskCounts();
                 }
 
+                // Update task detail slots (display only)
                 if (currentTask) {
                     updateTaskDetailSlots(currentTask.id);
                 }
@@ -3694,20 +3702,17 @@
             if (task) {
                 const statusDiv = document.getElementById('taskSubmitStatus');
                 if (task.left <= 0) {
-                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">❌ Task slots are full!</span>';
-                    const submitBtn = document.getElementById('submitProofBtn');
-                    submitBtn.disabled = true;
-                    submitBtn.classList.add('btn-submit-disabled');
-                    submitBtn.innerText = 'Full';
+                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full</span>';
+                    // We do NOT disable the button; user can still submit (slot check removed)
                 } else {
                     statusDiv.innerHTML =
                         `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
-                    const submitBtn = document.getElementById('submitProofBtn');
-                    if (!submitBtn.disabled) {
-                        submitBtn.classList.remove('btn-submit-disabled');
-                        submitBtn.innerText = 'Submit Task';
-                    }
                 }
+                // Ensure submit button is always enabled (unless other conditions)
+                const submitBtn = document.getElementById('submitProofBtn');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-submit-disabled');
+                submitBtn.innerText = 'Submit Task';
             }
         }
 
@@ -3750,7 +3755,7 @@
             filtered = filtered.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.creatorId === currentUser?.uid) return false;
-                if (t.left <= 0) return false;
+                // Do not filter by left > 0; we allow submission even if full, but we show a warning
                 return true;
             });
             for (let t of filtered) {
@@ -3779,14 +3784,21 @@
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
 
                 let slotsBadge = '';
-                if (t.left <= 3) {
+                if (t.left <= 0) {
+                    slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
+                } else if (t.left <= 3) {
                     slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
                 } else {
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
 
+                // Use escapeJs for steps to avoid breaking onclick
+                const escapedTitle = escapeJs(t.title);
+                const escapedDesc = escapeJs(t.desc);
+                const escapedSteps = escapeJs(t.steps);
+                const escapedLink = escapeJs(t.link);
                 allHtml +=
-                    `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapeHtml(t.title)}','${escapeHtml(t.desc)}','${escapeHtml(t.steps)}','${t.link}',${t.reward},'${t.creatorId}','${t.proofType}')">
+                    `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapedTitle}','${escapedDesc}','${escapedSteps}','${escapedLink}',${t.reward},'${t.creatorId}','${t.proofType}')">
                                 <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                             </div>`;
             }
@@ -3806,7 +3818,7 @@
             let officialHtml = '';
             const available = cachedOfficialTasks.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
-                if (t.left <= 0) return false;
+                // Show all tasks, even if full
                 return true;
             });
 
@@ -3819,28 +3831,23 @@
                             </div>`;
             }
 
-            const full = cachedOfficialTasks.filter(t => {
-                if (userSubmissionsMap[t.id]) return false;
-                if (t.left <= 0) return true;
-                return false;
-            });
-            for (let t of full) {
-                officialHtml +=
-                    `<div class="task-item" style="opacity:0.5;border-left-color:#dc3545;cursor:default;">
-                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-full-badge">❌ Full</span></small></div>
-                                <div>+${t.reward}</div>
-                            </div>`;
-            }
-
-            for (let t of available) {
+            // Show tasks not submitted
+            const notSubmitted = cachedOfficialTasks.filter(t => !userSubmissionsMap[t.id]);
+            for (let t of notSubmitted) {
                 let slotsBadge = '';
-                if (t.left <= 3) {
+                if (t.left <= 0) {
+                    slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
+                } else if (t.left <= 3) {
                     slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
                 } else {
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
+                const escapedTitle = escapeJs(t.title);
+                const escapedDesc = escapeJs(t.desc);
+                const escapedSteps = escapeJs(t.steps);
+                const escapedLink = escapeJs(t.link);
                 officialHtml +=
-                    `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapeHtml(t.title)}','${escapeHtml(t.desc)}','${escapeHtml(t.steps)}','${t.link}',${t.reward},'${t.creatorId}','image')">
+                    `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapedTitle}','${escapedDesc}','${escapedSteps}','${escapedLink}',${t.reward},'${t.creatorId}','image')">
                                 <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                             </div>`;
             }
@@ -3869,7 +3876,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT - FIXED: steps parsing
+        // TASK DETAIL & SUBMIT - FIXED: steps parsing and no slot block
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -3881,10 +3888,7 @@
             } else {
                 task = cachedUserTasks?.find(t => t.id === id);
             }
-            if (task && task.left <= 0) {
-                showToast("❌ Task slots are full!");
-                return;
-            }
+            // Do not block based on left slots, just show warning
 
             currentTask = { id, type, title, desc, steps, link, reward, proofType: proofType || 'image' };
             document.getElementById('taskDetailTitle').innerText = title;
@@ -3929,15 +3933,16 @@
 
             if (task) {
                 const statusDiv = document.getElementById('taskSubmitStatus');
-                if (task.left > 0) {
+                if (task.left <= 0) {
+                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full, but you can still submit (may be reviewed later)</span>';
+                } else {
                     statusDiv.innerHTML =
                         `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
-                } else {
-                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">❌ Task slots are full!</span>';
-                    submitBtn.disabled = true;
-                    submitBtn.classList.add('btn-submit-disabled');
-                    submitBtn.innerText = 'Full';
                 }
+                // Always enable submit
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-submit-disabled');
+                submitBtn.innerText = 'Submit Task';
             }
 
             if (currentTask.proofType === 'text') {
@@ -4007,7 +4012,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF - FIXED: hide after submission
+        // SUBMIT PROOF - NO SLOT CHECK, ALWAYS ALLOW
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -4031,31 +4036,15 @@
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Submit Task'; return; }
 
+                    // Always increment pending without checking limit
                     const taskRef = currentTask.type === 'official' ?
                         db.ref(`tasks/official/${currentTask.id}`) :
                         db.ref(`tasks/user/${currentTask.id}`);
-
-                    const result = await taskRef.transaction((currentData) => {
+                    await taskRef.transaction((currentData) => {
                         if (!currentData) return currentData;
-                        const limit = currentTask.type === 'official' ?
-                            (currentData.maxLimit || 0) :
-                            (currentData.requiredUsers || 0);
-                        const filled = (currentData.completed || 0) + (currentData.pending || 0) + (currentData
-                            .pendingReject || 0);
-                        if (filled >= limit) {
-                            return undefined;
-                        }
                         currentData.pending = (currentData.pending || 0) + 1;
                         return currentData;
                     });
-
-                    if (result.committed === false || result.snapshot === null) {
-                        showToast("❌ Task slots are full! Please try again.");
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('btn-loading');
-                        submitBtn.innerText = 'Submit Task';
-                        return;
-                    }
 
                     await db.ref('task_submissions').push({
                         userId: currentUser.uid,
@@ -4114,31 +4103,15 @@
                     return;
                 }
 
+                // Increment pending without checking limit
                 const taskRef = currentTask.type === 'official' ?
                     db.ref(`tasks/official/${currentTask.id}`) :
                     db.ref(`tasks/user/${currentTask.id}`);
-
-                const result = await taskRef.transaction((currentData) => {
+                await taskRef.transaction((currentData) => {
                     if (!currentData) return currentData;
-                    const limit = currentTask.type === 'official' ?
-                        (currentData.maxLimit || 0) :
-                        (currentData.requiredUsers || 0);
-                    const filled = (currentData.completed || 0) + (currentData.pending || 0) + (currentData
-                        .pendingReject || 0);
-                    if (filled >= limit) {
-                        return undefined;
-                    }
                     currentData.pending = (currentData.pending || 0) + 1;
                     return currentData;
                 });
-
-                if (result.committed === false || result.snapshot === null) {
-                    showToast("❌ Task slots are full! Please try again.");
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.innerText = 'Submit Task';
-                    return;
-                }
 
                 await db.ref('task_submissions').push({
                     userId: currentUser.uid,
@@ -4357,7 +4330,7 @@
                     let clickAttr = '';
                     if (t.status === 'approved') {
                         clickAttr =
-                            ` onclick="openMyTaskDetailsFromPosted('${escapeHtml(t.title)}')" style="cursor:pointer; transition:0.3s;"`;
+                            ` onclick="openMyTaskDetailsFromPosted('${escapeJs(t.title)}')" style="cursor:pointer; transition:0.3s;"`;
                     }
                     let proofLabel = t.proofType === 'text' ? '📝 Text' : '🖼️ Image';
                     html +=
