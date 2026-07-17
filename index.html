@@ -27,7 +27,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -66,7 +65,6 @@
             }
         }
 
-        /* ===== LOADING SCREEN ===== */
         #loadingScreen {
             display: flex;
             flex-direction: column;
@@ -189,7 +187,6 @@
             letter-spacing: 2px;
         }
 
-        /* ===== HEADER ===== */
         .header {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
@@ -242,7 +239,6 @@
             display: none;
         }
 
-        /* ===== NEW MAIL BANNER ===== */
         .new-mail-banner {
             position: fixed;
             top: 0;
@@ -346,7 +342,6 @@
             transform: rotate(90deg);
         }
 
-        /* ===== BOTTOM NAV ===== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -378,7 +373,6 @@
             display: block;
         }
 
-        /* ===== CARDS ===== */
         .card {
             background: white;
             border-radius: 16px;
@@ -403,7 +397,6 @@
             margin: 10px 0;
         }
 
-        /* ===== BUTTONS ===== */
         .btn {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
@@ -463,21 +456,7 @@
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(247, 151, 30, 0.5);
         }
-        .btn-claimed {
-            background: #28a745;
-            color: white;
-            opacity: 0.7;
-            cursor: default;
-            border-radius: 25px;
-            padding: 8px 20px;
-            font-size: 13px;
-        }
-        .btn-claimed:hover {
-            transform: none;
-            box-shadow: none;
-        }
 
-        /* ===== GOOGLE BUTTON ===== */
         .google-btn {
             background: white;
             color: #444;
@@ -536,7 +515,6 @@
             text-decoration: underline;
         }
 
-        /* ===== TASK ITEMS ===== */
         .task-item {
             background: #f8f9fa;
             padding: 15px;
@@ -548,6 +526,11 @@
             justify-content: space-between;
             align-items: center;
             border-left: 4px solid #1e3c72;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .task-item:active {
+            transform: scale(0.98);
         }
         .task-item:hover {
             transform: translateX(5px);
@@ -573,7 +556,6 @@
             background: #e9ecef;
         }
 
-        /* ===== PLATFORM FILTER ===== */
         .platform-filters {
             display: flex;
             flex-wrap: wrap;
@@ -619,7 +601,6 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* ===== MODALS ===== */
         .modal {
             display: none;
             position: fixed;
@@ -676,7 +657,6 @@
             background: #218838;
         }
 
-        /* ===== FULL SCREEN HISTORY ===== */
         .fullscreen-history {
             position: fixed;
             top: 0;
@@ -770,16 +750,7 @@
             background: #f8d7da;
             color: #721c24;
         }
-        .fullscreen-history .history-body .history-card .h-right .h-status.completed {
-            background: #d4edda;
-            color: #155724;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-status.cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
 
-        /* ===== TASK DETAIL ===== */
         .task-detail-modal,
         .my-task-details-screen {
             position: fixed;
@@ -827,7 +798,6 @@
             cursor: pointer;
         }
 
-        /* ===== REFERRAL ===== */
         .referral-code {
             background: #f0f2f5;
             padding: 12px 16px;
@@ -900,7 +870,6 @@
             margin: 0;
         }
 
-        /* ===== REFERRAL SHARE (new simplified) ===== */
         .referral-share-simple {
             background: linear-gradient(135deg, #e8f0fe, #d4e0f5);
             border-radius: 16px;
@@ -957,7 +926,6 @@
             margin: 4px 0;
         }
 
-        /* ===== DAILY REWARD ===== */
         .daily-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -987,7 +955,6 @@
             font-weight: bold;
         }
 
-        /* ===== CHECK-IN BUTTON ===== */
         .checkin-btn {
             display: inline-block;
             padding: 10px 30px;
@@ -1025,7 +992,6 @@
             }
         }
 
-        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 80px;
@@ -1067,7 +1033,6 @@
             font-size: 12px;
         }
 
-        /* ===== PLATFORM SELECTOR ===== */
         .platform-selector {
             display: flex;
             flex-wrap: wrap;
@@ -1156,7 +1121,6 @@
             color: #9b59b6;
         }
 
-        /* ===== MISC ===== */
         .mail-item {
             background: #f8f9fa;
             padding: 15px;
@@ -1170,20 +1134,6 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-        }
-        .mail-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transform: translateX(-100%);
-            transition: 0.6s;
-        }
-        .mail-item:hover::before {
-            transform: translateX(100%);
         }
         .mail-item:hover {
             transform: translateX(5px);
@@ -1315,149 +1265,47 @@
             font-size: 12px;
             font-weight: 600;
         }
-        table {
+
+        .fullscreen-tasks {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+            height: 100%;
+            background: #fff;
+            z-index: 3500;
+            overflow-y: auto;
+            display: none;
+            padding: 20px;
         }
-        th,
-        td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+        .fullscreen-tasks .tasks-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 0 0 20px 20px;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        th {
-            background: #f5f5f5;
-            font-weight: bold;
+        .fullscreen-tasks .tasks-header i {
+            font-size: 24px;
+            cursor: pointer;
         }
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
+        .fullscreen-tasks .tasks-header h2 {
+            font-size: 20px;
+            flex: 1;
         }
-        .history-table th,
-        .history-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #e8e8e8;
-            text-align: left;
+        .fullscreen-tasks .tasks-body {
+            padding: 10px 0;
         }
-        .history-table th {
-            background-color: #f2f4f8;
-            color: #1e3c72;
-            font-weight: 700;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .history-table tr:hover td {
-            background-color: #f8f9fc;
-        }
-        .history-table .status-badge {
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-block;
-            text-transform: capitalize;
-        }
-        .history-table .status-badge.pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .history-table .status-badge.approved {
-            background: #d4edda;
-            color: #155724;
-        }
-        .history-table .status-badge.rejected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .history-table .status-badge.completed {
-            background: #d4edda;
-            color: #155724;
-        }
-        .history-table .status-badge.cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .history-table .amount-positive {
-            color: #28a745;
-            font-weight: 700;
-        }
-        .history-table .amount-negative {
-            color: #dc3545;
-            font-weight: 700;
+        .fullscreen-tasks .tasks-body .platform-filters {
+            margin-bottom: 15px;
         }
 
-        .maintenance-screen,
-        .update-screen {
-            text-align: center;
-            padding: 50px 20px;
-        }
-        .maintenance-screen i,
-        .update-screen i {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-        .update-screen a {
-            background: #1e3c72;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-        }
-        .submission-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .submission-filter-btn {
-            background: #e0e0e0;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: 0.3s;
-        }
-        .submission-filter-btn.active {
-            background: #1e3c72;
-            color: white;
-        }
-        .suspended-screen {
-            text-align: center;
-            padding: 50px 20px;
-        }
-        .suspended-screen i {
-            font-size: 70px;
-            color: #ff4757;
-            margin-bottom: 20px;
-        }
-        .suspended-screen h2 {
-            color: #ff4757;
-            font-size: 28px;
-            margin-bottom: 15px;
-        }
-        .suspended-screen p {
-            color: #ccc;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        .suspended-screen .contact-email {
-            color: #4facfe;
-            font-weight: bold;
-            font-size: 20px;
-            margin: 20px 0;
-            display: block;
-        }
-        .suspended-screen .btn {
-            margin-top: 30px;
-            width: auto;
-            padding: 12px 40px;
-        }
         .image-modal {
             display: none;
             position: fixed;
@@ -1469,7 +1317,6 @@
             z-index: 3000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s ease;
         }
         .image-modal.active {
             display: flex;
@@ -1478,7 +1325,6 @@
             max-width: 95%;
             max-height: 90%;
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
             object-fit: contain;
         }
         .image-modal .close-btn {
@@ -1506,6 +1352,63 @@
             font-size: 30px;
             color: white;
         }
+
+        .task-slots-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #e8f0fe;
+            color: #1e3c72;
+        }
+        .task-slots-badge.few {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .task-slots-badge.none {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .view-all-btn {
+            background: none;
+            border: none;
+            color: #1e3c72;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 0;
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .view-all-btn:hover {
+            color: #2a5298;
+            text-decoration: underline;
+        }
+
+        .view-details-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 3000;
+            overflow-y: auto;
+            display: none;
+        }
+        .view-details-screen .task-detail-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+        }
+        .view-details-screen .task-detail-body {
+            padding: 20px;
+        }
+
         .reject-reason-textarea {
             width: 100%;
             min-height: 80px;
@@ -1537,45 +1440,36 @@
             color: #333;
             border-left: 4px solid #1e3c72;
         }
-        .reject-inline {
-            margin-top: 10px;
+
+        #rejectReasonModal {
+            z-index: 9999 !important;
+        }
+        #rejectReasonModal .modal-content {
+            max-width: 380px;
+        }
+        #rejectReasonModal .reason-preview {
+            background: #f8f9fa;
+            border-radius: 10px;
             padding: 10px;
-            background: #fff3cd;
-            border-radius: 8px;
-            border: 1px solid #ffc107;
-            display: none;
-        }
-        .reject-inline textarea {
-            width: 100%;
-            min-height: 60px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-family: inherit;
+            margin: 10px 0;
             font-size: 14px;
-            resize: vertical;
+            color: #333;
+            border-left: 4px solid #1e3c72;
         }
-        .reject-inline .char-counter {
-            text-align: right;
-            font-size: 12px;
-            color: #999;
-            margin: 4px 0;
+
+        .reject-reason-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin: 6px 0;
+            font-size: 13px;
+            color: #721c24;
         }
-        .reject-inline .char-counter.valid {
-            color: #28a745;
-        }
-        .reject-inline .char-counter.invalid {
+        .reject-reason-box strong {
             color: #dc3545;
         }
-        .reject-inline .reject-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .reject-inline .reject-actions .btn {
-            padding: 6px 16px;
-            font-size: 13px;
-        }
+
         .mail-detail-screen {
             position: fixed;
             top: 0;
@@ -1623,216 +1517,7 @@
             border-radius: 10px;
             border-left: 4px solid #1e3c72;
         }
-        .mail-detail-content .mail-actions-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        img.submission-img-thumb:not([src]),
-        img.submission-img-thumb[src=""],
-        img.preview-img:not([src]),
-        img.preview-img[src=""] {
-            background: #f0f0f0;
-            display: inline-block;
-            position: relative;
-        }
-        img.submission-img-thumb:not([src])::after,
-        img.preview-img:not([src])::after {
-            content: "🖼️";
-            font-size: 20px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
 
-        /* ===== REJECT REASON DISPLAY ===== */
-        .reject-reason-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin: 6px 0;
-            font-size: 13px;
-            color: #721c24;
-        }
-        .reject-reason-box strong {
-            color: #dc3545;
-        }
-
-        /* ===== FIX: REJECT MODAL ON TOP ===== */
-        #rejectReasonModal {
-            z-index: 9999 !important;
-        }
-
-        /* ===== VIEW ALL BUTTON ===== */
-        .view-all-btn {
-            background: none;
-            border: none;
-            color: #1e3c72;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 8px 0;
-            transition: 0.3s;
-            display: inline-block;
-        }
-        .view-all-btn:hover {
-            color: #2a5298;
-            text-decoration: underline;
-        }
-
-        /* ===== SCROLLABLE LIST ===== */
-        .scrollable-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 400px) {
-            .platform-filter-btn {
-                padding: 4px 10px;
-                font-size: 10px;
-            }
-            .platform-card {
-                width: 64px;
-                padding: 8px 4px;
-            }
-            .platform-card i {
-                font-size: 24px;
-            }
-            .mail-item {
-                padding: 12px;
-            }
-            .mail-item .mail-title {
-                font-size: 13px;
-            }
-            .referral-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .referral-row .claim-btn-wrap {
-                margin-left: 0;
-                width: 100%;
-            }
-            .referral-row .claim-btn-wrap .btn {
-                width: 100%;
-                text-align: center;
-            }
-            .history-table {
-                font-size: 11px;
-            }
-            .history-table th,
-            .history-table td {
-                padding: 6px 4px;
-            }
-        }
-
-        /* ===== UPLOAD OVERLAY ===== */
-        .upload-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
-            text-align: center;
-        }
-        .upload-overlay.active {
-            display: flex;
-        }
-        .upload-overlay .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        .upload-overlay .progress-text {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .upload-overlay .sub-text {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 8px;
-        }
-        .upload-overlay .progress-bar-bg {
-            width: 80%;
-            max-width: 300px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            margin-top: 15px;
-            overflow: hidden;
-        }
-        .upload-overlay .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: #38ef7d;
-            border-radius: 4px;
-            transition: width 0.2s;
-        }
-
-        /* ===== VIEW DETAILS SCREEN ===== */
-        .view-details-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            z-index: 3000;
-            overflow-y: auto;
-            display: none;
-        }
-        .view-details-screen .task-detail-header {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-        }
-        .view-details-screen .task-detail-body {
-            padding: 20px;
-        }
-        .view-details-screen .submission-item {
-            cursor: default;
-        }
-        .view-details-screen .submission-item:hover {
-            transform: none;
-            background: #f8f9fa;
-        }
-        .view-all-submissions-btn {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 8px;
-            transition: 0.3s;
-        }
-        .view-all-submissions-btn:hover {
-            transform: scale(1.02);
-        }
         .proof-text-box {
             background: #f8f9fa;
             padding: 15px;
@@ -1851,6 +1536,7 @@
             display: block;
             margin-bottom: 4px;
         }
+
         .proof-type-selector {
             display: flex;
             gap: 12px;
@@ -1881,22 +1567,7 @@
             border-color: #1e3c72;
             background: #e8f0fe;
         }
-        .proof-textarea {
-            width: 100%;
-            min-height: 100px;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 14px;
-            resize: vertical;
-            transition: 0.3s;
-        }
-        .proof-textarea:focus {
-            outline: none;
-            border-color: #1e3c72;
-            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
-        }
+
         .proof-type-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -1914,7 +1585,6 @@
             color: #1b5e20;
         }
 
-        /* ===== UPLOAD AREA - IMPROVED DESIGN ===== */
         .upload-area {
             border: 2.5px dashed #1e3c72;
             border-radius: 16px;
@@ -1993,145 +1663,96 @@
             transform: scale(1.1);
             background: #c82333;
         }
-        .upload-area .file-input-hidden {
-            display: none;
-        }
 
-        /* ===== PROOF UPLOAD SECTION IN TASK DETAIL ===== */
-        .proof-upload-section {
-            background: #f8faff;
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid #e8edf5;
-            margin: 12px 0;
-        }
-        .proof-upload-section .upload-area {
-            margin: 0;
-        }
-        .proof-upload-section .upload-preview-wrapper img {
-            width: 100px;
-            height: 100px;
-        }
-
-        /* ===== TASK LEFT SLOTS REAL-TIME ===== */
-        .task-slots-badge {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            background: #e8f0fe;
-            color: #1e3c72;
-        }
-        .task-slots-badge.few {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .task-slots-badge.none {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* ===== ADMIN SETTINGS CARD ===== */
-        #adminSettingsCard {
-            border: 2px solid #ffc107;
-        }
-
-        .update-screen {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 20px;
-            text-align: center;
-            color: white;
-        }
-        .update-screen .icon-box {
-            font-size: 80px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            animation: pulseIcon 2s ease-in-out infinite;
-        }
-        .update-screen h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .update-screen .sub-text {
-            font-size: 16px;
-            opacity: 0.85;
-            margin-bottom: 30px;
-            max-width: 300px;
-        }
-        .update-screen .update-link-btn {
-            background: white;
-            color: #1e3c72;
-            padding: 16px 40px;
-            border-radius: 50px;
-            font-size: 20px;
-            font-weight: 700;
-            text-decoration: none;
+        .proof-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
             transition: 0.3s;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            display: inline-block;
         }
-        .update-screen .update-link-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-        }
-        .update-screen .note {
-            margin-top: 30px;
-            font-size: 13px;
-            opacity: 0.5;
+        .proof-textarea:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
         }
 
-        .maintenance-screen {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 20px;
+        .single-img-hint {
+            font-size: 12px;
+            color: #666;
             text-align: center;
-            color: white;
+            margin-top: 6px;
         }
-        .maintenance-screen .icon-box {
-            font-size: 80px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
+        .single-img-hint i {
+            color: #1e3c72;
+            margin-right: 4px;
+        }
+
+        .upload-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
             justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
         }
-        .maintenance-screen h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
+        .upload-overlay.active {
+            display: flex;
         }
-        .maintenance-screen .sub-text {
-            font-size: 16px;
-            opacity: 0.85;
+        .upload-overlay .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .upload-overlay .progress-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .upload-overlay .sub-text {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+        .upload-overlay .progress-bar-bg {
+            width: 80%;
             max-width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        .upload-overlay .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #38ef7d;
+            border-radius: 4px;
+            transition: width 0.2s;
         }
 
-        /* ===== TASK COMPLETED HIDDEN ===== */
-        .task-completed-hidden {
-            display: none !important;
-        }
-
-        /* ===== LOADING OVERLAY FOR BUTTONS ===== */
         .btn-loading {
             opacity: 0.7;
             pointer-events: none;
@@ -2155,37 +1776,6 @@
             visibility: hidden;
         }
 
-        /* ===== REFERRAL PROGRESS BADGE ===== */
-        .referral-progress-badge {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            background: #e8f0fe;
-            color: #1e3c72;
-        }
-        .referral-progress-badge.complete {
-            background: #d4edda;
-            color: #155724;
-        }
-        .referral-progress-badge.claimed {
-            background: #c3e6cb;
-            color: #155724;
-        }
-
-        /* ===== SUBMIT BUTTON DISABLED STATE ===== */
-        .btn-submit-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .btn-submit-disabled:hover {
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        /* ===== SUBMISSION STATUS INDICATOR IN TASK LIST ===== */
         .task-submitted-badge {
             background: #28a745;
             color: white;
@@ -2214,7 +1804,6 @@
             margin-left: 8px;
         }
 
-        /* ===== MY TASK DETAILS - IMPROVED DESIGN ===== */
         .my-task-card {
             background: #fff;
             border-radius: 14px;
@@ -2289,7 +1878,6 @@
             color: #004085;
         }
 
-        /* ===== WITHDRAW - IMPROVED DESIGN ===== */
         .withdraw-card {
             background: #f8faff;
             border-radius: 16px;
@@ -2320,7 +1908,6 @@
             margin: 8px 0;
         }
 
-        /* ===== DEPOSIT - IMPROVED DESIGN ===== */
         .deposit-card {
             background: #f8faff;
             border-radius: 16px;
@@ -2347,53 +1934,28 @@
             font-weight: 500;
         }
 
-        /* ===== REJECT REASON MODAL - FROM reason.html ===== */
-        #rejectReasonModal .modal-content {
-            max-width: 380px;
+        .view-all-submissions-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 8px;
+            transition: 0.3s;
         }
-        #rejectReasonModal .reason-preview {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 14px;
-            color: #333;
-            border-left: 4px solid #1e3c72;
-        }
-        #rejectReasonModal .char-counter {
-            text-align: right;
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-        #rejectReasonModal .char-counter.valid {
-            color: #28a745;
-        }
-        #rejectReasonModal .char-counter.invalid {
-            color: #dc3545;
-        }
-        #rejectReasonModal .reject-reason-textarea {
-            width: 100%;
-            min-height: 80px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 14px;
-            resize: vertical;
-        }
-        .single-img-hint {
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-            margin-top: 6px;
-        }
-        .single-img-hint i {
-            color: #1e3c72;
-            margin-right: 4px;
+        .view-all-submissions-btn:hover {
+            transform: scale(1.02);
         }
 
-        /* ===== IMPROVED SUSPENDED & MAINTENANCE SCREENS ===== */
+        .suspended-screen,
+        .maintenance-screen,
+        .update-screen {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
         .suspended-screen {
             background: linear-gradient(135deg, #2d1b2e, #1a1a2e);
             min-height: 100vh;
@@ -2473,56 +2035,111 @@
             max-width: 300px;
             margin-bottom: 20px;
         }
-        .maintenance-screen .btn {
-            margin-top: 20px;
-        }
 
-        /* ===== FULL SCREEN TASKS VIEW ===== */
-        .fullscreen-tasks {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            z-index: 3500;
-            overflow-y: auto;
-            display: none;
-            padding: 20px;
-        }
-        .fullscreen-tasks .tasks-header {
+        .update-screen {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            text-align: center;
             color: white;
-            padding: 15px 20px;
-            border-radius: 0 0 20px 20px;
-            margin: -20px -20px 20px -20px;
+        }
+        .update-screen .icon-box {
+            font-size: 80px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: pulseIcon 2s ease-in-out infinite;
         }
-        .fullscreen-tasks .tasks-header i {
-            font-size: 24px;
-            cursor: pointer;
+        .update-screen h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
-        .fullscreen-tasks .tasks-header h2 {
+        .update-screen .sub-text {
+            font-size: 16px;
+            opacity: 0.85;
+            margin-bottom: 30px;
+            max-width: 300px;
+        }
+        .update-screen .update-link-btn {
+            background: white;
+            color: #1e3c72;
+            padding: 16px 40px;
+            border-radius: 50px;
             font-size: 20px;
-            flex: 1;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            display: inline-block;
         }
-        .fullscreen-tasks .tasks-body {
-            padding: 10px 0;
+        .update-screen .update-link-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
-        .fullscreen-tasks .tasks-body .platform-filters {
-            margin-bottom: 15px;
+        .update-screen .note {
+            margin-top: 30px;
+            font-size: 13px;
+            opacity: 0.5;
+        }
+
+        #adminSettingsCard {
+            border: 2px solid #ffc107;
+        }
+
+        @media (max-width: 400px) {
+            .platform-filter-btn {
+                padding: 4px 10px;
+                font-size: 10px;
+            }
+            .platform-card {
+                width: 64px;
+                padding: 8px 4px;
+            }
+            .platform-card i {
+                font-size: 24px;
+            }
+            .mail-item {
+                padding: 12px;
+            }
+            .mail-item .mail-title {
+                font-size: 13px;
+            }
+            .referral-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .referral-row .claim-btn-wrap {
+                margin-left: 0;
+                width: 100%;
+            }
+            .referral-row .claim-btn-wrap .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .history-table {
+                font-size: 11px;
+            }
+            .history-table th,
+            .history-table td {
+                padding: 6px 4px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="user-container" id="userContainer">
 
-        <!-- ===== NEW MAIL BANNER ===== -->
         <div id="newMailBanner" class="new-mail-banner" onclick="openMailBox()">
             <span class="banner-icon">📬</span>
             <div class="banner-text">
@@ -2532,7 +2149,6 @@
             <button class="banner-close" onclick="event.stopPropagation(); hideMailBanner()">✕</button>
         </div>
 
-        <!-- ===== LOADING SCREEN ===== -->
         <div id="loadingScreen">
             <div class="logo-icon"><i class="fas fa-tasks"></i></div>
             <div class="app-title">Task Expert</div>
@@ -2550,7 +2166,6 @@
             <div class="loader-footer">v1.0</div>
         </div>
 
-        <!-- ===== UPLOAD OVERLAY ===== -->
         <div id="uploadOverlay" class="upload-overlay">
             <div class="spinner"></div>
             <div class="progress-text" id="uploadProgressText">Processing...</div>
@@ -2560,13 +2175,11 @@
             </div>
         </div>
 
-        <!-- ===== IMAGE MODAL ===== -->
         <div id="imageModal" class="image-modal" onclick="closeImageModal()">
             <button class="close-btn" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
             <img id="modalImage" src="" alt="Preview">
         </div>
 
-        <!-- ===== MAIL DETAIL SCREEN ===== -->
         <div id="mailDetailScreen" class="mail-detail-screen">
             <div class="mail-detail-header">
                 <i class="fas fa-arrow-left" onclick="closeMailDetail()"></i>
@@ -2575,7 +2188,6 @@
             <div class="mail-detail-content" id="mailDetailContent"></div>
         </div>
 
-        <!-- ===== REJECT REASON MODAL ===== -->
         <div id="rejectReasonModal" class="modal">
             <div class="modal-content">
                 <h3>❌ Reject Submission</h3>
@@ -2590,7 +2202,6 @@
             </div>
         </div>
 
-        <!-- ===== GOOGLE SIGN IN/UP SCREEN ===== -->
         <div class="screen" id="googleSignInScreen">
             <div class="header"><h1>✅ Task Expert</h1><p>Earn Coins • Complete Tasks</p></div>
             <div class="card" style="margin-top:30px;text-align:center;">
@@ -2624,7 +2235,6 @@
             </div>
         </div>
 
-        <!-- ===== SUSPENDED SCREEN ===== -->
         <div class="screen" id="suspendedScreen">
             <div class="suspended-screen">
                 <div class="icon-box"><i class="fas fa-ban" style="color:#ff4757;"></i></div>
@@ -2635,7 +2245,6 @@
             </div>
         </div>
 
-        <!-- ===== MAINTENANCE SCREEN ===== -->
         <div class="screen" id="maintenanceScreen">
             <div class="maintenance-screen">
                 <div class="icon-box"><i class="fas fa-tools" style="color:#ffc107;"></i></div>
@@ -2645,7 +2254,6 @@
             </div>
         </div>
 
-        <!-- ===== UPDATE SCREEN ===== -->
         <div class="screen" id="updateScreen">
             <div class="update-screen">
                 <div class="icon-box"><i class="fas fa-download" style="color:#ffd43b;"></i></div>
@@ -2657,7 +2265,6 @@
             </div>
         </div>
 
-        <!-- ===== MAIN APP SCREEN ===== -->
         <div class="screen" id="mainScreen">
             <div class="header"><h1>✅ Task Expert</h1>
                 <div class="user-info">
@@ -2691,7 +2298,6 @@
                         <button class="platform-filter-btn" data-platform="download" onclick="filterTasksByPlatform('download')"><i class="fas fa-download" style="color:#3498db"></i> Download <span class="task-count-badge" id="countDownload">0</span></button>
                         <button class="platform-filter-btn" data-platform="other" onclick="filterTasksByPlatform('other')"><i class="fas fa-globe" style="color:#9b59b6"></i> Other <span class="task-count-badge" id="countOther">0</span></button>
                     </div>
-                    <!-- task list container with event delegation -->
                     <div id="allTasksList"></div>
                 </div>
             </div>
@@ -2745,7 +2351,6 @@
         </div>
     </div>
 
-    <!-- ===== FULL SCREEN TASKS VIEW ===== -->
     <div id="fullscreenTasks" class="fullscreen-tasks">
         <div class="tasks-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenTasks()"></i>
@@ -2765,7 +2370,6 @@
         </div>
     </div>
 
-    <!-- ===== FULL SCREEN DEPOSIT HISTORY ===== -->
     <div id="fullscreenDepositHistory" class="fullscreen-history">
         <div class="history-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenDepositHistory()"></i>
@@ -2774,7 +2378,6 @@
         <div class="history-body" id="fullscreenDepositHistoryBody"></div>
     </div>
 
-    <!-- ===== FULL SCREEN WITHDRAW HISTORY ===== -->
     <div id="fullscreenWithdrawHistory" class="fullscreen-history">
         <div class="history-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenWithdrawHistory()"></i>
@@ -2783,7 +2386,6 @@
         <div class="history-body" id="fullscreenWithdrawHistoryBody"></div>
     </div>
 
-    <!-- ===== VIEW DETAILS SCREEN ===== -->
     <div id="viewDetailsScreen" class="view-details-screen">
         <div class="task-detail-header">
             <i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeViewDetails()"></i>
@@ -2793,7 +2395,6 @@
         <div class="task-detail-body" id="viewDetailsBody"></div>
     </div>
 
-    <!-- ===== MODALS ===== -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openFullscreenDepositHistory()"><i class="fas fa-history"></i></div>
@@ -2851,7 +2452,6 @@
         </div>
     </div>
 
-    <!-- ===== CREATE TASK MODAL ===== -->
     <div id="createTaskModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openMyPostedTasks()"><i class="fas fa-history"></i></div>
@@ -2901,7 +2501,6 @@
         </div>
     </div>
 
-    <!-- ===== SUBMISSIONS ALL MODAL ===== -->
     <div id="allSubmissionsModal" class="modal">
         <div class="modal-content">
             <h3>📋 All Submissions</h3>
@@ -2910,7 +2509,6 @@
         </div>
     </div>
 
-    <!-- ===== REFERRALS ALL MODAL ===== -->
     <div id="allReferralsModal" class="modal">
         <div class="modal-content">
             <h3>👥 All Referrals</h3>
@@ -2922,15 +2520,16 @@
     <div id="mailModal" class="modal">
         <div class="modal-content"><h3>📬 Mail Box</h3><div id="mailList"></div><button class="btn btn-danger" onclick="closeModal('mailModal')" style="width:100%;">Close</button></div>
     </div>
+
     <div id="myPostedTasksModal" class="modal">
         <div class="modal-content" style="max-width:400px"><h3>📋 My Posted Tasks</h3><div id="myPostedTasksList"></div><button class="btn btn-danger" onclick="closeModal('myPostedTasksModal')" style="width:100%;">Close</button></div>
     </div>
+
     <div id="myTaskDetailsScreen" class="my-task-details-screen">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeMyTaskDetails()"></i><h2>📋 My Task Details</h2></div>
         <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
-    <!-- ===== TASK DETAIL MODAL ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
         <div class="task-detail-body" style="padding:16px;">
@@ -2961,6 +2560,7 @@
     <div id="submissionDetailModal" class="modal">
         <div class="modal-content"><h3>📄 Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')" style="width:100%;">Close</button></div>
     </div>
+
     <div id="toast" class="toast"></div>
 
     <script>
@@ -2989,8 +2589,8 @@
             currentTask = null,
             selectedPlatform = "youtube";
         let userSubmissionsMap = {};
-        let cachedUserTasks = null;
-        let cachedOfficialTasks = null;
+        let cachedUserTasks = [];
+        let cachedOfficialTasks = [];
         let tasksLoaded = false;
         let allSubmissions = [];
         let depositBonusPercent = 0;
@@ -3002,15 +2602,16 @@
         let currentPlatformFilter = 'all';
         let loadingTimeout = null;
         let currentViewTaskId = null;
-        let proofTextValue = '';
         let mailItems = [];
         let unreadCount = 0;
         let mailBannerShown = false;
         let isOnline = true;
         let isAdmin = false;
         let allReferrals = [];
-
         let selectedImage = null;
+        let fullscreenTasksFilter = 'all';
+        let minDeposit = 100;
+        let minWithdraw = 1000;
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -3021,20 +2622,14 @@
             other: { minMembers: 10, minCoins: 5 }
         };
 
-        let minDeposit = 100;
-        let minWithdraw = 1000;
-        let fullscreenTasksFilter = 'all';
-
         // ============================================================
-        // CONNECTION STATE
+        // CONNECTION
         // ============================================================
         const connectedRef = db.ref('.info/connected');
-        connectedRef.on('value', (snap) => {
-            isOnline = snap.val() === true;
-        });
+        connectedRef.on('value', (snap) => { isOnline = snap.val() === true; });
 
         // ============================================================
-        // HELPER FUNCTIONS
+        // HELPERS
         // ============================================================
         function showToast(msg) {
             let t = document.getElementById('toast');
@@ -3074,7 +2669,7 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 
         // ============================================================
-        // AUTH FUNCTIONS
+        // AUTH
         // ============================================================
         function showRegister() {
             document.getElementById('loginSection').style.display = 'none';
@@ -3101,7 +2696,7 @@
         }
 
         // ============================================================
-        // LOADING SCREEN
+        // LOADING
         // ============================================================
         function updateLoader(progress, statusText) {
             const fill = document.getElementById('loaderBarFill');
@@ -3143,14 +2738,15 @@
         }
 
         // ============================================================
-        // LOAD MAINTENANCE & UPDATE
+        // MAINTENANCE & UPDATE
         // ============================================================
         async function loadMaintenanceAndUpdate() {
             try {
                 const maintSnap = await db.ref('settings/maintenance').once('value');
                 const maint = maintSnap.val() || {};
                 if (maint.enabled) {
-                    document.getElementById('maintenanceMsg').innerText = maint.message || 'We are currently performing scheduled maintenance. Please check back later.';
+                    document.getElementById('maintenanceMsg').innerText = maint.message ||
+                        'We are currently performing scheduled maintenance. Please check back later.';
                     showScreen('maintenanceScreen');
                     return;
                 }
@@ -3165,7 +2761,7 @@
         }
 
         // ============================================================
-        // LOAD PLATFORM MIN SETTINGS & MIN LIMITS
+        // PLATFORM MIN SETTINGS
         // ============================================================
         async function loadPlatformMinSettings() {
             try {
@@ -3317,7 +2913,7 @@
         }
 
         // ============================================================
-        // UPDATE EARNINGS DISPLAY
+        // EARNINGS DISPLAY
         // ============================================================
         function updateEarningsDisplay() {
             let pending = 0,
@@ -3408,11 +3004,14 @@
                     return;
                 }
                 let proofHtml = '';
-                if (s.proofType === 'text' && s.proofText) {
+                // Only show proof if pending or pending_reject
+                if (s.proofType === 'text' && s.proofText && (s.status === 'pending' || s.status === 'pending_reject')) {
                     proofHtml =
                         `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
-                } else if (s.images && s.images.length > 0) {
+                } else if (s.images && s.images.length > 0 && (s.status === 'pending' || s.status === 'pending_reject')) {
                     proofHtml = s.images.map(img => safeImageHtml(img, 'preview-img')).join('');
+                } else if (s.status === 'approved' || s.status === 'rejected') {
+                    proofHtml = `<div style="color:#999;font-size:13px;">📎 Proof hidden (${s.status})</div>`;
                 }
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 document.getElementById('submissionDetailContent').innerHTML = `
@@ -3690,7 +3289,7 @@
         }
 
         // ============================================================
-        // TASKS - with event delegation for click
+        // TASKS - LOAD ALL
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -3740,7 +3339,8 @@
                             maxLimit: maxLimit,
                             platform: 'official',
                             creatorId: 'admin',
-                            timestamp: t.createdAt || 0
+                            timestamp: t.createdAt || 0,
+                            proofType: 'image'
                         });
                     }
                     cachedOfficialTasks.sort((a, b) => b.timestamp - a.timestamp);
@@ -3789,8 +3389,7 @@
                 updateTaskCounts();
                 displayFilteredTasks();
                 displayOfficialTasks();
-                setupTaskSlotListeners();
-                setupTaskDeletionListeners();
+                setupRealtimeListeners();
 
             } catch (err) {
                 console.error(err);
@@ -3802,66 +3401,16 @@
         }
 
         // ============================================================
-        // TASK DELETION LISTENERS (admin deletes task)
+        // REAL-TIME LISTENERS
         // ============================================================
-        function setupTaskDeletionListeners() {
-            // Listen for removal of user tasks
-            const userTasksRef = db.ref('tasks/user');
-            const officialTasksRef = db.ref('tasks/official');
+        let realtimeListeners = [];
 
-            const userListener = userTasksRef.on('child_removed', (snap) => {
-                const taskId = snap.key;
-                // Remove from cache
-                if (cachedUserTasks) {
-                    cachedUserTasks = cachedUserTasks.filter(t => t.id !== taskId);
-                }
-                // Also remove from task_requests? Not necessary.
-                // Refresh UI
-                displayFilteredTasks();
-                displayOfficialTasks();
-                updateTaskCounts();
-                // If task detail modal is open and it's this task, close it
-                if (currentTask && currentTask.id === taskId) {
-                    closeTaskDetail();
-                }
-                showToast('Task deleted by admin');
-            });
+        function setupRealtimeListeners() {
+            // Clean up old listeners
+            realtimeListeners.forEach(unsub => unsub());
+            realtimeListeners = [];
 
-            const officialListener = officialTasksRef.on('child_removed', (snap) => {
-                const taskId = snap.key;
-                if (cachedOfficialTasks) {
-                    cachedOfficialTasks = cachedOfficialTasks.filter(t => t.id !== taskId);
-                }
-                displayOfficialTasks();
-                if (currentTask && currentTask.id === taskId) {
-                    closeTaskDetail();
-                }
-                showToast('Official task deleted by admin');
-            });
-
-            // Store listeners for cleanup
-            if (!window._taskDeletionListeners) {
-                window._taskDeletionListeners = [];
-            }
-            window._taskDeletionListeners.push(() => {
-                userTasksRef.off('child_removed', userListener);
-                officialTasksRef.off('child_removed', officialListener);
-            });
-        }
-
-        // ============================================================
-        // REAL-TIME SLOT LISTENERS
-        // ============================================================
-        let taskSlotListeners = {};
-
-        function setupTaskSlotListeners() {
-            for (let key in taskSlotListeners) {
-                if (taskSlotListeners[key]) {
-                    taskSlotListeners[key]();
-                    delete taskSlotListeners[key];
-                }
-            }
-
+            // Listen for submission changes to update slot counts
             const subRef = db.ref('task_submissions');
             const listener = subRef.on('value', (snap) => {
                 const allSubs = snap.val() || {};
@@ -3876,24 +3425,22 @@
                     else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
                 }
 
-                // Update official tasks left count
-                if (cachedOfficialTasks) {
+                // Update official tasks left
+                if (cachedOfficialTasks.length) {
                     for (let task of cachedOfficialTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
-                        const maxLimit = task.maxLimit || 0;
-                        task.left = Math.max(0, maxLimit - filled);
+                        task.left = Math.max(0, (task.maxLimit || 0) - filled);
                     }
                     displayOfficialTasks();
                 }
 
-                // Update user tasks left count
-                if (cachedUserTasks) {
+                // Update user tasks left
+                if (cachedUserTasks.length) {
                     for (let task of cachedUserTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
-                        const required = task.requiredUsers || 0;
-                        task.left = Math.max(0, required - filled);
+                        task.left = Math.max(0, (task.requiredUsers || 0) - filled);
                     }
                     displayFilteredTasks();
                     updateTaskCounts();
@@ -3903,8 +3450,45 @@
                     updateTaskDetailSlots(currentTask.id);
                 }
             });
+            realtimeListeners.push(() => subRef.off('value', listener));
 
-            taskSlotListeners['submissions'] = () => subRef.off('value', listener);
+            // Listen for task deletions (admin)
+            const userTasksRef = db.ref('tasks/user');
+            const userDelListener = userTasksRef.on('child_removed', (snap) => {
+                const taskId = snap.key;
+                cachedUserTasks = cachedUserTasks.filter(t => t.id !== taskId);
+                displayFilteredTasks();
+                updateTaskCounts();
+                if (currentTask && currentTask.id === taskId) closeTaskDetail();
+                // Refresh my task details if open
+                if (document.getElementById('myTaskDetailsScreen').style.display === 'block') {
+                    openMyTaskDetails();
+                }
+                showToast('Task deleted by admin');
+            });
+            realtimeListeners.push(() => userTasksRef.off('child_removed', userDelListener));
+
+            const officialTasksRef = db.ref('tasks/official');
+            const officialDelListener = officialTasksRef.on('child_removed', (snap) => {
+                const taskId = snap.key;
+                cachedOfficialTasks = cachedOfficialTasks.filter(t => t.id !== taskId);
+                displayOfficialTasks();
+                if (currentTask && currentTask.id === taskId) closeTaskDetail();
+                showToast('Official task deleted by admin');
+            });
+            realtimeListeners.push(() => officialTasksRef.off('child_removed', officialDelListener));
+
+            // User coins updates
+            if (currentUser) {
+                const coinRef = db.ref(`users/${currentUser.uid}/coins`);
+                const coinListener = coinRef.on('value', snap => {
+                    if (currentUserData) {
+                        currentUserData.coins = snap.val() || 0;
+                        updateUI();
+                    }
+                });
+                realtimeListeners.push(() => coinRef.off('value', coinListener));
+            }
         }
 
         function updateTaskDetailSlots(taskId) {
@@ -3912,12 +3496,8 @@
             if (modal.style.display !== 'block') return;
 
             let task = null;
-            if (cachedUserTasks) {
-                task = cachedUserTasks.find(t => t.id === taskId);
-            }
-            if (!task && cachedOfficialTasks) {
-                task = cachedOfficialTasks.find(t => t.id === taskId);
-            }
+            task = cachedUserTasks.find(t => t.id === taskId);
+            if (!task) task = cachedOfficialTasks.find(t => t.id === taskId);
 
             if (task) {
                 const statusDiv = document.getElementById('taskSubmitStatus');
@@ -3935,20 +3515,18 @@
         }
 
         // ============================================================
-        // TASK DISPLAY FUNCTIONS (using event delegation)
+        // TASK DISPLAY FUNCTIONS
         // ============================================================
         function updateTaskCounts() {
             const counts = { all: 0, youtube: 0, tiktok: 0, instagram: 0, whatsapp: 0, download: 0, other: 0 };
-            if (cachedUserTasks) {
-                for (let t of cachedUserTasks) {
-                    if (userSubmissionsMap[t.id]) continue;
-                    if (t.creatorId === currentUser?.uid) continue;
-                    if (t.left <= 0) continue;
-                    counts.all++;
-                    const plat = t.platform || 'other';
-                    if (counts[plat] !== undefined) counts[plat]++;
-                    else counts.other++;
-                }
+            for (let t of cachedUserTasks) {
+                if (userSubmissionsMap[t.id]) continue;
+                if (t.creatorId === currentUser?.uid) continue;
+                if (t.left <= 0) continue;
+                counts.all++;
+                const plat = t.platform || 'other';
+                if (counts[plat] !== undefined) counts[plat]++;
+                else counts.other++;
             }
             document.getElementById('countAll').innerText = counts.all;
             document.getElementById('countYoutube').innerText = counts.youtube;
@@ -3960,7 +3538,6 @@
         }
 
         function getFilteredUserTasks(platform, limit = 5) {
-            if (!cachedUserTasks) return [];
             let filtered = cachedUserTasks.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.creatorId === currentUser?.uid) return false;
@@ -3974,9 +3551,48 @@
             return limit > 0 ? filtered.slice(0, limit) : filtered;
         }
 
+        // ===== MAIN TASK CLICK HANDLER - Using event delegation =====
+        function setupTaskClickHandler(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // Remove old listener if any
+            if (container._clickHandler) {
+                container.removeEventListener('click', container._clickHandler);
+            }
+
+            const handler = function(e) {
+                // Find the closest .task-item
+                const item = e.target.closest('.task-item');
+                if (!item) return;
+                // Check if it's clickable (not full/submitted)
+                if (item.style.cursor === 'default') return;
+
+                const id = item.dataset.taskId;
+                const type = item.dataset.taskType;
+                const title = item.dataset.taskTitle;
+                const desc = item.dataset.taskDesc;
+                const steps = item.dataset.taskSteps;
+                const link = item.dataset.taskLink;
+                const reward = parseInt(item.dataset.taskReward);
+                const creator = item.dataset.taskCreator;
+                const proofType = item.dataset.taskProoftype || 'image';
+
+                // Prevent double click
+                if (item.dataset.clicked === 'true') return;
+                item.dataset.clicked = 'true';
+                setTimeout(() => { item.dataset.clicked = 'false'; }, 500);
+
+                showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
+            };
+
+            container.addEventListener('click', handler);
+            container._clickHandler = handler;
+        }
+
         function displayFilteredTasks() {
             const container = document.getElementById('allTasksList');
-            if (!cachedUserTasks || cachedUserTasks.length === 0) {
+            if (!cachedUserTasks.length) {
                 container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">✨ No user tasks available.</p>';
                 return;
             }
@@ -4023,40 +3639,19 @@
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
 
-                // Store data in attributes
                 allHtml += `
                     <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
                         <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                     </div>
                 `;
             }
-            container.innerHTML = allHtml + viewAllHtml ||
-                '<p style="color:#666;text-align:center;padding:20px;">✨ No tasks available for this platform.</p>';
-
-            // Attach click event listener using delegation
-            container.querySelectorAll('.task-item').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const id = this.dataset.taskId;
-                    const type = this.dataset.taskType;
-                    const title = this.dataset.taskTitle;
-                    const desc = this.dataset.taskDesc;
-                    const steps = this.dataset.taskSteps;
-                    const link = this.dataset.taskLink;
-                    const reward = parseInt(this.dataset.taskReward);
-                    const creator = this.dataset.taskCreator;
-                    const proofType = this.dataset.taskProoftype;
-                    showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
-                });
-            });
+            container.innerHTML = allHtml + viewAllHtml;
+            setupTaskClickHandler('allTasksList');
         }
 
-        // ============================================================
-        // OFFICIAL TASKS - show only tasks not submitted and with slots
-        // ============================================================
         function displayOfficialTasks() {
             const container = document.getElementById('officialTasksList');
-            if (!cachedOfficialTasks || cachedOfficialTasks.length === 0) {
+            if (!cachedOfficialTasks.length) {
                 container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">📢 No official tasks available.</p>';
                 return;
             }
@@ -4084,8 +3679,9 @@
             }
 
             // Show available tasks (latest 5)
-            const latestAvailable = available.slice(0, 5);
-            const totalAvailable = available.length;
+            const sortedAvailable = [...available].sort((a, b) => b.timestamp - a.timestamp);
+            const latestAvailable = sortedAvailable.slice(0, 5);
+            const totalAvailable = sortedAvailable.length;
             let viewAllHtml = '';
             if (totalAvailable > 5) {
                 viewAllHtml =
@@ -4094,13 +3690,15 @@
 
             for (let t of latestAvailable) {
                 let slotsBadge = '';
-                if (t.left <= 3) {
+                if (t.left <= 0) {
+                    slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
+                } else if (t.left <= 3) {
                     slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
                 } else {
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
                 officialHtml += `
-                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="image">
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
                         <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                     </div>
                 `;
@@ -4113,23 +3711,7 @@
                 officialHtml += viewAllHtml;
             }
             container.innerHTML = officialHtml;
-
-            // Attach click events for official tasks
-            container.querySelectorAll('.task-item:not([style*="cursor:default"])').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const id = this.dataset.taskId;
-                    const type = this.dataset.taskType;
-                    const title = this.dataset.taskTitle;
-                    const desc = this.dataset.taskDesc;
-                    const steps = this.dataset.taskSteps;
-                    const link = this.dataset.taskLink;
-                    const reward = parseInt(this.dataset.taskReward);
-                    const creator = this.dataset.taskCreator;
-                    const proofType = this.dataset.taskProoftype;
-                    showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
-                });
-            });
+            setupTaskClickHandler('officialTasksList');
         }
 
         function filterTasksByPlatform(platform) {
@@ -4140,7 +3722,7 @@
         }
 
         // ============================================================
-        // FULLSCREEN TASKS VIEW
+        // FULLSCREEN TASKS
         // ============================================================
         function openFullscreenTasks() {
             document.getElementById('fullscreenTasks').style.display = 'block';
@@ -4164,24 +3746,18 @@
             let tasks = [];
 
             // User tasks (not submitted, not own, left > 0)
-            if (cachedUserTasks) {
-                const userTasks = cachedUserTasks.filter(t => {
-                    if (userSubmissionsMap[t.id]) return false;
-                    if (t.creatorId === currentUser?.uid) return false;
-                    if (t.left <= 0) return false;
-                    return true;
-                });
-                tasks = tasks.concat(userTasks.map(t => ({ ...t, isOfficial: false })));
+            for (let t of cachedUserTasks) {
+                if (userSubmissionsMap[t.id]) continue;
+                if (t.creatorId === currentUser?.uid) continue;
+                if (t.left <= 0) continue;
+                tasks.push({ ...t, isOfficial: false });
             }
 
             // Official tasks (not submitted, left > 0)
-            if (cachedOfficialTasks) {
-                const officialTasks = cachedOfficialTasks.filter(t => {
-                    if (userSubmissionsMap[t.id]) return false;
-                    if (t.left <= 0) return false;
-                    return true;
-                });
-                tasks = tasks.concat(officialTasks.map(t => ({ ...t, isOfficial: true })));
+            for (let t of cachedOfficialTasks) {
+                if (userSubmissionsMap[t.id]) continue;
+                if (t.left <= 0) continue;
+                tasks.push({ ...t, isOfficial: true });
             }
 
             if (platform !== 'all') {
@@ -4237,27 +3813,7 @@
                 `;
             }
             list.innerHTML = html;
-
-            // Attach click events for fullscreen tasks
-            list.querySelectorAll('.task-item').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const id = this.dataset.taskId;
-                    const type = this.dataset.taskType;
-                    const title = this.dataset.taskTitle;
-                    const desc = this.dataset.taskDesc;
-                    const steps = this.dataset.taskSteps;
-                    const link = this.dataset.taskLink;
-                    const reward = parseInt(this.dataset.taskReward);
-                    const creator = this.dataset.taskCreator;
-                    const proofType = this.dataset.taskProoftype;
-                    closeFullscreenTasks();
-                    // Small delay to allow close animation
-                    setTimeout(() => {
-                        showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
-                    }, 200);
-                });
-            });
+            setupTaskClickHandler('fullscreenTasksList');
         }
 
         function filterFullscreenTasks(platform) {
@@ -4267,24 +3823,30 @@
         window.manualRefreshTasks = async function() {
             showToast("Refreshing tasks...");
             tasksLoaded = false;
-            cachedUserTasks = null;
-            cachedOfficialTasks = null;
+            cachedUserTasks = [];
+            cachedOfficialTasks = [];
             await loadAllTasks();
             showToast("Tasks updated!");
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT
+        // TASK DETAIL
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
-            if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
-            if (userSubmissionsMap[id]) { showToast("Already submitted"); return; }
+            if (creatorId === currentUser.uid) {
+                showToast("You cannot do your own task");
+                return;
+            }
+            if (userSubmissionsMap[id]) {
+                showToast("Already submitted");
+                return;
+            }
 
             let task = null;
             if (type === 'official') {
-                task = cachedOfficialTasks?.find(t => t.id === id);
+                task = cachedOfficialTasks.find(t => t.id === id);
             } else {
-                task = cachedUserTasks?.find(t => t.id === id);
+                task = cachedUserTasks.find(t => t.id === id);
             }
 
             currentTask = { id, type, title, desc, steps, link, reward, proofType: proofType || 'image' };
@@ -4318,7 +3880,6 @@
             document.getElementById('previewImages').innerHTML = '';
             document.getElementById('proofInput').value = '';
             document.getElementById('proofTextInput').value = '';
-            proofTextValue = '';
 
             const submitBtn = document.getElementById('submitProofBtn');
             submitBtn.disabled = false;
@@ -4329,7 +3890,7 @@
             if (task) {
                 const statusDiv = document.getElementById('taskSubmitStatus');
                 if (task.left <= 0) {
-                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full, but you can still submit (may be reviewed later)</span>';
+                    statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full</span>';
                 } else {
                     statusDiv.innerHTML =
                         `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
@@ -4703,7 +4264,7 @@
         }
 
         // ============================================================
-        // MY POSTED TASKS, MY TASK DETAILS
+        // MY POSTED TASKS
         // ============================================================
         async function openMyPostedTasks() {
             try {
@@ -4849,13 +4410,12 @@
         }
 
         // ============================================================
-        // BUILD SUBMISSION HTML (hide proof images on approved/rejected)
+        // BUILD SUBMISSION HTML (hide proof on approved/rejected)
         // ============================================================
         function buildSubmissionHtml(s, taskId, rewardPerUser) {
             let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
                 'pending_reject' ? 'orange' : 'orange'));
             let proofHtml = '';
-            // Only show proof if status is pending or pending_reject
             if (s.status === 'pending' || s.status === 'pending_reject') {
                 if (s.proofType === 'text' && s.proofText) {
                     proofHtml =
@@ -4864,7 +4424,6 @@
                     proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
                 }
             } else {
-                // For approved/rejected, show only a message
                 proofHtml = `<div style="color:#999;font-size:12px;">📎 Proof hidden (${s.status})</div>`;
             }
 
@@ -5286,7 +4845,6 @@
                         let statusClass = it.status || 'pending';
                         let amountClass = statusClass === 'approved' ? 'negative' : 'negative';
                         let fee = Math.round((it.amount || 0) * 0.1);
-                        let received = (it.amount || 0) - fee;
                         html += `
                                     <div class="history-card">
                                         <div class="h-left">
@@ -5310,7 +4868,7 @@
         }
 
         // ============================================================
-        // WITHDRAW - WITH 10% FEE DEDUCTION
+        // WITHDRAW
         // ============================================================
         function showWithdrawModal() {
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
@@ -5646,7 +5204,7 @@
                 displayOfficialTasks(); } }
 
         // ============================================================
-        // PLATFORM SELECTOR & PROOF TOGGLE
+        // PLATFORM SELECTOR
         // ============================================================
         function initPlatform() {
             document.querySelectorAll('.platform-card').forEach(card => {
@@ -5672,33 +5230,6 @@
         };
 
         // ============================================================
-        // REALTIME LISTENERS
-        // ============================================================
-        function setupRealtimeListeners() {
-            if (!currentUser) return;
-            db.ref(`users/${currentUser.uid}/coins`).on('value', snap => { if (currentUserData) { currentUserData
-                        .coins = snap.val() || 0;
-                    updateUI(); } });
-            db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid).on('value', () => {
-                loadMySubmissions(); });
-            db.ref(`mailbox/${currentUser.uid}`).on('value', () => {
-                loadMailBox().then(() => {
-                    if (unreadCount > 0 && !mailBannerShown && document.getElementById('mainScreen').classList
-                        .contains('active')) {
-                        showMailBanner();
-                    }
-                });
-            });
-            db.ref('task_submissions').on('child_changed', (snap) => {
-                const data = snap.val();
-                if (data && data.status === 'approved' && data.userId) {
-                    updateReferralProgress(data.userId);
-                }
-            });
-            setInterval(() => { if (currentUser) cleanupCompletedTasks(); }, 5 * 60 * 1000);
-        }
-
-        // ============================================================
         // AUTH STATE
         // ============================================================
         auth.onAuthStateChanged(async user => {
@@ -5721,7 +5252,6 @@
                     loadDailyRewardGrid();
                     loadBonusAndCommissionSettings();
                     loadMailBox();
-                    setupRealtimeListeners();
                     loadMaintenanceAndUpdate();
                     if (currentUser) {
                         db.ref('referrals').orderByChild('referredBy').equalTo(currentUser.uid).once('value')
@@ -5744,20 +5274,13 @@
                 currentUser = null;
                 currentUserData = null;
                 userSubmissionsMap = {};
-                cachedUserTasks = null;
-                cachedOfficialTasks = null;
+                cachedUserTasks = [];
+                cachedOfficialTasks = [];
                 tasksLoaded = false;
                 isAdmin = false;
-                for (let key in taskSlotListeners) {
-                    if (taskSlotListeners[key]) {
-                        taskSlotListeners[key]();
-                        delete taskSlotListeners[key];
-                    }
-                }
-                if (window._taskDeletionListeners) {
-                    window._taskDeletionListeners.forEach(unsub => unsub());
-                    window._taskDeletionListeners = [];
-                }
+                // Clean up realtime listeners
+                realtimeListeners.forEach(unsub => unsub());
+                realtimeListeners = [];
                 updateLoader(100, 'Please sign in');
                 setTimeout(finishLoading, 300);
             }
@@ -5779,7 +5302,7 @@
             loadBankDetails();
         });
 
-        // Expose functions to global
+        // Expose functions
         window.filterTasksByPlatform = filterTasksByPlatform;
         window.navigateTo = navigateTo;
         window.showTaskDetail = window.showTaskDetail;
