@@ -676,6 +676,109 @@
             background: #218838;
         }
 
+        /* ===== FULL SCREEN HISTORY ===== */
+        .fullscreen-history {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 3000;
+            overflow-y: auto;
+            display: none;
+            padding: 20px;
+        }
+        .fullscreen-history .history-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 0 0 20px 20px;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .fullscreen-history .history-header i {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .fullscreen-history .history-header h2 {
+            font-size: 20px;
+            flex: 1;
+        }
+        .fullscreen-history .history-body {
+            padding: 10px 0;
+        }
+        .fullscreen-history .history-body .history-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid #1e3c72;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .fullscreen-history .history-body .history-card .h-left {
+            flex: 1;
+        }
+        .fullscreen-history .history-body .history-card .h-left .h-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e3c72;
+        }
+        .fullscreen-history .history-body .history-card .h-left .h-meta {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+        .fullscreen-history .history-body .history-card .h-right {
+            text-align: right;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-amount {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-amount.positive {
+            color: #28a745;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-amount.negative {
+            color: #dc3545;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-status {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-status.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-status.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .fullscreen-history .history-body .history-card .h-right .h-status.cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
         /* ===== TASK DETAIL ===== */
         .task-detail-modal,
         .my-task-details-screen {
@@ -797,34 +900,24 @@
             margin: 0;
         }
 
-        /* ===== REFERRAL SHARE CARD ===== */
-        .referral-share-card {
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        /* ===== REFERRAL SHARE (new simplified) ===== */
+        .referral-share-simple {
+            background: linear-gradient(135deg, #e8f0fe, #d4e0f5);
             border-radius: 16px;
-            padding: 18px 20px;
+            padding: 16px 20px;
             margin-bottom: 16px;
-            border: 2px solid #f7971e;
+            border: 1px solid #c5d5ea;
             text-align: center;
         }
-        .referral-share-card .fire-icon {
-            font-size: 28px;
-            display: block;
-            margin-bottom: 6px;
-        }
-        .referral-share-card .share-title {
-            font-size: 18px;
+        .referral-share-simple .share-title {
+            font-size: 20px;
             font-weight: 800;
             color: #1e3c72;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
-        .referral-share-card .share-desc {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 10px;
-        }
-        .referral-share-card .share-link {
+        .referral-share-simple .share-link-box {
             background: white;
-            padding: 8px 14px;
+            padding: 10px 14px;
             border-radius: 10px;
             font-size: 13px;
             word-break: break-all;
@@ -835,8 +928,9 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+            margin-top: 6px;
         }
-        .referral-share-card .share-link .share-link-text {
+        .referral-share-simple .share-link-box .share-link-text {
             font-size: 12px;
             flex: 1;
             text-align: left;
@@ -844,7 +938,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .referral-share-card .share-link .copy-btn-sm {
+        .referral-share-simple .share-link-box .copy-btn-sm {
             background: #1e3c72;
             color: white;
             border: none;
@@ -854,8 +948,13 @@
             font-size: 12px;
             flex-shrink: 0;
         }
-        .referral-share-card .share-link .copy-btn-sm:hover {
+        .referral-share-simple .share-link-box .copy-btn-sm:hover {
             background: #2a5298;
+        }
+        .referral-share-simple .share-arrow {
+            font-size: 24px;
+            color: #1e3c72;
+            margin: 4px 0;
         }
 
         /* ===== DAILY REWARD ===== */
@@ -1914,7 +2013,7 @@
             height: 100px;
         }
 
-        /* ===== TASK LEFT SLOTS REAL-TIME (display only) ===== */
+        /* ===== TASK LEFT SLOTS REAL-TIME ===== */
         .task-slots-badge {
             display: inline-block;
             padding: 2px 12px;
@@ -2075,7 +2174,7 @@
             color: #155724;
         }
 
-        /* ===== SUBMIT BUTTON DISABLED STATE (only for full, but we removed block) ===== */
+        /* ===== SUBMIT BUTTON DISABLED STATE ===== */
         .btn-submit-disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -2377,6 +2476,47 @@
         .maintenance-screen .btn {
             margin-top: 20px;
         }
+
+        /* ===== VIEW ALL TASKS FULL SCREEN ===== */
+        .fullscreen-tasks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 3500;
+            overflow-y: auto;
+            display: none;
+            padding: 20px;
+        }
+        .fullscreen-tasks .tasks-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 0 0 20px 20px;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .fullscreen-tasks .tasks-header i {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .fullscreen-tasks .tasks-header h2 {
+            font-size: 20px;
+            flex: 1;
+        }
+        .fullscreen-tasks .tasks-body {
+            padding: 10px 0;
+        }
+        .fullscreen-tasks .tasks-body .platform-filters {
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -2484,7 +2624,7 @@
             </div>
         </div>
 
-        <!-- ===== SUSPENDED SCREEN (Improved) ===== -->
+        <!-- ===== SUSPENDED SCREEN ===== -->
         <div class="screen" id="suspendedScreen">
             <div class="suspended-screen">
                 <div class="icon-box"><i class="fas fa-ban" style="color:#ff4757;"></i></div>
@@ -2495,7 +2635,7 @@
             </div>
         </div>
 
-        <!-- ===== MAINTENANCE SCREEN (Improved) ===== -->
+        <!-- ===== MAINTENANCE SCREEN ===== -->
         <div class="screen" id="maintenanceScreen">
             <div class="maintenance-screen">
                 <div class="icon-box"><i class="fas fa-tools" style="color:#ffc107;"></i></div>
@@ -2505,7 +2645,7 @@
             </div>
         </div>
 
-        <!-- ===== UPDATE SCREEN (Improved) ===== -->
+        <!-- ===== UPDATE SCREEN ===== -->
         <div class="screen" id="updateScreen">
             <div class="update-screen">
                 <div class="icon-box"><i class="fas fa-download" style="color:#ffd43b;"></i></div>
@@ -2563,17 +2703,19 @@
             </div>
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
-                    <!-- ===== REFERRAL SHARE CARD ===== -->
-                    <div class="referral-share-card">
-                        <span class="fire-icon">🔥</span>
-                        <div class="share-title">Earn Daily Money From Home!</div>
-                        <div class="share-desc">Complete simple tasks &amp; start earning 💰</div>
-                        <div class="share-link">
+                    <!-- ===== REFERRAL SHARE - SIMPLIFIED ===== -->
+                    <div class="referral-share-simple">
+                        <div class="share-title">Refer To Earn</div>
+                        <div class="share-arrow">👇👇</div>
+                        <div class="share-link-box">
                             <span class="share-link-text" id="shareLinkDisplay">https://taskexpertapp.pages.dev/?ref=910372</span>
-                            <button class="copy-btn-sm" onclick="copyShareLink()"><i class="fas fa-copy"></i> Copy</button>
+                            <button class="copy-btn-sm" onclick="copyFullShareText()"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>
-                    <div class="referral-code"><span><i class="fas fa-code-branch"></i> <strong id="referralCode">910372</strong></span><button class="copy-btn" onclick="copyReferralCode()">Copy</button></div>
+                    <!-- Referral code hidden but functional -->
+                    <div style="display:none;">
+                        <span id="referralCode">910372</span>
+                    </div>
                     <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins</div>
                     <div class="referral-stats">
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
@@ -2604,6 +2746,44 @@
         </div>
     </div>
 
+    <!-- ===== FULL SCREEN TASKS VIEW ===== -->
+    <div id="fullscreenTasks" class="fullscreen-tasks">
+        <div class="tasks-header">
+            <i class="fas fa-arrow-left" onclick="closeFullscreenTasks()"></i>
+            <h2 id="fullscreenTasksTitle">All Tasks</h2>
+        </div>
+        <div class="tasks-body">
+            <div class="platform-filters" id="fullscreenPlatformFilters">
+                <button class="platform-filter-btn active" data-platform="all" onclick="filterFullscreenTasks('all')"><i class="fas fa-th-list"></i> All</button>
+                <button class="platform-filter-btn" data-platform="youtube" onclick="filterFullscreenTasks('youtube')"><i class="fab fa-youtube" style="color:#ff0000"></i> YouTube</button>
+                <button class="platform-filter-btn" data-platform="tiktok" onclick="filterFullscreenTasks('tiktok')"><i class="fab fa-tiktok"></i> TikTok</button>
+                <button class="platform-filter-btn" data-platform="instagram" onclick="filterFullscreenTasks('instagram')"><i class="fab fa-instagram" style="color:#e4405f"></i> Instagram</button>
+                <button class="platform-filter-btn" data-platform="whatsapp" onclick="filterFullscreenTasks('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</button>
+                <button class="platform-filter-btn" data-platform="download" onclick="filterFullscreenTasks('download')"><i class="fas fa-download" style="color:#3498db"></i> Download</button>
+                <button class="platform-filter-btn" data-platform="other" onclick="filterFullscreenTasks('other')"><i class="fas fa-globe" style="color:#9b59b6"></i> Other</button>
+            </div>
+            <div id="fullscreenTasksList"></div>
+        </div>
+    </div>
+
+    <!-- ===== FULL SCREEN DEPOSIT HISTORY ===== -->
+    <div id="fullscreenDepositHistory" class="fullscreen-history">
+        <div class="history-header">
+            <i class="fas fa-arrow-left" onclick="closeFullscreenDepositHistory()"></i>
+            <h2>📜 Deposit History</h2>
+        </div>
+        <div class="history-body" id="fullscreenDepositHistoryBody"></div>
+    </div>
+
+    <!-- ===== FULL SCREEN WITHDRAW HISTORY ===== -->
+    <div id="fullscreenWithdrawHistory" class="fullscreen-history">
+        <div class="history-header">
+            <i class="fas fa-arrow-left" onclick="closeFullscreenWithdrawHistory()"></i>
+            <h2>📜 Withdraw History</h2>
+        </div>
+        <div class="history-body" id="fullscreenWithdrawHistoryBody"></div>
+    </div>
+
     <!-- ===== VIEW DETAILS SCREEN ===== -->
     <div id="viewDetailsScreen" class="view-details-screen">
         <div class="task-detail-header">
@@ -2617,7 +2797,7 @@
     <!-- ===== MODALS ===== -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
-            <div class="history-icon" onclick="openDepositHistory()"><i class="fas fa-history"></i></div>
+            <div class="history-icon" onclick="openFullscreenDepositHistory()"><i class="fas fa-history"></i></div>
             <h3>💳 Deposit Coins</h3>
             <p style="color:#666;font-size:14px;">1000 Coins = 100 PKR</p>
             <div class="deposit-card">
@@ -2649,17 +2829,18 @@
 
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
-            <div class="history-icon" onclick="openWithdrawHistory()"><i class="fas fa-history"></i></div>
+            <div class="history-icon" onclick="openFullscreenWithdrawHistory()"><i class="fas fa-history"></i></div>
             <h3>💸 Withdraw Coins</h3>
             <div class="withdraw-card">
                 <div class="balance-display">
                     <div class="label">Withdrawable Balance</div>
                     <div class="amount" id="withdrawableBalance">0</div>
                 </div>
-                <div class="fee-info" id="withdrawCommissionInfo">💸 Fee: 0% (deducted on approval)</div>
+                <div class="fee-info" id="withdrawCommissionInfo">💸 Fee: 10% (deducted from request)</div>
             </div>
             <label class="input-label">Amount (Coins)</label>
             <input type="number" id="withdrawAmount" placeholder="e.g. 1000" />
+            <div class="info-text" id="withdrawTotalInfo">Total needed including fee: 0 coins</div>
             <label class="input-label">Withdraw Method</label>
             <select id="withdrawMethod"><option>Easypaisa</option><option>JazzCash</option></select>
             <label class="input-label">Account Number</label>
@@ -2739,12 +2920,6 @@
         </div>
     </div>
 
-    <div id="depositHistoryModal" class="modal">
-        <div class="modal-content"><h3>📜 Deposit History</h3><div id="depositHistoryList"></div><button class="btn btn-danger" onclick="closeModal('depositHistoryModal')" style="width:100%;">Close</button></div>
-    </div>
-    <div id="withdrawHistoryModal" class="modal">
-        <div class="modal-content"><h3>📜 Withdraw History</h3><div id="withdrawHistoryList"></div><button class="btn btn-danger" onclick="closeModal('withdrawHistoryModal')" style="width:100%;">Close</button></div>
-    </div>
     <div id="mailModal" class="modal">
         <div class="modal-content"><h3>📬 Mail Box</h3><div id="mailList"></div><button class="btn btn-danger" onclick="closeModal('mailModal')" style="width:100%;">Close</button></div>
     </div>
@@ -2756,7 +2931,7 @@
         <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
-    <!-- ===== TASK DETAIL MODAL - SIMPLE SINGLE UPLOAD ===== -->
+    <!-- ===== TASK DETAIL MODAL ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
         <div class="task-detail-body" style="padding:16px;">
@@ -2765,7 +2940,6 @@
             <div class="card"><h3>🔗 Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
             <div class="card">
                 <h3 id="proofSectionTitle">📤 Submit Proof</h3>
-                <!-- IMAGE PROOF -->
                 <div id="imageProofArea">
                     <div class="upload-area" onclick="document.getElementById('proofInput').click()">
                         <i class="fas fa-camera" style="font-size:28px;display:block;margin-bottom:6px;color:#1e3c72;"></i>
@@ -2775,7 +2949,6 @@
                     <div id="previewImages"></div>
                     <div class="single-img-hint"><i class="fas fa-info-circle"></i> Only 1 image per submission</div>
                 </div>
-                <!-- TEXT PROOF -->
                 <div id="textProofArea" style="display:none;">
                     <textarea id="proofTextInput" class="proof-textarea" placeholder="Enter your proof details here..."></textarea>
                     <div style="font-size:12px; color:#666; margin-top:4px;">Please provide detailed proof text.</div>
@@ -2822,7 +2995,7 @@
         let tasksLoaded = false;
         let allSubmissions = [];
         let depositBonusPercent = 0;
-        let withdrawCommissionPercent = 0;
+        let withdrawCommissionPercent = 10; // 10% default
         let pendingRejectSubmissionId = null,
             pendingRejectTaskId = null,
             pendingRejectWorkerId = null,
@@ -2851,6 +3024,7 @@
 
         let minDeposit = 100;
         let minWithdraw = 1000;
+        let fullscreenTasksFilter = 'all';
 
         // ============================================================
         // CONNECTION STATE
@@ -2880,7 +3054,6 @@
         function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
                 '<' ? '&lt;' : '&gt;')); }
 
-        // === Escape for JavaScript string (to use in onclick) ===
         function escapeJs(str) {
             if (!str) return '';
             return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(
@@ -2902,7 +3075,7 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 
         // ============================================================
-        // AUTH FUNCTIONS - NO OFFLINE CHECK
+        // AUTH FUNCTIONS
         // ============================================================
         function showRegister() {
             document.getElementById('loginSection').style.display = 'none';
@@ -2929,7 +3102,7 @@
         }
 
         // ============================================================
-        // LOADING SCREEN - FINISH IMMEDIATELY AFTER AUTH
+        // LOADING SCREEN
         // ============================================================
         function updateLoader(progress, statusText) {
             const fill = document.getElementById('loaderBarFill');
@@ -3159,7 +3332,7 @@
         }
 
         // ============================================================
-        // SUBMISSIONS (latest first)
+        // SUBMISSIONS
         // ============================================================
         async function loadMySubmissions() {
             try {
@@ -3259,7 +3432,7 @@
         };
 
         // ============================================================
-        // REFERRALS with 7-task logic
+        // REFERRALS
         // ============================================================
         async function loadReferralData() {
             try {
@@ -3518,7 +3691,7 @@
         }
 
         // ============================================================
-        // TASKS - LOAD ALL
+        // TASKS
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -3629,7 +3802,7 @@
         }
 
         // ============================================================
-        // REAL-TIME SLOT LISTENERS (display only)
+        // REAL-TIME SLOT LISTENERS
         // ============================================================
         let taskSlotListeners = {};
 
@@ -3678,7 +3851,6 @@
                     updateTaskCounts();
                 }
 
-                // Update task detail slots (display only)
                 if (currentTask) {
                     updateTaskDetailSlots(currentTask.id);
                 }
@@ -3703,12 +3875,10 @@
                 const statusDiv = document.getElementById('taskSubmitStatus');
                 if (task.left <= 0) {
                     statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full</span>';
-                    // We do NOT disable the button; user can still submit (slot check removed)
                 } else {
                     statusDiv.innerHTML =
                         `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
                 }
-                // Ensure submit button is always enabled (unless other conditions)
                 const submitBtn = document.getElementById('submitProofBtn');
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-submit-disabled');
@@ -3741,24 +3911,39 @@
             document.getElementById('countOther').innerText = counts.other;
         }
 
+        // ===== Get latest 5 tasks or all for fullscreen =====
+        function getFilteredUserTasks(platform, limit = 5) {
+            if (!cachedUserTasks) return [];
+            let filtered = cachedUserTasks.filter(t => {
+                if (userSubmissionsMap[t.id]) return false;
+                if (t.creatorId === currentUser?.uid) return false;
+                return true;
+            });
+            if (platform !== 'all') {
+                filtered = filtered.filter(t => t.platform === platform);
+            }
+            // Sort by timestamp descending (newest first)
+            filtered.sort((a, b) => b.timestamp - a.timestamp);
+            return limit > 0 ? filtered.slice(0, limit) : filtered;
+        }
+
         function displayFilteredTasks() {
             if (!cachedUserTasks || cachedUserTasks.length === 0) {
                 document.getElementById('allTasksList').innerHTML =
                     '<p style="color:#666;text-align:center;padding:20px;">✨ No user tasks available.</p>';
                 return;
             }
+            // Show latest 5
+            let tasks = getFilteredUserTasks(currentPlatformFilter, 5);
             let allHtml = '';
-            let filtered = cachedUserTasks;
-            if (currentPlatformFilter !== 'all') {
-                filtered = cachedUserTasks.filter(t => t.platform === currentPlatformFilter);
+            let viewAllHtml = '';
+            const totalAvailable = getFilteredUserTasks(currentPlatformFilter, 0).length;
+            if (totalAvailable > 5) {
+                viewAllHtml =
+                    `<div style="text-align:center;margin-top:8px;"><button class="view-all-btn" onclick="openFullscreenTasks()">📋 View All (${totalAvailable})</button></div>`;
             }
-            filtered = filtered.filter(t => {
-                if (userSubmissionsMap[t.id]) return false;
-                if (t.creatorId === currentUser?.uid) return false;
-                // Do not filter by left > 0; we allow submission even if full, but we show a warning
-                return true;
-            });
-            for (let t of filtered) {
+
+            for (let t of tasks) {
                 let iconHtml = '';
                 switch (t.platform) {
                     case 'youtube':
@@ -3792,7 +3977,6 @@
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
 
-                // Use escapeJs for steps to avoid breaking onclick
                 const escapedTitle = escapeJs(t.title);
                 const escapedDesc = escapeJs(t.desc);
                 const escapedSteps = escapeJs(t.steps);
@@ -3802,12 +3986,12 @@
                                 <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                             </div>`;
             }
-            document.getElementById('allTasksList').innerHTML = allHtml ||
+            document.getElementById('allTasksList').innerHTML = allHtml + viewAllHtml ||
                 '<p style="color:#666;text-align:center;padding:20px;">✨ No tasks available for this platform.</p>';
         }
 
         // ============================================================
-        // OFFICIAL TASKS - DISPLAY
+        // OFFICIAL TASKS - show latest 5
         // ============================================================
         function displayOfficialTasks() {
             if (!cachedOfficialTasks || cachedOfficialTasks.length === 0) {
@@ -3816,12 +4000,8 @@
                 return;
             }
             let officialHtml = '';
-            const available = cachedOfficialTasks.filter(t => {
-                if (userSubmissionsMap[t.id]) return false;
-                // Show all tasks, even if full
-                return true;
-            });
 
+            // Show submitted tasks
             const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
             for (let t of submitted) {
                 officialHtml +=
@@ -3831,9 +4011,19 @@
                             </div>`;
             }
 
-            // Show tasks not submitted
-            const notSubmitted = cachedOfficialTasks.filter(t => !userSubmissionsMap[t.id]);
-            for (let t of notSubmitted) {
+            // Show available tasks (latest 5)
+            const available = cachedOfficialTasks.filter(t => !userSubmissionsMap[t.id]);
+            const latestAvailable = available.slice(0, 5);
+            const totalAvailable = available.length;
+
+            let viewAllHtml = '';
+            if (totalAvailable > 5) {
+                // Get counts for fullscreen
+                viewAllHtml =
+                    `<div style="text-align:center;margin-top:8px;"><button class="view-all-btn" onclick="openFullscreenTasks()">📋 View All Official (${totalAvailable})</button></div>`;
+            }
+
+            for (let t of latestAvailable) {
                 let slotsBadge = '';
                 if (t.left <= 0) {
                     slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
@@ -3855,6 +4045,8 @@
             if (!officialHtml) {
                 officialHtml =
                     '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
+            } else {
+                officialHtml += viewAllHtml;
             }
             document.getElementById('officialTasksList').innerHTML = officialHtml;
         }
@@ -3864,6 +4056,110 @@
             document.querySelectorAll('.platform-filter-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.platform-filter-btn[data-platform="${platform}"]`).classList.add('active');
             displayFilteredTasks();
+        }
+
+        // ============================================================
+        // FULLSCREEN TASKS VIEW
+        // ============================================================
+        function openFullscreenTasks() {
+            document.getElementById('fullscreenTasks').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            renderFullscreenTasks('all');
+        }
+
+        function closeFullscreenTasks() {
+            document.getElementById('fullscreenTasks').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderFullscreenTasks(platform) {
+            fullscreenTasksFilter = platform;
+            // Update filter buttons
+            document.querySelectorAll('#fullscreenPlatformFilters .platform-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.platform === platform) btn.classList.add('active');
+            });
+
+            const list = document.getElementById('fullscreenTasksList');
+            let tasks = [];
+
+            // Get user tasks
+            if (cachedUserTasks) {
+                const userTasks = cachedUserTasks.filter(t => {
+                    if (userSubmissionsMap[t.id]) return false;
+                    if (t.creatorId === currentUser?.uid) return false;
+                    return true;
+                });
+                tasks = tasks.concat(userTasks.map(t => ({ ...t, isOfficial: false })));
+            }
+
+            // Get official tasks
+            if (cachedOfficialTasks) {
+                const officialTasks = cachedOfficialTasks.filter(t => !userSubmissionsMap[t.id]);
+                tasks = tasks.concat(officialTasks.map(t => ({ ...t, isOfficial: true })));
+            }
+
+            if (platform !== 'all') {
+                tasks = tasks.filter(t => t.platform === platform);
+            }
+
+            tasks.sort((a, b) => b.timestamp - a.timestamp);
+
+            if (tasks.length === 0) {
+                list.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No tasks available.</p>';
+                return;
+            }
+
+            let html = '';
+            for (let t of tasks) {
+                let iconHtml = '';
+                switch (t.platform) {
+                    case 'youtube':
+                        iconHtml = '<i class="fab fa-youtube" style="color:#ff0000"></i>';
+                        break;
+                    case 'tiktok':
+                        iconHtml = '<i class="fab fa-tiktok"></i>';
+                        break;
+                    case 'instagram':
+                        iconHtml = '<i class="fab fa-instagram" style="color:#e4405f"></i>';
+                        break;
+                    case 'whatsapp':
+                        iconHtml = '<i class="fab fa-whatsapp" style="color:#25D366"></i>';
+                        break;
+                    case 'download':
+                        iconHtml = '<i class="fas fa-download" style="color:#3498db"></i>';
+                        break;
+                    default:
+                        iconHtml = '<i class="fas fa-tasks" style="color:#1e3c72"></i>';
+                }
+                let typeLabel = t.isOfficial ? '📢 Official' : '👤 User';
+                let proofBadge = t.proofType === 'text' ?
+                    '<span class="proof-type-badge text" style="font-size:9px;">📝 Text</span>' :
+                    '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
+
+                let slotsBadge = '';
+                if (t.left <= 0) {
+                    slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
+                } else if (t.left <= 3) {
+                    slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
+                } else {
+                    slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
+                }
+
+                const escapedTitle = escapeJs(t.title);
+                const escapedDesc = escapeJs(t.desc);
+                const escapedSteps = escapeJs(t.steps);
+                const escapedLink = escapeJs(t.link);
+                html +=
+                    `<div class="task-item" onclick="closeFullscreenTasks(); setTimeout(() => showTaskDetail('${t.id}','${t.type}','${escapedTitle}','${escapedDesc}','${escapedSteps}','${escapedLink}',${t.reward},'${t.creatorId}','${t.proofType||'image'}'), 300);">
+                                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge} <span style="font-size:10px;color:#888;">${typeLabel}</span><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
+                            </div>`;
+            }
+            list.innerHTML = html;
+        }
+
+        function filterFullscreenTasks(platform) {
+            renderFullscreenTasks(platform);
         }
 
         window.manualRefreshTasks = async function() {
@@ -3876,7 +4172,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT - FIXED: steps parsing and no slot block
+        // TASK DETAIL & SUBMIT
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -3888,7 +4184,6 @@
             } else {
                 task = cachedUserTasks?.find(t => t.id === id);
             }
-            // Do not block based on left slots, just show warning
 
             currentTask = { id, type, title, desc, steps, link, reward, proofType: proofType || 'image' };
             document.getElementById('taskDetailTitle').innerText = title;
@@ -3898,7 +4193,6 @@
                 `📤 Submit Proof <span style="font-size:12px;color:#666;font-weight:normal;">(${proofTypeLabel})</span>`;
             document.getElementById('taskDetailDesc').innerHTML = desc.replace(/\n/g, '<br>');
 
-            // ===== FIX: steps parsing - handle multiple lines, trim, filter empty =====
             let stepsHtml = '';
             if (steps) {
                 const stepLines = steps.split('\n').map(s => s.trim()).filter(s => s.length > 0);
@@ -3918,7 +4212,6 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
-            // Reset image
             selectedImage = null;
             document.getElementById('previewImages').innerHTML = '';
             document.getElementById('proofInput').value = '';
@@ -3939,7 +4232,6 @@
                     statusDiv.innerHTML =
                         `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
                 }
-                // Always enable submit
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-submit-disabled');
                 submitBtn.innerText = 'Submit Task';
@@ -4012,7 +4304,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF - NO SLOT CHECK, ALWAYS ALLOW
+        // SUBMIT PROOF
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -4024,7 +4316,6 @@
             submitBtn.innerText = 'Submitting...';
 
             try {
-                // --- TEXT PROOF ---
                 if (currentTask.proofType === 'text') {
                     const proofText = document.getElementById('proofTextInput').value.trim();
                     if (!proofText) { showToast("Please enter your proof text.");
@@ -4036,7 +4327,6 @@
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Submit Task'; return; }
 
-                    // Always increment pending without checking limit
                     const taskRef = currentTask.type === 'official' ?
                         db.ref(`tasks/official/${currentTask.id}`) :
                         db.ref(`tasks/user/${currentTask.id}`);
@@ -4072,7 +4362,6 @@
                     return;
                 }
 
-                // --- IMAGE PROOF ---
                 if (!selectedImage) {
                     showToast("Please upload a proof image.");
                     submitBtn.disabled = false;
@@ -4103,7 +4392,6 @@
                     return;
                 }
 
-                // Increment pending without checking limit
                 const taskRef = currentTask.type === 'official' ?
                     db.ref(`tasks/official/${currentTask.id}`) :
                     db.ref(`tasks/user/${currentTask.id}`);
@@ -4175,7 +4463,7 @@
         }
 
         // ============================================================
-        // CREATE TASK - FIXED: coins deduction and steps validation
+        // CREATE TASK
         // ============================================================
         function showCreateTaskModal() {
             document.getElementById('taskSubmitBtn').disabled = false;
@@ -4217,7 +4505,6 @@
             document.getElementById('totalCostPreview').innerText = total || 0;
         }
 
-        // ===== STEPS VALIDATION =====
         function validateSteps(stepsText) {
             const lines = stepsText.split('\n').map(s => s.trim()).filter(s => s.length > 0);
             if (lines.length === 0) return { valid: false, msg: "Please enter at least one step." };
@@ -4245,7 +4532,6 @@
                 return;
             }
 
-            // Validate steps
             const stepsValidation = validateSteps(steps);
             if (!stepsValidation.valid) {
                 showToast(stepsValidation.msg);
@@ -4272,12 +4558,15 @@
             const interval = showLoadingOverlay('Creating Task...', 'Please wait...');
 
             try {
-                // ===== DEDUCT COINS =====
                 let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
                 let deductFromNon = Math.min(nonWithdrawable, total);
                 let deductFromCoins = total - deductFromNon;
                 let newNonWithdrawable = nonWithdrawable - deductFromNon;
                 let newCoins = currentUserData.coins - deductFromCoins;
+
+                // Prevent negative coins
+                if (newCoins < 0) { newCoins = 0; }
+                if (newNonWithdrawable < 0) { newNonWithdrawable = 0; }
 
                 await db.ref(`users/${currentUser.uid}/coins`).set(newCoins);
                 await db.ref(`users/${currentUser.uid}/nonWithdrawableCoins`).set(newNonWithdrawable);
@@ -4589,6 +4878,15 @@
                 });
             }
             toggleProofTypeFields();
+
+            // Withdraw amount listener for fee calculation
+            document.getElementById('withdrawAmount').addEventListener('input', function() {
+                const amt = parseInt(this.value) || 0;
+                const fee = Math.round(amt * 0.1);
+                const total = amt + fee;
+                document.getElementById('withdrawTotalInfo').innerText =
+                    `Total needed including 10% fee: ${total} coins (fee: ${fee} coins)`;
+            });
         });
 
         async function submitRejectReason() {
@@ -4797,7 +5095,22 @@
             }
         }
 
-        async function openDepositHistory() {
+        // ============================================================
+        // FULL SCREEN DEPOSIT HISTORY
+        // ============================================================
+        function openFullscreenDepositHistory() {
+            closeModal('depositModal');
+            document.getElementById('fullscreenDepositHistory').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            renderFullscreenDepositHistory();
+        }
+
+        function closeFullscreenDepositHistory() {
+            document.getElementById('fullscreenDepositHistory').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        async function renderFullscreenDepositHistory() {
             try {
                 let snap = await db.ref('deposit_requests').orderByChild('userId').equalTo(currentUser.uid).once(
                 'value');
@@ -4805,23 +5118,92 @@
                 let arr = [];
                 for (let id in items) arr.push({ id, ...items[id] });
                 arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                let html =
-                    '<table class="history-table"><thead><tr><th>Amount</th><th>Method</th><th>TID</th><th>Status</th><th>Date</th></tr></thead><tbody>';
-                for (let it of arr) {
-                    let statusClass = it.status || 'pending';
-                    html +=
-                        `<tr><td><span class="amount-positive">${it.amount} coins</span></td><td>${it.method||'Easypaisa'}</td><td>${it.tid||'-'}</td><td><span class="status-badge ${statusClass}">${statusClass}</span></td><td>${new Date(it.timestamp).toLocaleString()}</td></tr>`;
+
+                let html = '';
+                if (arr.length === 0) {
+                    html = '<p style="color:#666;text-align:center;padding:20px;">No deposit history</p>';
+                } else {
+                    for (let it of arr) {
+                        let statusClass = it.status || 'pending';
+                        let amountClass = statusClass === 'approved' ? 'positive' : 'negative';
+                        html += `
+                                    <div class="history-card">
+                                        <div class="h-left">
+                                            <div class="h-title">💰 ${it.amount} coins</div>
+                                            <div class="h-meta">${it.method || 'Easypaisa'} • TID: ${it.tid || '-'}</div>
+                                        </div>
+                                        <div class="h-right">
+                                            <div class="h-amount ${amountClass}">${it.amount} coins</div>
+                                            <span class="h-status ${statusClass}">${statusClass}</span>
+                                            <div class="h-meta">${new Date(it.timestamp).toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                `;
+                    }
                 }
-                html += '</tbody></table>';
-                document.getElementById('depositHistoryList').innerHTML = html || '<p>No deposits</p>';
-                document.getElementById('depositHistoryModal').style.display = 'flex';
+                document.getElementById('fullscreenDepositHistoryBody').innerHTML = html;
             } catch (e) {
-                document.getElementById('depositHistoryList').innerHTML = '<p>No deposits</p>';
+                document.getElementById('fullscreenDepositHistoryBody').innerHTML =
+                    '<p style="color:#666;text-align:center;padding:20px;">Error loading history</p>';
             }
         }
 
         // ============================================================
-        // WITHDRAW
+        // FULL SCREEN WITHDRAW HISTORY
+        // ============================================================
+        function openFullscreenWithdrawHistory() {
+            closeModal('withdrawModal');
+            document.getElementById('fullscreenWithdrawHistory').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            renderFullscreenWithdrawHistory();
+        }
+
+        function closeFullscreenWithdrawHistory() {
+            document.getElementById('fullscreenWithdrawHistory').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        async function renderFullscreenWithdrawHistory() {
+            try {
+                let snap = await db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value');
+                let items = snap.val() || {};
+                let arr = [];
+                for (let id in items) arr.push({ id, ...items[id] });
+                arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                let html = '';
+                if (arr.length === 0) {
+                    html = '<p style="color:#666;text-align:center;padding:20px;">No withdraw history</p>';
+                } else {
+                    for (let it of arr) {
+                        let statusClass = it.status || 'pending';
+                        let amountClass = statusClass === 'approved' ? 'negative' : 'negative';
+                        let fee = Math.round((it.amount || 0) * 0.1);
+                        let received = (it.amount || 0) - fee;
+                        html += `
+                                    <div class="history-card">
+                                        <div class="h-left">
+                                            <div class="h-title">💸 ${it.amount} coins (fee: ${fee})</div>
+                                            <div class="h-meta">${it.method || 'Easypaisa'} • ${it.account || '-'} (${it.accountName || '-'})</div>
+                                        </div>
+                                        <div class="h-right">
+                                            <div class="h-amount ${amountClass}">-${it.amount} coins</div>
+                                            <span class="h-status ${statusClass}">${statusClass}</span>
+                                            <div class="h-meta">${new Date(it.timestamp).toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                `;
+                    }
+                }
+                document.getElementById('fullscreenWithdrawHistoryBody').innerHTML = html;
+            } catch (e) {
+                document.getElementById('fullscreenWithdrawHistoryBody').innerHTML =
+                    '<p style="color:#666;text-align:center;padding:20px;">Error loading history</p>';
+            }
+        }
+
+        // ============================================================
+        // WITHDRAW - WITH 10% FEE DEDUCTION
         // ============================================================
         function showWithdrawModal() {
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
@@ -4833,6 +5215,7 @@
             document.getElementById('withdrawAmount').value = '';
             document.getElementById('withdrawAccount').value = '';
             document.getElementById('withdrawName').value = '';
+            document.getElementById('withdrawTotalInfo').innerText = 'Total needed including fee: 0 coins';
         }
 
         async function requestWithdraw() {
@@ -4842,15 +5225,22 @@
             let method = document.getElementById('withdrawMethod').value;
             let acc = document.getElementById('withdrawAccount').value.trim();
             let name = document.getElementById('withdrawName').value.trim();
+
+            // Calculate fee (10%)
+            let fee = Math.round(amt * 0.1);
+            let totalNeeded = amt + fee;
+
             if (!amt || amt < minWithdraw) return showToast(`Min withdraw is ${minWithdraw} coins`);
-            if (amt > free) return showToast("Insufficient withdrawable coins");
+            if (totalNeeded > free) return showToast(`Insufficient coins. Need ${totalNeeded} coins (${amt} + ${fee} fee)`);
             if (!acc || !name) return showToast("Fill account details");
             if (!isOnline) { showToast("📴 You are offline."); return; }
 
             const interval = showLoadingOverlay('Processing Withdrawal...', 'Please wait...');
 
             try {
-                let newCoins = currentUserData.coins - amt;
+                let newCoins = currentUserData.coins - totalNeeded;
+                // Prevent negative
+                if (newCoins < 0) newCoins = 0;
                 await db.ref(`users/${currentUser.uid}/coins`).set(newCoins);
                 currentUserData.coins = newCoins;
                 updateUI();
@@ -4859,6 +5249,7 @@
                     userId: currentUser.uid,
                     username: currentUserData.username,
                     amount: amt,
+                    fee: fee,
                     method,
                     account: acc,
                     accountName: name,
@@ -4866,33 +5257,11 @@
                     timestamp: Date.now()
                 });
                 hideLoadingOverlay(interval);
-                showToast("✅ Withdrawal request sent!");
+                showToast(`✅ Withdrawal request sent! (${fee} coins fee deducted)`);
                 closeModal('withdrawModal');
             } catch (err) {
                 hideLoadingOverlay(interval);
                 showToast('Error: ' + err.message);
-            }
-        }
-
-        async function openWithdrawHistory() {
-            try {
-                let snap = await db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value');
-                let items = snap.val() || {};
-                let arr = [];
-                for (let id in items) arr.push({ id, ...items[id] });
-                arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                let html =
-                    '<table class="history-table"><thead><tr><th>Amount</th><th>Method</th><th>Account</th><th>Status</th><th>Date</th></tr></thead><tbody>';
-                for (let it of arr) {
-                    let statusClass = it.status || 'pending';
-                    html +=
-                        `<tr><td><span class="amount-negative">${it.amount} coins</span></td><td>${it.method}</td><td>${it.account} (${it.accountName})</td><td><span class="status-badge ${statusClass}">${statusClass}</span></td><td>${new Date(it.timestamp).toLocaleString()}</td></tr>`;
-                }
-                html += '</tbody></table>';
-                document.getElementById('withdrawHistoryList').innerHTML = html || '<p>No withdrawals</p>';
-                document.getElementById('withdrawHistoryModal').style.display = 'flex';
-            } catch (e) {
-                document.getElementById('withdrawHistoryList').innerHTML = '<p>No withdrawals</p>';
             }
         }
 
@@ -4904,16 +5273,16 @@
                 const platformSnap = await db.ref('settings/platform').once('value');
                 const plat = platformSnap.val() || {};
                 depositBonusPercent = plat.depositBonusPercent || 0;
-                withdrawCommissionPercent = plat.withdrawCommission || 0;
+                withdrawCommissionPercent = plat.withdrawCommission || 10;
                 document.getElementById('depositBonusInfo').innerText =
                     `🎁 Deposit Bonus: ${depositBonusPercent}% (extra on approval)`;
                 document.getElementById('withdrawCommissionInfo').innerText =
-                    `💸 Fee: ${withdrawCommissionPercent}% (deducted on approval)`;
+                    `💸 Fee: ${withdrawCommissionPercent}% (deducted from request)`;
             } catch (e) {
                 depositBonusPercent = 0;
-                withdrawCommissionPercent = 0;
+                withdrawCommissionPercent = 10;
                 document.getElementById('depositBonusInfo').innerText = `🎁 Deposit Bonus: 0%`;
-                document.getElementById('withdrawCommissionInfo').innerText = `💸 Fee: 0%`;
+                document.getElementById('withdrawCommissionInfo').innerText = `💸 Fee: 10% (deducted from request)`;
             }
         }
 
@@ -5133,6 +5502,26 @@
         }
 
         // ============================================================
+        // COPY FULL SHARE TEXT
+        // ============================================================
+        function copyFullShareText() {
+            const code = currentUserData?.referralCode || '910372';
+            const link = `https://taskexpertapp.pages.dev/?ref=${code}`;
+            const fullText =
+                `🔥\nEarn Daily Money From Home!\nComplete simple tasks & start earning 💰\n👇👇\n${link}`;
+            navigator.clipboard.writeText(fullText).then(() => showToast('✅ Full share text copied!')).catch(() => {
+                // Fallback
+                const input = document.createElement('input');
+                input.value = fullText;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('✅ Full share text copied!');
+            });
+        }
+
+        // ============================================================
         // NAVIGATION
         // ============================================================
         function navigateTo(section, e) {
@@ -5206,36 +5595,7 @@
         }
 
         // ============================================================
-        // COPY FUNCTIONS
-        // ============================================================
-        function copyReferralCode() {
-            const code = document.getElementById('referralCode').innerText;
-            navigator.clipboard.writeText(code).then(() => showToast('Referral code copied!')).catch(() => {
-                const input = document.createElement('input');
-                input.value = code;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
-                showToast('Referral code copied!');
-            });
-        }
-
-        function copyShareLink() {
-            const link = document.getElementById('shareLinkDisplay').innerText;
-            navigator.clipboard.writeText(link).then(() => showToast('Share link copied!')).catch(() => {
-                const input = document.createElement('input');
-                input.value = link;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
-                showToast('Share link copied!');
-            });
-        }
-
-        // ============================================================
-        // AUTH STATE - FINISH LOADING IMMEDIATELY
+        // AUTH STATE
         // ============================================================
         auth.onAuthStateChanged(async user => {
             if (user) {
@@ -5251,9 +5611,7 @@
                         return;
                     }
                     updateLoader(100, 'Welcome back!');
-                    // Finish loading immediately after data load
                     finishLoading();
-                    // Then load all other data
                     loadAllTasks();
                     loadMySubmissions();
                     loadDailyRewardGrid();
@@ -5341,8 +5699,13 @@
         window.showWithdrawModal = showWithdrawModal;
         window.requestDeposit = requestDeposit;
         window.requestWithdraw = requestWithdraw;
-        window.openDepositHistory = openDepositHistory;
-        window.openWithdrawHistory = openWithdrawHistory;
+        window.openFullscreenDepositHistory = openFullscreenDepositHistory;
+        window.closeFullscreenDepositHistory = closeFullscreenDepositHistory;
+        window.openFullscreenWithdrawHistory = openFullscreenWithdrawHistory;
+        window.closeFullscreenWithdrawHistory = closeFullscreenWithdrawHistory;
+        window.openFullscreenTasks = openFullscreenTasks;
+        window.closeFullscreenTasks = closeFullscreenTasks;
+        window.filterFullscreenTasks = filterFullscreenTasks;
         window.submitTaskRequest = submitTaskRequest;
         window.showCreateTaskModal = showCreateTaskModal;
         window.submitRejectReason = submitRejectReason;
@@ -5356,7 +5719,7 @@
         window.openImageModal = openImageModal;
         window.closeImageModal = closeImageModal;
         window.copyReferralCode = copyReferralCode;
-        window.copyShareLink = copyShareLink;
+        window.copyFullShareText = copyFullShareText;
         window.openAllSubmissionsModal = openAllSubmissionsModal;
         window.openAllReferralsModal = openAllReferralsModal;
         window.claimReferralBonus = claimReferralBonus;
