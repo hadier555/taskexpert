@@ -2283,6 +2283,16 @@
             font-size: 14px;
             resize: vertical;
         }
+        .single-img-hint {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 6px;
+        }
+        .single-img-hint i {
+            color: #1e3c72;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
@@ -2654,7 +2664,7 @@
         <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
-    <!-- ===== TASK DETAIL MODAL - IMAGE UPLOAD ONLY (no ImgBB link) ===== -->
+    <!-- ===== TASK DETAIL MODAL - SIMPLE SINGLE UPLOAD (from task.html) ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
         <div class="task-detail-body" style="padding:16px;">
@@ -2663,18 +2673,15 @@
             <div class="card"><h3>🔗 Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
             <div class="card">
                 <h3 id="proofSectionTitle">📤 Submit Proof</h3>
-                <!-- IMAGE PROOF - only upload area, no link input -->
+                <!-- IMAGE PROOF - simple single upload from task.html -->
                 <div id="imageProofArea">
-                    <div class="proof-upload-section">
-                        <div class="upload-area" id="taskProofUploadArea" onclick="document.getElementById('taskProofInput').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <div class="upload-text">Upload Proof Image</div>
-                            <div class="upload-sub">Tap to select image (JPG, PNG)</div>
-                        </div>
-                        <input type="file" id="taskProofInput" accept="image/*" style="display:none" />
-                        <div id="taskProofPreview" style="margin-top:10px; text-align:center;"></div>
-                        <div style="font-size:12px; color:#888; margin-top:6px; text-align:center;">✅ Upload a clear screenshot as proof</div>
+                    <div class="upload-area" onclick="document.getElementById('proofInput').click()">
+                        <i class="fas fa-camera" style="font-size:28px;display:block;margin-bottom:6px;color:#1e3c72;"></i>
+                        <span>Tap to upload 1 image</span>
                     </div>
+                    <input type="file" id="proofInput" accept="image/*" style="display:none" />
+                    <div id="previewImages"></div>
+                    <div class="single-img-hint"><i class="fas fa-info-circle"></i> Only 1 image per submission</div>
                 </div>
                 <!-- TEXT PROOF -->
                 <div id="textProofArea" style="display:none;">
@@ -2739,8 +2746,8 @@
         let isAdmin = false;
         let allReferrals = [];
 
-        let taskProofImage = null;
-        let taskProofImageData = null;
+        // ===== SIMPLE IMAGE UPLOAD (from task.html) =====
+        let selectedImage = null;
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -3351,98 +3358,71 @@
         }
 
         // ============================================================
-        // TASK PROOF - IMAGE UPLOAD (FIXED: single upload)
+        // IMAGE UPLOAD SERVICE (with multiple fallbacks)
         // ============================================================
-        function setupTaskProofUpload() {
-            const input = document.getElementById('taskProofInput');
-            const preview = document.getElementById('taskProofPreview');
-            const uploadArea = document.getElementById('taskProofUploadArea');
+        const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
+        const CLOUDINARY_API_KEY = '614258583454693';
+        const CLOUDINARY_UPLOAD_PRESET = 'ml_default';
+        const IMGBB_API_KEY = '1b477ca0def1913d17500dfdbad91f2d';
 
-            if (!input || !preview) return;
-
-            // Click on upload area triggers file input
-            uploadArea.addEventListener('click', function(e) {
-                if (e.target.tagName !== 'BUTTON' && !e.target.closest('.remove-img-btn')) {
-                    input.click();
-                }
-            });
-
-            // Drag and drop
-            uploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('dragover');
-            });
-            uploadArea.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-            });
-            uploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0 && files[0].type.startsWith('image/')) {
-                    handleTaskProofFile(files[0]);
-                } else {
-                    showToast('Please drop an image file.');
-                }
-            });
-
-            input.addEventListener('change', function() {
-                if (this.files && this.files.length > 0) {
-                    handleTaskProofFile(this.files[0]);
-                }
-                // Reset input so same file can be re-uploaded
-                this.value = '';
-            });
-        }
-
-        function handleTaskProofFile(file) {
-            if (!file.type.startsWith('image/')) {
-                showToast('Please select an image file.');
-                return;
+        function base64ToBlob(base64Data) {
+            const raw = base64Data.split(',')[1];
+            const byteCharacters = atob(raw);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
             }
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Image too large. Max 5MB.');
-                return;
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: 'image/jpeg' });
+        }
+
+        async function uploadToCloudinary(base64Data) {
+            const blob = base64ToBlob(base64Data);
+            const file = new File([blob], 'upload.jpg', { type: 'image/jpeg' });
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('api_key', CLOUDINARY_API_KEY);
+            const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+            const response = await fetch(url, { method: 'POST', body: formData });
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message || 'Cloudinary upload failed');
+            if (!data.secure_url) throw new Error('Cloudinary did not return a URL');
+            return data.secure_url;
+        }
+
+        async function uploadToImgBB(base64Data) {
+            const raw = base64Data.split(',')[1];
+            const formData = new FormData();
+            formData.append('image', raw);
+            formData.append('key', IMGBB_API_KEY);
+            const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error?.message || 'ImgBB upload failed');
+            return data.data.url;
+        }
+
+        async function uploadImage(base64Data) {
+            const UPLOAD_TIMEOUT = 10000;
+            try {
+                const cloudinaryPromise = uploadToCloudinary(base64Data);
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
+                );
+                const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
+                return result;
+            } catch (cloudErr) {
+                console.warn('Cloudinary failed:', cloudErr.message);
+                try {
+                    return await uploadToImgBB(base64Data);
+                } catch (imgbbErr) {
+                    throw new Error(`All upload services failed. Last error: ${imgbbErr.message}`);
+                }
             }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const dataUrl = e.target.result;
-                taskProofImageData = dataUrl;
-                taskProofImage = file;
-                showTaskProofPreview(dataUrl);
-                showToast('✅ Image uploaded successfully!');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function showTaskProofPreview(dataUrl) {
-            const preview = document.getElementById('taskProofPreview');
-            preview.innerHTML = `
-                        <div class="upload-preview-wrapper">
-                            <img src="${dataUrl}" alt="Proof preview">
-                            <button class="remove-img-btn" onclick="removeTaskProofImage()">✕</button>
-                        </div>
-                        <div style="font-size:12px; color:#28a745; margin-top:4px;">✅ Image ready for submission</div>
-                    `;
-            const uploadArea = document.getElementById('taskProofUploadArea');
-            uploadArea.style.borderColor = '#28a745';
-            uploadArea.style.background = '#f0fff4';
-        }
-
-        function removeTaskProofImage() {
-            taskProofImage = null;
-            taskProofImageData = null;
-            document.getElementById('taskProofPreview').innerHTML = '';
-            document.getElementById('taskProofInput').value = '';
-            const uploadArea = document.getElementById('taskProofUploadArea');
-            uploadArea.style.borderColor = '#1e3c72';
-            uploadArea.style.background = '#f8faff';
         }
 
         // ============================================================
-        // TASKS
+        // TASKS - LOAD ALL (with real-time slot updates)
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -3476,7 +3456,6 @@
                     const officialSnap = await db.ref('tasks/official').limitToFirst(50).once('value');
                     const officialData = officialSnap.val() || {};
                     for (let [id, t] of Object.entries(officialData)) {
-                        // Calculate remaining slots using maxLimit or left
                         const counts = countMap[id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         const maxLimit = t.maxLimit || t.left || 0;
@@ -3554,7 +3533,7 @@
         }
 
         // ============================================================
-        // RACE CONDITION FIX: REAL-TIME SLOT LISTENERS (Firebase)
+        // REAL-TIME SLOT LISTENERS
         // ============================================================
         let taskSlotListeners = {};
 
@@ -3727,7 +3706,7 @@
         }
 
         // ============================================================
-        // OFFICIAL TASKS - FIXED: proper slot display
+        // OFFICIAL TASKS - DISPLAY
         // ============================================================
         function displayOfficialTasks() {
             if (!cachedOfficialTasks || cachedOfficialTasks.length === 0) {
@@ -3804,7 +3783,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL & SUBMIT (FIXED: single image upload)
+        // TASK DETAIL & SUBMIT (SIMPLE SINGLE UPLOAD from task.html)
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) { showToast("You cannot do your own task"); return; }
@@ -3835,8 +3814,10 @@
             document.getElementById('taskDetailLink').href = link;
             document.getElementById('taskDetailLink').innerText = link;
 
-            // Reset proof image
-            removeTaskProofImage();
+            // Reset image (simple)
+            selectedImage = null;
+            document.getElementById('previewImages').innerHTML = '';
+            document.getElementById('proofInput').value = '';
             document.getElementById('proofTextInput').value = '';
             proofTextValue = '';
 
@@ -3865,9 +3846,6 @@
             } else {
                 document.getElementById('imageProofArea').style.display = 'block';
                 document.getElementById('textProofArea').style.display = 'none';
-                const uploadArea = document.getElementById('taskProofUploadArea');
-                uploadArea.style.borderColor = '#1e3c72';
-                uploadArea.style.background = '#f8faff';
             }
             document.getElementById('taskDetailModal').style.display = 'block';
         };
@@ -3875,7 +3853,9 @@
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
             currentTask = null;
-            removeTaskProofImage();
+            selectedImage = null;
+            document.getElementById('previewImages').innerHTML = '';
+            document.getElementById('proofInput').value = '';
             document.getElementById('proofTextInput').value = '';
             document.getElementById('taskSubmitStatus').innerHTML = '';
             const submitBtn = document.getElementById('submitProofBtn');
@@ -3885,7 +3865,49 @@
         }
 
         // ============================================================
-        // SUBMIT PROOF - FIXED: single upload flow
+        // PROOF INPUT - SIMPLE SINGLE IMAGE (from task.html)
+        // ============================================================
+        document.getElementById('proofInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+
+            const f = files[0];
+            if (!f.type.startsWith('image/')) {
+                showToast("Please select an image file");
+                this.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 800;
+                    if (width > maxSize || height > maxSize) {
+                        const ratio = Math.min(maxSize / width, maxSize / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    selectedImage = compressedDataUrl;
+                    document.getElementById('previewImages').innerHTML =
+                        `<img src="${compressedDataUrl}" class="preview-img" style="width:120px;height:120px;object-fit:cover;border-radius:12px;margin:8px auto;display:block;border:3px solid #28a745;box-shadow:0 4px 15px rgba(0,0,0,0.1);">`;
+                    showToast("✅ 1 image selected");
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(f);
+        });
+
+        // ============================================================
+        // SUBMIT PROOF - SIMPLE (from task.html)
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -3918,11 +3940,9 @@
                         const limit = currentTask.type === 'official' ?
                             (currentData.maxLimit || 0) :
                             (currentData.requiredUsers || 0);
-                        const filled = currentData.completed || 0;
-                        const pending = currentData.pending || 0;
-                        const pendingReject = currentData.pendingReject || 0;
-                        const totalFilled = filled + pending + pendingReject;
-                        if (totalFilled >= limit) {
+                        const filled = (currentData.completed || 0) + (currentData.pending || 0) + (currentData
+                            .pendingReject || 0);
+                        if (filled >= limit) {
                             return undefined;
                         }
                         currentData.pending = (currentData.pending || 0) + 1;
@@ -3963,8 +3983,8 @@
                     return;
                 }
 
-                // --- IMAGE PROOF - FIXED: uses taskProofImageData directly ---
-                if (!taskProofImageData) {
+                // --- IMAGE PROOF (simple single upload) ---
+                if (!selectedImage) {
                     showToast("Please upload a proof image.");
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-loading');
@@ -3972,11 +3992,10 @@
                     return;
                 }
 
-                // Upload the image (only once)
                 const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                 let uploadedUrl;
                 try {
-                    uploadedUrl = await uploadImage(taskProofImageData);
+                    uploadedUrl = await uploadImage(selectedImage);
                 } catch (uploadErr) {
                     hideLoadingOverlay(interval);
                     showToast('Upload failed: ' + uploadErr.message);
@@ -4005,11 +4024,9 @@
                     const limit = currentTask.type === 'official' ?
                         (currentData.maxLimit || 0) :
                         (currentData.requiredUsers || 0);
-                    const filled = currentData.completed || 0;
-                    const pending = currentData.pending || 0;
-                    const pendingReject = currentData.pendingReject || 0;
-                    const totalFilled = filled + pending + pendingReject;
-                    if (totalFilled >= limit) {
+                    const filled = (currentData.completed || 0) + (currentData.pending || 0) + (currentData
+                        .pendingReject || 0);
+                    if (filled >= limit) {
                         return undefined;
                     }
                     currentData.pending = (currentData.pending || 0) + 1;
@@ -4059,6 +4076,33 @@
         }
 
         // ============================================================
+        // LOADING OVERLAY
+        // ============================================================
+        function showLoadingOverlay(text, subText) {
+            const overlay = document.getElementById('uploadOverlay');
+            document.getElementById('uploadProgressText').innerText = text || 'Processing...';
+            document.getElementById('uploadSubText').innerText = subText || 'Please wait...';
+            document.getElementById('uploadProgressFill').style.width = '0%';
+            overlay.classList.add('active');
+            let pct = 0;
+            const interval = setInterval(() => {
+                pct = Math.min(90, pct + 8);
+                document.getElementById('uploadProgressFill').style.width = pct + '%';
+                if (pct >= 90) clearInterval(interval);
+            }, 200);
+            return interval;
+        }
+
+        function hideLoadingOverlay(interval) {
+            if (interval) clearInterval(interval);
+            document.getElementById('uploadProgressFill').style.width = '100%';
+            setTimeout(() => {
+                document.getElementById('uploadOverlay').classList.remove('active');
+                document.getElementById('uploadProgressFill').style.width = '0%';
+            }, 400);
+        }
+
+        // ============================================================
         // CREATE TASK
         // ============================================================
         function showCreateTaskModal() {
@@ -4099,30 +4143,6 @@
             let members = parseInt(document.getElementById('taskMembers').value) || 0;
             let total = (coins * members) + Math.ceil((coins * members) * 0.2);
             document.getElementById('totalCostPreview').innerText = total || 0;
-        }
-
-        function showLoadingOverlay(text, subText) {
-            const overlay = document.getElementById('uploadOverlay');
-            document.getElementById('uploadProgressText').innerText = text || 'Processing...';
-            document.getElementById('uploadSubText').innerText = subText || 'Please wait...';
-            document.getElementById('uploadProgressFill').style.width = '0%';
-            overlay.classList.add('active');
-            let pct = 0;
-            const interval = setInterval(() => {
-                pct = Math.min(90, pct + 8);
-                document.getElementById('uploadProgressFill').style.width = pct + '%';
-                if (pct >= 90) clearInterval(interval);
-            }, 200);
-            return interval;
-        }
-
-        function hideLoadingOverlay(interval) {
-            if (interval) clearInterval(interval);
-            document.getElementById('uploadProgressFill').style.width = '100%';
-            setTimeout(() => {
-                document.getElementById('uploadOverlay').classList.remove('active');
-                document.getElementById('uploadProgressFill').style.width = '0%';
-            }, 400);
         }
 
         async function submitTaskRequest() {
@@ -4364,7 +4384,6 @@
                                             <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject</button>
                                         </div>`;
             }
-            // ===== REJECT REASON DISPLAY (from reason.html) =====
             let rejectReasonHtml = '';
             if (s.status === 'rejected' && s.rejectReason) {
                 rejectReasonHtml =
@@ -4430,7 +4449,7 @@
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
 
         // ============================================================
-        // REJECT LOGIC (copied from reason.html)
+        // REJECT LOGIC
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
             pendingRejectSubmissionId = submissionId;
@@ -4476,7 +4495,6 @@
                 });
             }
             toggleProofTypeFields();
-            setupTaskProofUpload();
         });
 
         async function submitRejectReason() {
@@ -5123,70 +5141,6 @@
         }
 
         // ============================================================
-        // UPLOAD SYSTEM
-        // ============================================================
-        const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
-        const CLOUDINARY_API_KEY = '614258583454693';
-        const CLOUDINARY_UPLOAD_PRESET = 'ml_default';
-        const IMGBB_API_KEY = '1b477ca0def1913d17500dfdbad91f2d';
-
-        function base64ToBlob(base64Data) {
-            const raw = base64Data.split(',')[1];
-            const byteCharacters = atob(raw);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            return new Blob([byteArray], { type: 'image/jpeg' });
-        }
-
-        async function uploadToCloudinary(base64Data) {
-            const blob = base64ToBlob(base64Data);
-            const file = new File([blob], 'upload.jpg', { type: 'image/jpeg' });
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-            formData.append('api_key', CLOUDINARY_API_KEY);
-            const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
-            const response = await fetch(url, { method: 'POST', body: formData });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message || 'Cloudinary upload failed');
-            if (!data.secure_url) throw new Error('Cloudinary did not return a URL');
-            return data.secure_url;
-        }
-
-        async function uploadToImgBB(base64Data) {
-            const raw = base64Data.split(',')[1];
-            const formData = new FormData();
-            formData.append('image', raw);
-            formData.append('key', IMGBB_API_KEY);
-            const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-            const data = await res.json();
-            if (!data.success) throw new Error(data.error?.message || 'ImgBB upload failed');
-            return data.data.url;
-        }
-
-        async function uploadImage(base64Data) {
-            const UPLOAD_TIMEOUT = 10000;
-            try {
-                const cloudinaryPromise = uploadToCloudinary(base64Data);
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
-                );
-                const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
-                return result;
-            } catch (cloudErr) {
-                console.warn('Cloudinary failed:', cloudErr.message);
-                try {
-                    return await uploadToImgBB(base64Data);
-                } catch (imgbbErr) {
-                    throw new Error(`All upload services failed. Last error: ${imgbbErr.message}`);
-                }
-            }
-        }
-
-        // ============================================================
         // AUTH STATE
         // ============================================================
         auth.onAuthStateChanged(async user => {
@@ -5262,7 +5216,6 @@
             toggleProofTypeFields();
             mailBannerShown = false;
             document.getElementById('newMailBanner').style.display = 'none';
-            setupTaskProofUpload();
             loadBankDetails();
         });
 
@@ -5314,9 +5267,7 @@
         window.openAllReferralsModal = openAllReferralsModal;
         window.claimReferralBonus = claimReferralBonus;
         window.updateReferralProgress = updateReferralProgress;
-        window.removeTaskProofImage = removeTaskProofImage;
         window.removeDepositImage = removeDepositImage;
-        window.setupTaskProofUpload = setupTaskProofUpload;
     </script>
 </body>
 </html>
