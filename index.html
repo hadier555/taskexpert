@@ -2477,7 +2477,7 @@
             margin-top: 20px;
         }
 
-        /* ===== VIEW ALL TASKS FULL SCREEN ===== */
+        /* ===== FULL SCREEN TASKS VIEW ===== */
         .fullscreen-tasks {
             position: fixed;
             top: 0;
@@ -2691,6 +2691,7 @@
                         <button class="platform-filter-btn" data-platform="download" onclick="filterTasksByPlatform('download')"><i class="fas fa-download" style="color:#3498db"></i> Download <span class="task-count-badge" id="countDownload">0</span></button>
                         <button class="platform-filter-btn" data-platform="other" onclick="filterTasksByPlatform('other')"><i class="fas fa-globe" style="color:#9b59b6"></i> Other <span class="task-count-badge" id="countOther">0</span></button>
                     </div>
+                    <!-- task list container with event delegation -->
                     <div id="allTasksList"></div>
                 </div>
             </div>
@@ -2703,7 +2704,6 @@
             </div>
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
-                    <!-- ===== REFERRAL SHARE - SIMPLIFIED ===== -->
                     <div class="referral-share-simple">
                         <div class="share-title">Refer To Earn</div>
                         <div class="share-arrow">👇👇</div>
@@ -2712,7 +2712,6 @@
                             <button class="copy-btn-sm" onclick="copyFullShareText()"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>
-                    <!-- Referral code hidden but functional -->
                     <div style="display:none;">
                         <span id="referralCode">910372</span>
                     </div>
@@ -2995,7 +2994,7 @@
         let tasksLoaded = false;
         let allSubmissions = [];
         let depositBonusPercent = 0;
-        let withdrawCommissionPercent = 10; // 10% default
+        let withdrawCommissionPercent = 10;
         let pendingRejectSubmissionId = null,
             pendingRejectTaskId = null,
             pendingRejectWorkerId = null,
@@ -3691,7 +3690,7 @@
         }
 
         // ============================================================
-        // TASKS
+        // TASKS - with event delegation for click
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -3791,6 +3790,7 @@
                 displayFilteredTasks();
                 displayOfficialTasks();
                 setupTaskSlotListeners();
+                setupTaskDeletionListeners();
 
             } catch (err) {
                 console.error(err);
@@ -3799,6 +3799,54 @@
                 document.getElementById('officialTasksList').innerHTML =
                     '<p style="color:#666;text-align:center;padding:20px;">📢 No official tasks available.</p>';
             }
+        }
+
+        // ============================================================
+        // TASK DELETION LISTENERS (admin deletes task)
+        // ============================================================
+        function setupTaskDeletionListeners() {
+            // Listen for removal of user tasks
+            const userTasksRef = db.ref('tasks/user');
+            const officialTasksRef = db.ref('tasks/official');
+
+            const userListener = userTasksRef.on('child_removed', (snap) => {
+                const taskId = snap.key;
+                // Remove from cache
+                if (cachedUserTasks) {
+                    cachedUserTasks = cachedUserTasks.filter(t => t.id !== taskId);
+                }
+                // Also remove from task_requests? Not necessary.
+                // Refresh UI
+                displayFilteredTasks();
+                displayOfficialTasks();
+                updateTaskCounts();
+                // If task detail modal is open and it's this task, close it
+                if (currentTask && currentTask.id === taskId) {
+                    closeTaskDetail();
+                }
+                showToast('Task deleted by admin');
+            });
+
+            const officialListener = officialTasksRef.on('child_removed', (snap) => {
+                const taskId = snap.key;
+                if (cachedOfficialTasks) {
+                    cachedOfficialTasks = cachedOfficialTasks.filter(t => t.id !== taskId);
+                }
+                displayOfficialTasks();
+                if (currentTask && currentTask.id === taskId) {
+                    closeTaskDetail();
+                }
+                showToast('Official task deleted by admin');
+            });
+
+            // Store listeners for cleanup
+            if (!window._taskDeletionListeners) {
+                window._taskDeletionListeners = [];
+            }
+            window._taskDeletionListeners.push(() => {
+                userTasksRef.off('child_removed', userListener);
+                officialTasksRef.off('child_removed', officialListener);
+            });
         }
 
         // ============================================================
@@ -3828,24 +3876,24 @@
                     else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
                 }
 
+                // Update official tasks left count
                 if (cachedOfficialTasks) {
                     for (let task of cachedOfficialTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         const maxLimit = task.maxLimit || 0;
-                        const remaining = Math.max(0, maxLimit - filled);
-                        task.left = remaining;
+                        task.left = Math.max(0, maxLimit - filled);
                     }
                     displayOfficialTasks();
                 }
 
+                // Update user tasks left count
                 if (cachedUserTasks) {
                     for (let task of cachedUserTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         const required = task.requiredUsers || 0;
-                        const remaining = required - filled;
-                        task.left = Math.max(0, remaining);
+                        task.left = Math.max(0, required - filled);
                     }
                     displayFilteredTasks();
                     updateTaskCounts();
@@ -3887,7 +3935,7 @@
         }
 
         // ============================================================
-        // TASK DISPLAY FUNCTIONS
+        // TASK DISPLAY FUNCTIONS (using event delegation)
         // ============================================================
         function updateTaskCounts() {
             const counts = { all: 0, youtube: 0, tiktok: 0, instagram: 0, whatsapp: 0, download: 0, other: 0 };
@@ -3911,33 +3959,32 @@
             document.getElementById('countOther').innerText = counts.other;
         }
 
-        // ===== Get latest 5 tasks or all for fullscreen =====
         function getFilteredUserTasks(platform, limit = 5) {
             if (!cachedUserTasks) return [];
             let filtered = cachedUserTasks.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.creatorId === currentUser?.uid) return false;
+                if (t.left <= 0) return false;
                 return true;
             });
             if (platform !== 'all') {
                 filtered = filtered.filter(t => t.platform === platform);
             }
-            // Sort by timestamp descending (newest first)
             filtered.sort((a, b) => b.timestamp - a.timestamp);
             return limit > 0 ? filtered.slice(0, limit) : filtered;
         }
 
         function displayFilteredTasks() {
+            const container = document.getElementById('allTasksList');
             if (!cachedUserTasks || cachedUserTasks.length === 0) {
-                document.getElementById('allTasksList').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">✨ No user tasks available.</p>';
+                container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">✨ No user tasks available.</p>';
                 return;
             }
-            // Show latest 5
+
             let tasks = getFilteredUserTasks(currentPlatformFilter, 5);
             let allHtml = '';
-            let viewAllHtml = '';
             const totalAvailable = getFilteredUserTasks(currentPlatformFilter, 0).length;
+            let viewAllHtml = '';
             if (totalAvailable > 5) {
                 viewAllHtml =
                     `<div style="text-align:center;margin-top:8px;"><button class="view-all-btn" onclick="openFullscreenTasks()">📋 View All (${totalAvailable})</button></div>`;
@@ -3967,7 +4014,6 @@
                 let proofBadge = t.proofType === 'text' ?
                     '<span class="proof-type-badge text" style="font-size:9px;">📝 Text</span>' :
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
-
                 let slotsBadge = '';
                 if (t.left <= 0) {
                     slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
@@ -3977,69 +4023,87 @@
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
 
-                const escapedTitle = escapeJs(t.title);
-                const escapedDesc = escapeJs(t.desc);
-                const escapedSteps = escapeJs(t.steps);
-                const escapedLink = escapeJs(t.link);
-                allHtml +=
-                    `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapedTitle}','${escapedDesc}','${escapedSteps}','${escapedLink}',${t.reward},'${t.creatorId}','${t.proofType}')">
-                                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
-                            </div>`;
+                // Store data in attributes
+                allHtml += `
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
+                        <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
+                    </div>
+                `;
             }
-            document.getElementById('allTasksList').innerHTML = allHtml + viewAllHtml ||
+            container.innerHTML = allHtml + viewAllHtml ||
                 '<p style="color:#666;text-align:center;padding:20px;">✨ No tasks available for this platform.</p>';
+
+            // Attach click event listener using delegation
+            container.querySelectorAll('.task-item').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.dataset.taskId;
+                    const type = this.dataset.taskType;
+                    const title = this.dataset.taskTitle;
+                    const desc = this.dataset.taskDesc;
+                    const steps = this.dataset.taskSteps;
+                    const link = this.dataset.taskLink;
+                    const reward = parseInt(this.dataset.taskReward);
+                    const creator = this.dataset.taskCreator;
+                    const proofType = this.dataset.taskProoftype;
+                    showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
+                });
+            });
         }
 
         // ============================================================
-        // OFFICIAL TASKS - show latest 5
+        // OFFICIAL TASKS - show only tasks not submitted and with slots
         // ============================================================
         function displayOfficialTasks() {
+            const container = document.getElementById('officialTasksList');
             if (!cachedOfficialTasks || cachedOfficialTasks.length === 0) {
-                document.getElementById('officialTasksList').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">📢 No official tasks available.</p>';
+                container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">📢 No official tasks available.</p>';
                 return;
             }
+
+            // Filter: only tasks with left > 0 and not submitted by user
+            let available = cachedOfficialTasks.filter(t => {
+                if (userSubmissionsMap[t.id]) return false;
+                if (t.left <= 0) return false;
+                return true;
+            });
+
+            // Show submitted tasks (these are hidden but we show a "submitted" placeholder)
+            const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
+
             let officialHtml = '';
 
-            // Show submitted tasks
-            const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
+            // Show submitted tasks (as disabled)
             for (let t of submitted) {
-                officialHtml +=
-                    `<div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
-                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
-                                <div>+${t.reward}</div>
-                            </div>`;
+                officialHtml += `
+                    <div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
+                        <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
+                        <div>+${t.reward}</div>
+                    </div>
+                `;
             }
 
             // Show available tasks (latest 5)
-            const available = cachedOfficialTasks.filter(t => !userSubmissionsMap[t.id]);
             const latestAvailable = available.slice(0, 5);
             const totalAvailable = available.length;
-
             let viewAllHtml = '';
             if (totalAvailable > 5) {
-                // Get counts for fullscreen
                 viewAllHtml =
                     `<div style="text-align:center;margin-top:8px;"><button class="view-all-btn" onclick="openFullscreenTasks()">📋 View All Official (${totalAvailable})</button></div>`;
             }
 
             for (let t of latestAvailable) {
                 let slotsBadge = '';
-                if (t.left <= 0) {
-                    slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
-                } else if (t.left <= 3) {
+                if (t.left <= 3) {
                     slotsBadge = `<span class="task-slots-badge few">${t.left} left</span>`;
                 } else {
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
-                const escapedTitle = escapeJs(t.title);
-                const escapedDesc = escapeJs(t.desc);
-                const escapedSteps = escapeJs(t.steps);
-                const escapedLink = escapeJs(t.link);
-                officialHtml +=
-                    `<div class="task-item" onclick="showTaskDetail('${t.id}','${t.type}','${escapedTitle}','${escapedDesc}','${escapedSteps}','${escapedLink}',${t.reward},'${t.creatorId}','image')">
-                                <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
-                            </div>`;
+                officialHtml += `
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="image">
+                        <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
+                    </div>
+                `;
             }
 
             if (!officialHtml) {
@@ -4048,7 +4112,24 @@
             } else {
                 officialHtml += viewAllHtml;
             }
-            document.getElementById('officialTasksList').innerHTML = officialHtml;
+            container.innerHTML = officialHtml;
+
+            // Attach click events for official tasks
+            container.querySelectorAll('.task-item:not([style*="cursor:default"])').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.dataset.taskId;
+                    const type = this.dataset.taskType;
+                    const title = this.dataset.taskTitle;
+                    const desc = this.dataset.taskDesc;
+                    const steps = this.dataset.taskSteps;
+                    const link = this.dataset.taskLink;
+                    const reward = parseInt(this.dataset.taskReward);
+                    const creator = this.dataset.taskCreator;
+                    const proofType = this.dataset.taskProoftype;
+                    showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
+                });
+            });
         }
 
         function filterTasksByPlatform(platform) {
@@ -4074,7 +4155,6 @@
 
         function renderFullscreenTasks(platform) {
             fullscreenTasksFilter = platform;
-            // Update filter buttons
             document.querySelectorAll('#fullscreenPlatformFilters .platform-filter-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.platform === platform) btn.classList.add('active');
@@ -4083,19 +4163,24 @@
             const list = document.getElementById('fullscreenTasksList');
             let tasks = [];
 
-            // Get user tasks
+            // User tasks (not submitted, not own, left > 0)
             if (cachedUserTasks) {
                 const userTasks = cachedUserTasks.filter(t => {
                     if (userSubmissionsMap[t.id]) return false;
                     if (t.creatorId === currentUser?.uid) return false;
+                    if (t.left <= 0) return false;
                     return true;
                 });
                 tasks = tasks.concat(userTasks.map(t => ({ ...t, isOfficial: false })));
             }
 
-            // Get official tasks
+            // Official tasks (not submitted, left > 0)
             if (cachedOfficialTasks) {
-                const officialTasks = cachedOfficialTasks.filter(t => !userSubmissionsMap[t.id]);
+                const officialTasks = cachedOfficialTasks.filter(t => {
+                    if (userSubmissionsMap[t.id]) return false;
+                    if (t.left <= 0) return false;
+                    return true;
+                });
                 tasks = tasks.concat(officialTasks.map(t => ({ ...t, isOfficial: true })));
             }
 
@@ -4136,7 +4221,6 @@
                 let proofBadge = t.proofType === 'text' ?
                     '<span class="proof-type-badge text" style="font-size:9px;">📝 Text</span>' :
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
-
                 let slotsBadge = '';
                 if (t.left <= 0) {
                     slotsBadge = `<span class="task-slots-badge none">⛔ Full</span>`;
@@ -4146,16 +4230,34 @@
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
 
-                const escapedTitle = escapeJs(t.title);
-                const escapedDesc = escapeJs(t.desc);
-                const escapedSteps = escapeJs(t.steps);
-                const escapedLink = escapeJs(t.link);
-                html +=
-                    `<div class="task-item" onclick="closeFullscreenTasks(); setTimeout(() => showTaskDetail('${t.id}','${t.type}','${escapedTitle}','${escapedDesc}','${escapedSteps}','${escapedLink}',${t.reward},'${t.creatorId}','${t.proofType||'image'}'), 300);">
-                                <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge} <span style="font-size:10px;color:#888;">${typeLabel}</span><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
-                            </div>`;
+                html += `
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
+                        <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge} <span style="font-size:10px;color:#888;">${typeLabel}</span><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
+                    </div>
+                `;
             }
             list.innerHTML = html;
+
+            // Attach click events for fullscreen tasks
+            list.querySelectorAll('.task-item').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.dataset.taskId;
+                    const type = this.dataset.taskType;
+                    const title = this.dataset.taskTitle;
+                    const desc = this.dataset.taskDesc;
+                    const steps = this.dataset.taskSteps;
+                    const link = this.dataset.taskLink;
+                    const reward = parseInt(this.dataset.taskReward);
+                    const creator = this.dataset.taskCreator;
+                    const proofType = this.dataset.taskProoftype;
+                    closeFullscreenTasks();
+                    // Small delay to allow close animation
+                    setTimeout(() => {
+                        showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
+                    }, 200);
+                });
+            });
         }
 
         function filterFullscreenTasks(platform) {
@@ -4564,7 +4666,6 @@
                 let newNonWithdrawable = nonWithdrawable - deductFromNon;
                 let newCoins = currentUserData.coins - deductFromCoins;
 
-                // Prevent negative coins
                 if (newCoins < 0) { newCoins = 0; }
                 if (newNonWithdrawable < 0) { newNonWithdrawable = 0; }
 
@@ -4748,18 +4849,25 @@
         }
 
         // ============================================================
-        // BUILD SUBMISSION HTML
+        // BUILD SUBMISSION HTML (hide proof images on approved/rejected)
         // ============================================================
         function buildSubmissionHtml(s, taskId, rewardPerUser) {
             let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
                 'pending_reject' ? 'orange' : 'orange'));
             let proofHtml = '';
-            if (s.proofType === 'text' && s.proofText) {
-                proofHtml =
-                    `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
-            } else if (s.images && s.images.length > 0) {
-                proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
+            // Only show proof if status is pending or pending_reject
+            if (s.status === 'pending' || s.status === 'pending_reject') {
+                if (s.proofType === 'text' && s.proofText) {
+                    proofHtml =
+                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
+                } else if (s.images && s.images.length > 0) {
+                    proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
+                }
+            } else {
+                // For approved/rejected, show only a message
+                proofHtml = `<div style="color:#999;font-size:12px;">📎 Proof hidden (${s.status})</div>`;
             }
+
             let actionButtons = '';
             if (s.status === 'pending' && currentUser && currentUserData) {
                 actionButtons = `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">
@@ -4879,7 +4987,6 @@
             }
             toggleProofTypeFields();
 
-            // Withdraw amount listener for fee calculation
             document.getElementById('withdrawAmount').addEventListener('input', function() {
                 const amt = parseInt(this.value) || 0;
                 const fee = Math.round(amt * 0.1);
@@ -5226,7 +5333,6 @@
             let acc = document.getElementById('withdrawAccount').value.trim();
             let name = document.getElementById('withdrawName').value.trim();
 
-            // Calculate fee (10%)
             let fee = Math.round(amt * 0.1);
             let totalNeeded = amt + fee;
 
@@ -5239,7 +5345,6 @@
 
             try {
                 let newCoins = currentUserData.coins - totalNeeded;
-                // Prevent negative
                 if (newCoins < 0) newCoins = 0;
                 await db.ref(`users/${currentUser.uid}/coins`).set(newCoins);
                 currentUserData.coins = newCoins;
@@ -5510,7 +5615,6 @@
             const fullText =
                 `🔥\nEarn Daily Money From Home!\nComplete simple tasks & start earning 💰\n👇👇\n${link}`;
             navigator.clipboard.writeText(fullText).then(() => showToast('✅ Full share text copied!')).catch(() => {
-                // Fallback
                 const input = document.createElement('input');
                 input.value = fullText;
                 document.body.appendChild(input);
@@ -5649,6 +5753,10 @@
                         taskSlotListeners[key]();
                         delete taskSlotListeners[key];
                     }
+                }
+                if (window._taskDeletionListeners) {
+                    window._taskDeletionListeners.forEach(unsub => unsub());
+                    window._taskDeletionListeners = [];
                 }
                 updateLoader(100, 'Please sign in');
                 setTimeout(finishLoading, 300);
