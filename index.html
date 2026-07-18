@@ -17,16 +17,17 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
 
-    <!-- Cloudinary + ImgBB fallback (unchanged) -->
+    <!-- Cloudinary + ImgBB fallback -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        /* === ALL STYLES SAME AS BEFORE – KEEP YOUR EXISTING CSS === */
-        /* (Paste your complete CSS here – I'm including a minimal version for brevity) */
+        /* ===== ALL STYLES (same as before) ===== */
+        /* (I'm keeping the existing CSS exactly as provided – no changes needed) */
         * {
             margin: 0;
             padding: 0;
@@ -2140,6 +2141,7 @@
 <body>
     <div class="user-container" id="userContainer">
 
+        <!-- ===== NEW MAIL BANNER ===== -->
         <div id="newMailBanner" class="new-mail-banner" onclick="openMailBox()">
             <span class="banner-icon">📬</span>
             <div class="banner-text">
@@ -2149,6 +2151,7 @@
             <button class="banner-close" onclick="event.stopPropagation(); hideMailBanner()">✕</button>
         </div>
 
+        <!-- ===== LOADING SCREEN ===== -->
         <div id="loadingScreen">
             <div class="logo-icon"><i class="fas fa-tasks"></i></div>
             <div class="app-title">Task Expert</div>
@@ -2166,6 +2169,7 @@
             <div class="loader-footer">v2.0 (Supabase)</div>
         </div>
 
+        <!-- ===== UPLOAD OVERLAY ===== -->
         <div id="uploadOverlay" class="upload-overlay">
             <div class="spinner"></div>
             <div class="progress-text" id="uploadProgressText">Processing...</div>
@@ -2175,11 +2179,13 @@
             </div>
         </div>
 
+        <!-- ===== IMAGE MODAL ===== -->
         <div id="imageModal" class="image-modal" onclick="closeImageModal()">
             <button class="close-btn" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
             <img id="modalImage" src="" alt="Preview">
         </div>
 
+        <!-- ===== MAIL DETAIL SCREEN ===== -->
         <div id="mailDetailScreen" class="mail-detail-screen">
             <div class="mail-detail-header">
                 <i class="fas fa-arrow-left" onclick="closeMailDetail()"></i>
@@ -2188,6 +2194,7 @@
             <div class="mail-detail-content" id="mailDetailContent"></div>
         </div>
 
+        <!-- ===== REJECT REASON MODAL ===== -->
         <div id="rejectReasonModal" class="modal">
             <div class="modal-content">
                 <h3>❌ Reject Submission</h3>
@@ -2202,6 +2209,7 @@
             </div>
         </div>
 
+        <!-- ===== GOOGLE SIGN IN/UP SCREEN ===== -->
         <div class="screen" id="googleSignInScreen">
             <div class="header"><h1>✅ Task Expert</h1><p>Earn Coins • Complete Tasks</p></div>
             <div class="card" style="margin-top:30px;text-align:center;">
@@ -2235,6 +2243,7 @@
             </div>
         </div>
 
+        <!-- ===== SUSPENDED SCREEN ===== -->
         <div class="screen" id="suspendedScreen">
             <div class="suspended-screen">
                 <div class="icon-box"><i class="fas fa-ban" style="color:#ff4757;"></i></div>
@@ -2245,6 +2254,7 @@
             </div>
         </div>
 
+        <!-- ===== MAINTENANCE SCREEN ===== -->
         <div class="screen" id="maintenanceScreen">
             <div class="maintenance-screen">
                 <div class="icon-box"><i class="fas fa-tools" style="color:#ffc107;"></i></div>
@@ -2254,6 +2264,7 @@
             </div>
         </div>
 
+        <!-- ===== UPDATE SCREEN ===== -->
         <div class="screen" id="updateScreen">
             <div class="update-screen">
                 <div class="icon-box"><i class="fas fa-download" style="color:#ffd43b;"></i></div>
@@ -2265,6 +2276,7 @@
             </div>
         </div>
 
+        <!-- ===== MAIN APP SCREEN ===== -->
         <div class="screen" id="mainScreen">
             <div class="header"><h1>✅ Task Expert</h1>
                 <div class="user-info">
@@ -2351,6 +2363,7 @@
         </div>
     </div>
 
+    <!-- ===== FULL SCREEN TASKS ===== -->
     <div id="fullscreenTasks" class="fullscreen-tasks">
         <div class="tasks-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenTasks()"></i>
@@ -2370,6 +2383,7 @@
         </div>
     </div>
 
+    <!-- ===== FULL SCREEN DEPOSIT HISTORY ===== -->
     <div id="fullscreenDepositHistory" class="fullscreen-history">
         <div class="history-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenDepositHistory()"></i>
@@ -2378,6 +2392,7 @@
         <div class="history-body" id="fullscreenDepositHistoryBody"></div>
     </div>
 
+    <!-- ===== FULL SCREEN WITHDRAW HISTORY ===== -->
     <div id="fullscreenWithdrawHistory" class="fullscreen-history">
         <div class="history-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenWithdrawHistory()"></i>
@@ -2386,6 +2401,7 @@
         <div class="history-body" id="fullscreenWithdrawHistoryBody"></div>
     </div>
 
+    <!-- ===== VIEW DETAILS SCREEN ===== -->
     <div id="viewDetailsScreen" class="view-details-screen">
         <div class="task-detail-header">
             <i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeViewDetails()"></i>
@@ -2395,6 +2411,7 @@
         <div class="task-detail-body" id="viewDetailsBody"></div>
     </div>
 
+    <!-- ===== MODALS ===== -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openFullscreenDepositHistory()"><i class="fas fa-history"></i></div>
@@ -2452,6 +2469,7 @@
         </div>
     </div>
 
+    <!-- ===== CREATE TASK MODAL ===== -->
     <div id="createTaskModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openMyPostedTasks()"><i class="fas fa-history"></i></div>
@@ -2501,6 +2519,7 @@
         </div>
     </div>
 
+    <!-- ===== SUBMISSIONS ALL MODAL ===== -->
     <div id="allSubmissionsModal" class="modal">
         <div class="modal-content">
             <h3>📋 All Submissions</h3>
@@ -2509,6 +2528,7 @@
         </div>
     </div>
 
+    <!-- ===== REFERRALS ALL MODAL ===== -->
     <div id="allReferralsModal" class="modal">
         <div class="modal-content">
             <h3>👥 All Referrals</h3>
@@ -2517,19 +2537,23 @@
         </div>
     </div>
 
+    <!-- ===== MAIL MODAL ===== -->
     <div id="mailModal" class="modal">
         <div class="modal-content"><h3>📬 Mail Box</h3><div id="mailList"></div><button class="btn btn-danger" onclick="closeModal('mailModal')" style="width:100%;">Close</button></div>
     </div>
 
+    <!-- ===== MY POSTED TASKS MODAL ===== -->
     <div id="myPostedTasksModal" class="modal">
         <div class="modal-content" style="max-width:400px"><h3>📋 My Posted Tasks</h3><div id="myPostedTasksList"></div><button class="btn btn-danger" onclick="closeModal('myPostedTasksModal')" style="width:100%;">Close</button></div>
     </div>
 
+    <!-- ===== MY TASK DETAILS SCREEN ===== -->
     <div id="myTaskDetailsScreen" class="my-task-details-screen">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeMyTaskDetails()"></i><h2>📋 My Task Details</h2></div>
         <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
+    <!-- ===== TASK DETAIL MODAL ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
         <div class="task-detail-body" style="padding:16px;">
@@ -2557,23 +2581,25 @@
         </div>
     </div>
 
+    <!-- ===== SUBMISSION DETAIL MODAL ===== -->
     <div id="submissionDetailModal" class="modal">
         <div class="modal-content"><h3>📄 Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')" style="width:100%;">Close</button></div>
     </div>
 
+    <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
 
     <script>
         // ============================================================
         // SUPABASE CONFIG
         // ============================================================
-        const SUPABASE_URL = 'https://gjilqnfmkdoulruqwuez.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_75tKh1i1m4cesjXhu_VyOA_ExNvHFij';
+        const SUPABASE_URL = 'https://bfqkwwkvnioreeagyvco.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_BVS4gTa_FpesnI8t3CTUjw_qxNUwiHG';
 
         const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
-        // GLOBALS
+        // GLOBALS (same as before)
         // ============================================================
         let currentUser = null,
             currentUserData = null,
@@ -2716,7 +2742,7 @@
         }
 
         // ============================================================
-        // MAINTENANCE & UPDATE (from settings table)
+        // MAINTENANCE & UPDATE
         // ============================================================
         async function loadMaintenanceAndUpdate() {
             try {
@@ -2791,7 +2817,7 @@
 
             if (user) {
                 currentUserData = user;
-                // Ensure nonWithdrawableCoins exists (migration)
+                // Ensure nonWithdrawableCoins exists
                 if (currentUserData.non_withdrawable_coins === undefined) {
                     currentUserData.non_withdrawable_coins = currentUserData.deposit_coins || 0;
                     await supabase.from('users').update({
@@ -2973,7 +2999,7 @@
         }
 
         // ============================================================
-        // UPDATE EARNINGS DISPLAY
+        // EARNINGS DISPLAY
         // ============================================================
         function updateEarningsDisplay() {
             let pending = 0,
@@ -3228,7 +3254,6 @@
                     return;
                 }
 
-                // Update user coins
                 const { data: user } = await supabase
                     .from('users')
                     .select('coins')
@@ -3239,7 +3264,6 @@
                     .update({ coins: newCoins })
                     .eq('id', referrerId);
 
-                // Mark bonus as claimed
                 await supabase.from('referrals')
                     .update({ bonus_claimed: true, bonus_claimed_at: new Date().toISOString() })
                     .eq('id', referralId);
@@ -3261,7 +3285,6 @@
         async function updateReferralProgress(userId) {
             if (!userId) return;
             try {
-                // Count approved submissions for this user
                 const { data: subs, error } = await supabase
                     .from('submissions')
                     .select('id')
@@ -3271,7 +3294,6 @@
 
                 const approvedCount = subs ? subs.length : 0;
 
-                // Update referrals where referred_user_id = userId
                 const { data: refs } = await supabase
                     .from('referrals')
                     .select('id')
@@ -3663,7 +3685,7 @@
                 } else {
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
-                // Store data attributes
+
                 allHtml += `
                     <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.description)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creator_id}" data-task-prooftype="${t.proof_type || 'image'}">
                         <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
@@ -5395,7 +5417,6 @@
                     loadMailBox();
                     loadMaintenanceAndUpdate();
                     if (currentUser) {
-                        // Update referral progress for users who referred this user
                         const { data: refs } = await supabase
                             .from('referrals')
                             .select('referred_by')
@@ -5413,7 +5434,6 @@
                     setTimeout(finishLoading, 500);
                 }
             } else {
-                // No session – show login
                 currentUser = null;
                 currentUserData = null;
                 userSubmissionsMap = {};
