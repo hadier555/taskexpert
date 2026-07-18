@@ -16,17 +16,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js">
-    </script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Cloudinary + ImgBB fallback (unchanged) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
+        /* === ALL STYLES SAME AS BEFORE – KEEP YOUR EXISTING CSS === */
+        /* (Paste your complete CSS here – I'm including a minimal version for brevity) */
         * {
             margin: 0;
             padding: 0;
@@ -2163,7 +2163,7 @@
                     <span></span><span></span><span></span>
                 </div>
             </div>
-            <div class="loader-footer">v1.0</div>
+            <div class="loader-footer">v2.0 (Supabase)</div>
         </div>
 
         <div id="uploadOverlay" class="upload-overlay">
@@ -2222,7 +2222,7 @@
                     <h3>Create a new account</h3>
                     <p style="margin:15px 0;">Sign up using Google.</p>
                     <div class="btn-group">
-                        <button class="btn google-btn" onclick="signupWithGoogle()">
+                        <button class="btn google-btn" onclick="loginWithGoogle()">
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
                             Sign up with Google
                         </button>
@@ -2564,22 +2564,13 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // ===== FIREBASE CONFIG =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyAFlpqi5e3EI1loNu3QWFLOMBjfYyyAusk",
-            authDomain: "taskexpert7.firebaseapp.com",
-            databaseURL: "https://taskexpert7-default-rtdb.firebaseio.com",
-            projectId: "taskexpert7",
-            storageBucket: "taskexpert7.firebasestorage.app",
-            messagingSenderId: "112187780941",
-            appId: "1:112187780941:web:a9ed957d2538847cd01104",
-            measurementId: "G-6FP0RJSQD6"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.error(e));
+        // ============================================================
+        // SUPABASE CONFIG
+        // ============================================================
+        const SUPABASE_URL = 'https://gjilqnfmkdoulruqwuez.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_75tKh1i1m4cesjXhu_VyOA_ExNvHFij';
+
+        const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
         // GLOBALS
@@ -2623,12 +2614,6 @@
         };
 
         // ============================================================
-        // CONNECTION
-        // ============================================================
-        const connectedRef = db.ref('.info/connected');
-        connectedRef.on('value', (snap) => { isOnline = snap.val() === true; });
-
-        // ============================================================
         // HELPERS
         // ============================================================
         function showToast(msg) {
@@ -2656,7 +2641,7 @@
 
         function generateReferralCode() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
-        function logout() { auth.signOut(); }
+        function logout() { supabase.auth.signOut().then(() => { location.reload(); }); }
 
         function openImageModal(imgUrl) { if (!imgUrl) return; const modal = document.getElementById('imageModal');
             const img = document.getElementById('modalImage');
@@ -2669,7 +2654,7 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 
         // ============================================================
-        // AUTH
+        // AUTH FUNCTIONS
         // ============================================================
         function showRegister() {
             document.getElementById('loginSection').style.display = 'none';
@@ -2682,21 +2667,14 @@
         }
 
         function loginWithGoogle() {
-            auth.signInWithPopup(provider).catch(e => {
-                if (e.code === 'auth/popup-blocked') showToast('⚠️ Popup blocked.');
-                else showToast('❌ Login error: ' + e.message);
-            });
-        }
-
-        function signupWithGoogle() {
-            auth.signInWithPopup(provider).catch(e => {
-                if (e.code === 'auth/popup-blocked') showToast('⚠️ Popup blocked.');
-                else showToast('❌ Sign-up error: ' + e.message);
+            supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin }
             });
         }
 
         // ============================================================
-        // LOADING
+        // LOADING SCREEN
         // ============================================================
         function updateLoader(progress, statusText) {
             const fill = document.getElementById('loaderBarFill');
@@ -2738,22 +2716,28 @@
         }
 
         // ============================================================
-        // MAINTENANCE & UPDATE
+        // MAINTENANCE & UPDATE (from settings table)
         // ============================================================
         async function loadMaintenanceAndUpdate() {
             try {
-                const maintSnap = await db.ref('settings/maintenance').once('value');
-                const maint = maintSnap.val() || {};
-                if (maint.enabled) {
-                    document.getElementById('maintenanceMsg').innerText = maint.message ||
+                const { data: maint, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'maintenance')
+                    .maybeSingle();
+                if (!error && maint && maint.value && maint.value.enabled) {
+                    document.getElementById('maintenanceMsg').innerText = maint.value.message ||
                         'We are currently performing scheduled maintenance. Please check back later.';
                     showScreen('maintenanceScreen');
                     return;
                 }
-                const updateSnap = await db.ref('settings/appUpdate').once('value');
-                const upd = updateSnap.val() || {};
-                if (upd.enabled && upd.link) {
-                    document.getElementById('updateLink').href = upd.link;
+                const { data: upd, error: e2 } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'appUpdate')
+                    .maybeSingle();
+                if (!e2 && upd && upd.value && upd.value.enabled && upd.value.link) {
+                    document.getElementById('updateLink').href = upd.value.link;
                     showScreen('updateScreen');
                     return;
                 }
@@ -2761,101 +2745,150 @@
         }
 
         // ============================================================
-        // PLATFORM MIN SETTINGS
+        // PLATFORM MIN SETTINGS & MIN LIMITS
         // ============================================================
         async function loadPlatformMinSettings() {
             try {
-                const snap = await db.ref('settings/platformMin').once('value');
-                const data = snap.val() || {};
-                for (let key in platformMinSettings) {
-                    if (data[key]) {
-                        platformMinSettings[key] = data[key];
-                    }
+                const { data, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'platformMin')
+                    .maybeSingle();
+                if (!error && data && data.value) {
+                    platformMinSettings = data.value;
                 }
             } catch (e) { console.warn('Could not load platform min settings:', e); }
         }
 
         async function loadMinLimits() {
             try {
-                const snap = await db.ref('settings/minLimits').once('value');
-                const data = snap.val() || {};
-                minDeposit = data.minDeposit || 100;
-                minWithdraw = data.minWithdraw || 1000;
+                const { data, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'minLimits')
+                    .maybeSingle();
+                if (!error && data && data.value) {
+                    minDeposit = data.value.minDeposit || 100;
+                    minWithdraw = data.value.minWithdraw || 1000;
+                }
             } catch (e) { console.warn('Could not load min limits:', e); }
         }
 
         // ============================================================
         // USER DATA
         // ============================================================
-        async function loadUserData() {
-            let snap = await db.ref(`users/${currentUser.uid}`).once('value');
-            if (snap.exists()) {
-                currentUserData = snap.val();
-                if (currentUserData.nonWithdrawableCoins === undefined) {
-                    currentUserData.nonWithdrawableCoins = currentUserData.depositCoins || 0;
-                    await db.ref(`users/${currentUser.uid}/nonWithdrawableCoins`).set(currentUserData
-                    .nonWithdrawableCoins);
+        async function loadUserData(userId) {
+            const { data: user, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', userId)
+                .maybeSingle();
+
+            if (error) {
+                console.error('Error loading user:', error);
+                return;
+            }
+
+            if (user) {
+                currentUserData = user;
+                // Ensure nonWithdrawableCoins exists (migration)
+                if (currentUserData.non_withdrawable_coins === undefined) {
+                    currentUserData.non_withdrawable_coins = currentUserData.deposit_coins || 0;
+                    await supabase.from('users').update({
+                        non_withdrawable_coins: currentUserData.non_withdrawable_coins
+                    }).eq('id', userId);
                 }
-                if (currentUserData.depositCoins === undefined) {
-                    currentUserData.depositCoins = currentUserData.nonWithdrawableCoins || 0;
-                    await db.ref(`users/${currentUser.uid}/depositCoins`).set(currentUserData.depositCoins);
+                if (currentUserData.deposit_coins === undefined) {
+                    currentUserData.deposit_coins = currentUserData.non_withdrawable_coins || 0;
+                    await supabase.from('users').update({
+                        deposit_coins: currentUserData.deposit_coins
+                    }).eq('id', userId);
                 }
-                const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
-                isAdmin = adminSnap.val() === true;
+                // Check admin
+                const { data: adminCheck } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', userId)
+                    .maybeSingle();
+                isAdmin = (adminCheck && adminCheck.role === 'admin') || false;
             } else {
-                let uname = currentUser.email.split('@')[0];
-                let refCode = generateReferralCode();
-                let signupBonus = await getSignupBonusAmount();
-                let referralBonusAmount = await getReferralBonusAmount();
+                // Create new user
+                const uname = currentUser.email.split('@')[0];
+                const refCode = generateReferralCode();
+                const signupBonus = await getSignupBonusAmount();
+                const referralBonusAmount = await getReferralBonusAmount();
+
+                // Check referrer from URL
                 const urlRef = new URLSearchParams(window.location.search).get('ref');
                 let referredBy = null;
                 if (urlRef) {
-                    const usersSnap = await db.ref('users').once('value');
-                    usersSnap.forEach(child => { if (child.val().referralCode === urlRef) referredBy = child.key; });
+                    const { data: refUser } = await supabase
+                        .from('users')
+                        .select('id')
+                        .eq('referral_code', urlRef)
+                        .maybeSingle();
+                    if (refUser) referredBy = refUser.id;
                 }
-                let totalCoins = signupBonus;
-                let nonWithdrawable = signupBonus;
-                currentUserData = {
+
+                const newUser = {
+                    id: userId,
                     username: uname,
                     email: currentUser.email,
-                    coins: totalCoins,
-                    nonWithdrawableCoins: nonWithdrawable,
-                    totalEarned: totalCoins,
-                    todayEarned: totalCoins,
-                    pendingEarnings: 0,
-                    approvedEarnings: 0,
-                    referrals: [],
-                    totalReferrals: 0,
-                    referralEarnings: 0,
-                    referralCode: refCode,
-                    referredBy: referredBy || null,
+                    coins: signupBonus,
+                    non_withdrawable_coins: signupBonus,
+                    deposit_coins: signupBonus,
+                    total_earned: signupBonus,
+                    today_earned: signupBonus,
+                    pending_earnings: 0,
+                    approved_earnings: 0,
+                    total_referrals: 0,
+                    referral_earnings: 0,
+                    referral_code: refCode,
+                    referred_by: referredBy,
                     suspended: false,
-                    spinsToday: 0,
-                    lastSpinDate: null,
-                    dailyReward: { lastClaim: null, day: 0 },
-                    depositCoins: nonWithdrawable,
-                    createdAt: Date.now(),
-                    authProvider: "google"
+                    role: 'user',
+                    spins_today: 0,
+                    last_spin_date: null,
+                    daily_reward_last_claim: null,
+                    daily_reward_day: 0,
+                    created_at: new Date().toISOString(),
+                    auth_provider: 'google'
                 };
-                await db.ref(`users/${currentUser.uid}`).set(currentUserData);
 
+                const { error: insertError } = await supabase
+                    .from('users')
+                    .insert(newUser);
+
+                if (insertError) {
+                    console.error('Error creating user:', insertError);
+                    return;
+                }
+
+                currentUserData = newUser;
+
+                // Handle referral
                 if (referredBy) {
                     const currentReferralBonus = await getReferralBonusAmount();
-                    await db.ref('referrals').push({
-                        referredBy: referredBy,
-                        referredUserId: currentUser.uid,
-                        referredUsername: uname,
-                        timestamp: Date.now(),
-                        bonusLocked: currentReferralBonus,
-                        tasksCompleted: 0,
-                        bonusClaimed: false,
-                        bonusClaimedAt: null
+                    await supabase.from('referrals').insert({
+                        referred_by: referredBy,
+                        referred_user_id: userId,
+                        referred_username: uname,
+                        bonus_locked: currentReferralBonus,
+                        tasks_completed: 0,
+                        bonus_claimed: false,
+                        timestamp: new Date().toISOString()
                     });
-                    const currentRefs = (await db.ref(`users/${referredBy}/totalReferrals`).once('value')).val() || 0;
-                    await db.ref(`users/${referredBy}/totalReferrals`).set(currentRefs + 1);
+                    // Increment total referrals for referrer
+                    const { data: refUser } = await supabase
+                        .from('users')
+                        .select('total_referrals')
+                        .eq('id', referredBy)
+                        .maybeSingle();
+                    const newCount = (refUser ? refUser.total_referrals : 0) + 1;
+                    await supabase.from('users')
+                        .update({ total_referrals: newCount })
+                        .eq('id', referredBy);
                 }
-                const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
-                isAdmin = adminSnap.val() === true;
             }
             updateUI();
             loadReferralData();
@@ -2873,35 +2906,62 @@
             if (!currentUserData) return;
             document.getElementById('displayUsername').innerText = currentUserData.username;
             document.getElementById('walletCoins').innerText = currentUserData.coins;
-            document.getElementById('totalEarnings').innerText = currentUserData.totalEarned;
-            document.getElementById('todayEarnings').innerText = currentUserData.todayEarned;
+            document.getElementById('totalEarnings').innerText = currentUserData.total_earned;
+            document.getElementById('todayEarnings').innerText = currentUserData.today_earned || 0;
             document.getElementById('profileUsername').innerText = currentUserData.username;
             document.getElementById('profileEmail').innerText = currentUserData.email;
             document.getElementById('profileCoins').innerText = currentUserData.coins;
-            document.getElementById('referralCode').innerText = currentUserData.referralCode;
+            document.getElementById('referralCode').innerText = currentUserData.referral_code;
             updateEarningsDisplay();
             updateShareLink();
         }
 
         function updateShareLink() {
-            const code = currentUserData?.referralCode || '910372';
+            const code = currentUserData?.referral_code || '910372';
             const link = `https://taskexpertapp.pages.dev/?ref=${code}`;
             document.getElementById('shareLinkDisplay').innerText = link;
         }
 
-        async function getReferralBonusAmount() { try { const snap = await db.ref('settings/referralBonus').once(
-                'value'); return snap.exists() ? snap.val() : 100; } catch (e) { return 100; } }
+        async function getReferralBonusAmount() {
+            try {
+                const { data, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'referralBonus')
+                    .maybeSingle();
+                if (!error && data) return data.value;
+                return 100;
+            } catch (e) { return 100; }
+        }
 
-        async function getSignupBonusAmount() { try { const snap = await db.ref('settings/signupBonus').once(
-                'value'); return snap.exists() ? snap.val() : 50; } catch (e) { return 50; } }
+        async function getSignupBonusAmount() {
+            try {
+                const { data, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'signupBonus')
+                    .maybeSingle();
+                if (!error && data) return data.value;
+                return 50;
+            } catch (e) { return 50; }
+        }
 
         // ============================================================
         // BANK DETAILS
         // ============================================================
         async function loadBankDetails() {
             try {
-                let snap = await db.ref('settings/bankDetails').once('value');
-                let b = snap.val() || {};
+                const { data, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'bankDetails')
+                    .maybeSingle();
+                if (error || !data) {
+                    document.getElementById('bankEasypaisa').innerText = 'Mukhtar Ahmad - 03418568337';
+                    document.getElementById('bankJazzCash').innerText = 'Mukhtar Ahmad - 03418568337';
+                    return;
+                }
+                const b = data.value || {};
                 const easypaisa = b.easypaisa || { name: 'Mukhtar Ahmad', number: '03418568337' };
                 const jazzcash = b.jazzcash || { name: 'Mukhtar Ahmad', number: '03418568337' };
                 document.getElementById('bankEasypaisa').innerText = `${easypaisa.name} - ${easypaisa.number}`;
@@ -2913,7 +2973,7 @@
         }
 
         // ============================================================
-        // EARNINGS DISPLAY
+        // UPDATE EARNINGS DISPLAY
         // ============================================================
         function updateEarningsDisplay() {
             let pending = 0,
@@ -2930,18 +2990,20 @@
         // SUBMISSIONS
         // ============================================================
         async function loadMySubmissions() {
-            try {
-                let snap = await db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid).once(
-                'value');
-                allSubmissions = [];
-                let subs = snap.val() || {};
-                for (let id in subs) { let s = subs[id]; if (!s.adminDeleted) allSubmissions.push({ id, ...s }); }
-                allSubmissions.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                updateEarningsDisplay();
-                displaySubmissionsList();
-            } catch (e) {
-                document.getElementById('submissionsContainer').innerHTML = '<p>No submissions yet</p>';
+            if (!currentUser) return;
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('timestamp', { ascending: false });
+
+            if (error) {
+                console.error('Error loading submissions:', error);
+                return;
             }
+            allSubmissions = data || [];
+            updateEarningsDisplay();
+            displaySubmissionsList();
         }
 
         function displaySubmissionsList() {
@@ -2961,11 +3023,11 @@
                 let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
                     s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
-                let proofTypeBadge = s.proofType === 'text' ?
+                let proofTypeBadge = s.proof_type === 'text' ?
                     '<span class="proof-type-badge text">📝 Text</span>' :
                     '<span class="proof-type-badge image">🖼️ Image</span>';
                 html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
-                            <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
+                            <div><strong>${escapeHtml(s.task_title)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
                             <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
                         </div>`;
             }
@@ -2980,11 +3042,11 @@
                 let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
                     s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
-                let proofTypeBadge = s.proofType === 'text' ?
+                let proofTypeBadge = s.proof_type === 'text' ?
                     '<span class="proof-type-badge text">📝 Text</span>' :
                     '<span class="proof-type-badge image">🖼️ Image</span>';
                 html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
-                            <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
+                            <div><strong>${escapeHtml(s.task_title)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
                             <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
                         </div>`;
             }
@@ -2994,20 +3056,23 @@
 
         window.viewSubmission = async function(id) {
             try {
-                let snap = await db.ref(`task_submissions/${id}`).once('value');
-                let s = snap.val();
-                if (!s) return;
-                if (s.adminDeleted) {
+                const { data: s, error } = await supabase
+                    .from('submissions')
+                    .select('*')
+                    .eq('id', id)
+                    .maybeSingle();
+
+                if (error || !s) return;
+                if (s.admin_deleted) {
                     document.getElementById('submissionDetailContent').innerHTML =
                         `<p><strong>Submission removed by admin.</strong></p><button class="btn" onclick="closeModal('submissionDetailModal')">Close</button>`;
                     document.getElementById('submissionDetailModal').style.display = 'flex';
                     return;
                 }
                 let proofHtml = '';
-                // Only show proof if pending or pending_reject
-                if (s.proofType === 'text' && s.proofText && (s.status === 'pending' || s.status === 'pending_reject')) {
+                if (s.proof_type === 'text' && s.proof_text && (s.status === 'pending' || s.status === 'pending_reject')) {
                     proofHtml =
-                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
+                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proof_text)}</div>`;
                 } else if (s.images && s.images.length > 0 && (s.status === 'pending' || s.status === 'pending_reject')) {
                     proofHtml = s.images.map(img => safeImageHtml(img, 'preview-img')).join('');
                 } else if (s.status === 'approved' || s.status === 'rejected') {
@@ -3015,10 +3080,10 @@
                 }
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 document.getElementById('submissionDetailContent').innerHTML = `
-                            <p><strong>Task:</strong> ${escapeHtml(s.taskTitle)}</p>
+                            <p><strong>Task:</strong> ${escapeHtml(s.task_title)}</p>
                             <p><strong>Status:</strong> <span style="color:${s.status==='approved'?'green':(s.status==='rejected'?'red':(s.status==='pending_reject'?'orange':'orange'))}">${label}</span></p>
                             <p><strong>Reward:</strong> ${s.reward||0} coins</p>
-                            <p><strong>Proof Type:</strong> ${s.proofType === 'text' ? '📝 Text' : '🖼️ Image'}</p>
+                            <p><strong>Proof Type:</strong> ${s.proof_type === 'text' ? '📝 Text' : '🖼️ Image'}</p>
                             <p><strong>Submitted:</strong> ${new Date(s.timestamp).toLocaleString()}</p>
                             ${proofHtml ? `<p><strong>Proof:</strong></p><div style="display:flex;flex-wrap:wrap;">${proofHtml}</div>` : ''}
                             <button class="btn" onclick="closeModal('submissionDetailModal')">Close</button>
@@ -3033,35 +3098,28 @@
         // REFERRALS
         // ============================================================
         async function loadReferralData() {
-            try {
-                let snap = await db.ref('referrals').orderByChild('referredBy').equalTo(currentUser.uid).once('value');
-                let list = snap.val() || {};
-                allReferrals = [];
-                for (let id in list) {
-                    let item = list[id];
-                    if (item.bonusLocked === undefined) item.bonusLocked = 100;
-                    if (item.tasksCompleted === undefined) item.tasksCompleted = 0;
-                    if (item.bonusClaimed === undefined) item.bonusClaimed = false;
-                    allReferrals.push({ id, ...item });
-                }
-                allReferrals.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            if (!currentUser) return;
+            const { data, error } = await supabase
+                .from('referrals')
+                .select('*')
+                .eq('referred_by', currentUser.id)
+                .order('timestamp', { ascending: false });
 
-                let count = allReferrals.length;
-                let earnings = allReferrals.filter(r => r.bonusClaimed).reduce((sum, r) => sum + (r.bonusLocked || 0), 0);
-                document.getElementById('totalReferrals').innerText = count;
-                document.getElementById('referralEarnings').innerText = earnings;
-
-                if (currentUserData) {
-                    currentUserData.referralEarnings = earnings;
-                }
-
-                displayReferralsList();
-                let bonusAmount = await getReferralBonusAmount();
-                document.getElementById('refBonusAmount').innerText = bonusAmount;
-            } catch (e) {
-                console.warn('Referral load error:', e);
-                document.getElementById('referralsContainer').innerHTML = '<p>No referrals yet</p>';
+            if (error) {
+                console.error('Error loading referrals:', error);
+                return;
             }
+            allReferrals = data || [];
+            let count = allReferrals.length;
+            let earnings = allReferrals.filter(r => r.bonus_claimed).reduce((sum, r) => sum + (r.bonus_locked || 0), 0);
+            document.getElementById('totalReferrals').innerText = count;
+            document.getElementById('referralEarnings').innerText = earnings;
+            if (currentUserData) {
+                currentUserData.referral_earnings = earnings;
+            }
+            displayReferralsList();
+            let bonusAmount = await getReferralBonusAmount();
+            document.getElementById('refBonusAmount').innerText = bonusAmount;
         }
 
         function displayReferralsList() {
@@ -3080,11 +3138,11 @@
 
             const displayItems = allReferrals.slice(0, 10);
             for (let item of displayItems) {
-                const username = item.referredUsername || 'Unknown';
-                const tasksDone = item.tasksCompleted || 0;
+                const username = item.referred_username || 'Unknown';
+                const tasksDone = item.tasks_completed || 0;
                 const totalNeeded = 7;
                 const isComplete = tasksDone >= totalNeeded;
-                const isClaimed = item.bonusClaimed === true;
+                const isClaimed = item.bonus_claimed === true;
                 const progressText = `${tasksDone}/${totalNeeded}`;
                 const progressClass = isComplete ? 'complete' : '';
 
@@ -3123,11 +3181,11 @@
             const list = document.getElementById('allReferralsList');
             let html = '';
             for (let item of allReferrals) {
-                const username = item.referredUsername || 'Unknown';
-                const tasksDone = item.tasksCompleted || 0;
+                const username = item.referred_username || 'Unknown';
+                const tasksDone = item.tasks_completed || 0;
                 const totalNeeded = 7;
                 const isComplete = tasksDone >= totalNeeded;
-                const isClaimed = item.bonusClaimed === true;
+                const isClaimed = item.bonus_claimed === true;
                 const progressText = `${tasksDone}/${totalNeeded}`;
 
                 let statusText = '';
@@ -3151,30 +3209,44 @@
             if (!confirm('Claim bonus for this referral?')) return;
 
             try {
-                const snap = await db.ref(`referrals/${referralId}`).once('value');
-                const refData = snap.val();
-                if (!refData) { showToast('Referral record not found'); return; }
-                if (refData.bonusClaimed) { showToast('Bonus already claimed'); return; }
-                const tasksDone = refData.tasksCompleted || 0;
+                const { data: refData, error } = await supabase
+                    .from('referrals')
+                    .select('*')
+                    .eq('id', referralId)
+                    .maybeSingle();
+
+                if (error || !refData) { showToast('Referral record not found'); return; }
+                if (refData.bonus_claimed) { showToast('Bonus already claimed'); return; }
+                const tasksDone = refData.tasks_completed || 0;
                 if (tasksDone < 7) { showToast('User has not completed 7 tasks yet'); return; }
 
-                const bonusAmount = refData.bonusLocked || 100;
-                const referrerId = refData.referredBy;
+                const bonusAmount = refData.bonus_locked || 100;
+                const referrerId = refData.referred_by;
 
-                if (referrerId !== currentUser.uid) {
+                if (referrerId !== currentUser.id) {
                     showToast('You are not the referrer for this user');
                     return;
                 }
 
-                const currentCoins = (await db.ref(`users/${referrerId}/coins`).once('value')).val() || 0;
-                await db.ref(`users/${referrerId}/coins`).set(currentCoins + bonusAmount);
+                // Update user coins
+                const { data: user } = await supabase
+                    .from('users')
+                    .select('coins')
+                    .eq('id', referrerId)
+                    .maybeSingle();
+                const newCoins = (user ? user.coins : 0) + bonusAmount;
+                await supabase.from('users')
+                    .update({ coins: newCoins })
+                    .eq('id', referrerId);
 
-                await db.ref(`referrals/${referralId}/bonusClaimed`).set(true);
-                await db.ref(`referrals/${referralId}/bonusClaimedAt`).set(Date.now());
+                // Mark bonus as claimed
+                await supabase.from('referrals')
+                    .update({ bonus_claimed: true, bonus_claimed_at: new Date().toISOString() })
+                    .eq('id', referralId);
 
                 if (currentUserData) {
-                    currentUserData.coins = (currentUserData.coins || 0) + bonusAmount;
-                    currentUserData.referralEarnings = (currentUserData.referralEarnings || 0) + bonusAmount;
+                    currentUserData.coins = newCoins;
+                    currentUserData.referral_earnings = (currentUserData.referral_earnings || 0) + bonusAmount;
                     updateUI();
                 }
 
@@ -3189,24 +3261,28 @@
         async function updateReferralProgress(userId) {
             if (!userId) return;
             try {
-                const snap = await db.ref('referrals').orderByChild('referredUserId').equalTo(userId).once('value');
-                const refs = snap.val();
-                if (!refs) return;
+                // Count approved submissions for this user
+                const { data: subs, error } = await supabase
+                    .from('submissions')
+                    .select('id')
+                    .eq('user_id', userId)
+                    .eq('status', 'approved')
+                    .eq('admin_deleted', false);
 
-                const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(userId).once('value');
-                const subs = subSnap.val() || {};
-                let approvedCount = 0;
-                for (let id in subs) {
-                    if (subs[id].status === 'approved' && !subs[id].adminDeleted) {
-                        approvedCount++;
-                    }
-                }
+                const approvedCount = subs ? subs.length : 0;
 
-                for (let refId in refs) {
-                    const ref = refs[refId];
-                    if (ref.bonusClaimed) continue;
-                    if (ref.tasksCompleted !== approvedCount) {
-                        await db.ref(`referrals/${refId}/tasksCompleted`).set(approvedCount);
+                // Update referrals where referred_user_id = userId
+                const { data: refs } = await supabase
+                    .from('referrals')
+                    .select('id')
+                    .eq('referred_user_id', userId)
+                    .eq('bonus_claimed', false);
+
+                if (refs && refs.length) {
+                    for (let r of refs) {
+                        await supabase.from('referrals')
+                            .update({ tasks_completed: approvedCount })
+                            .eq('id', r.id);
                     }
                 }
             } catch (e) {
@@ -3225,7 +3301,7 @@
         }
 
         // ============================================================
-        // IMAGE UPLOAD SERVICE
+        // IMAGE UPLOAD SERVICE (Cloudinary + ImgBB fallback)
         // ============================================================
         const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
         const CLOUDINARY_API_KEY = '614258583454693';
@@ -3298,91 +3374,70 @@
                 document.getElementById('officialTasksList').innerHTML =
                     '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading official tasks...</div>';
 
-                const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid)
-                    .once('value');
-                userSubmissionsMap = {};
-                const subs = subSnap.val() || {};
-                for (let id in subs) if (subs[id].userId === currentUser.uid) userSubmissionsMap[subs[id].taskId] =
-                    true;
+                // Load user submissions map
+                if (currentUser) {
+                    const { data: subs, error } = await supabase
+                        .from('submissions')
+                        .select('task_id')
+                        .eq('user_id', currentUser.id);
 
-                const allSubSnap = await db.ref('task_submissions').once('value');
-                const allSubs = allSubSnap.val() || {};
-                const countMap = {};
-                for (let id in allSubs) {
-                    const s = allSubs[id];
-                    if (s.adminDeleted) continue;
-                    const taskId = s.taskId;
-                    if (!countMap[taskId]) countMap[taskId] = { approved: 0, pending: 0, pendingReject: 0 };
-                    if (s.status === 'approved') countMap[taskId].approved++;
-                    else if (s.status === 'pending') countMap[taskId].pending++;
-                    else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
+                    if (!error && subs) {
+                        userSubmissionsMap = {};
+                        subs.forEach(s => { userSubmissionsMap[s.task_id] = true; });
+                    }
+                }
+
+                // Load all tasks
+                const { data: tasks, error } = await supabase
+                    .from('tasks')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading tasks:', error);
+                    return;
                 }
 
                 cachedOfficialTasks = [];
-                try {
-                    const officialSnap = await db.ref('tasks/official').limitToFirst(50).once('value');
-                    const officialData = officialSnap.val() || {};
-                    for (let [id, t] of Object.entries(officialData)) {
-                        const counts = countMap[id] || { approved: 0, pending: 0, pendingReject: 0 };
-                        const filled = counts.approved + counts.pending + counts.pendingReject;
-                        const maxLimit = t.maxLimit || t.left || 0;
+                cachedUserTasks = [];
+
+                for (let t of tasks) {
+                    if (t.type === 'official') {
+                        // Calculate remaining slots
+                        const filled = (t.completed || 0) + (t.pending || 0) + (t.pending_reject || 0);
+                        const maxLimit = t.max_limit || 0;
                         const remaining = Math.max(0, maxLimit - filled);
                         cachedOfficialTasks.push({
-                            id,
-                            type: 'official',
-                            title: t.title,
+                            ...t,
+                            left: remaining,
+                            maxLimit: maxLimit,
+                            reward: t.reward,
                             desc: t.description || '',
                             steps: t.steps || '',
                             link: t.link || '#',
-                            reward: t.reward,
-                            left: remaining,
-                            maxLimit: maxLimit,
                             platform: 'official',
                             creatorId: 'admin',
-                            timestamp: t.createdAt || 0,
-                            proofType: 'image'
+                            proofType: t.proof_type || 'image'
                         });
-                    }
-                    cachedOfficialTasks.sort((a, b) => b.timestamp - a.timestamp);
-                } catch (e) {
-                    cachedOfficialTasks = [];
-                }
-
-                cachedUserTasks = [];
-                try {
-                    const userTasksSnap = await db.ref('tasks/user').once('value');
-                    let tasksData = userTasksSnap.val() || {};
-                    for (let [id, t] of Object.entries(tasksData)) {
+                    } else if (t.type === 'user') {
+                        const filled = (t.completed || 0) + (t.pending || 0) + (t.pending_reject || 0);
+                        const required = t.required_users || 0;
+                        const remaining = Math.max(0, required - filled);
                         if (t.status === 'approved') {
-                            const counts = countMap[id] || { approved: 0, pending: 0, pendingReject: 0 };
-                            const filledSlots = counts.approved + counts.pending + counts.pendingReject;
-                            const required = t.requiredUsers || 0;
-                            const remaining = required - filledSlots;
-                            if (remaining > 0) {
-                                cachedUserTasks.push({
-                                    id,
-                                    type: 'user',
-                                    title: t.title,
-                                    desc: t.description || '',
-                                    steps: t.steps || '',
-                                    link: t.link || '#',
-                                    reward: t.rewardPerUser,
-                                    left: remaining,
-                                    platform: t.type || 'other',
-                                    creatorId: t.creatorId,
-                                    timestamp: t.publishedAt || t.timestamp || 0,
-                                    requiredUsers: required,
-                                    completed: counts.approved,
-                                    pending: counts.pending,
-                                    pendingReject: counts.pendingReject,
-                                    proofType: t.proofType || 'image'
-                                });
-                            }
+                            cachedUserTasks.push({
+                                ...t,
+                                left: remaining,
+                                requiredUsers: required,
+                                reward: t.reward,
+                                desc: t.description || '',
+                                steps: t.steps || '',
+                                link: t.link || '#',
+                                platform: t.platform || 'other',
+                                creatorId: t.creator_id,
+                                proofType: t.proof_type || 'image'
+                            });
                         }
                     }
-                    cachedUserTasks.sort((a, b) => b.timestamp - a.timestamp);
-                } catch (e) {
-                    cachedUserTasks = [];
                 }
 
                 tasksLoaded = true;
@@ -3401,94 +3456,68 @@
         }
 
         // ============================================================
-        // REAL-TIME LISTENERS
+        // REAL-TIME LISTENERS (Supabase)
         // ============================================================
-        let realtimeListeners = [];
+        let realtimeSubscriptions = [];
 
         function setupRealtimeListeners() {
-            // Clean up old listeners
-            realtimeListeners.forEach(unsub => unsub());
-            realtimeListeners = [];
+            // Clean up old subscriptions
+            realtimeSubscriptions.forEach(sub => sub.unsubscribe());
+            realtimeSubscriptions = [];
 
-            // Listen for submission changes to update slot counts
-            const subRef = db.ref('task_submissions');
-            const listener = subRef.on('value', (snap) => {
-                const allSubs = snap.val() || {};
-                const countMap = {};
-                for (let id in allSubs) {
-                    const s = allSubs[id];
-                    if (s.adminDeleted) continue;
-                    const taskId = s.taskId;
-                    if (!countMap[taskId]) countMap[taskId] = { approved: 0, pending: 0, pendingReject: 0 };
-                    if (s.status === 'approved') countMap[taskId].approved++;
-                    else if (s.status === 'pending') countMap[taskId].pending++;
-                    else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
-                }
-
-                // Update official tasks left
-                if (cachedOfficialTasks.length) {
-                    for (let task of cachedOfficialTasks) {
-                        const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
-                        const filled = counts.approved + counts.pending + counts.pendingReject;
-                        task.left = Math.max(0, (task.maxLimit || 0) - filled);
+            // Subscribe to changes on submissions table
+            const sub = supabase
+                .channel('submissions-changes')
+                .on('postgres_changes',
+                    { event: '*', schema: 'public', table: 'submissions' },
+                    (payload) => {
+                        // Refresh tasks and submissions
+                        loadAllTasks();
+                        loadMySubmissions();
+                        if (currentTask) {
+                            updateTaskDetailSlots(currentTask.id);
+                        }
                     }
-                    displayOfficialTasks();
-                }
+                )
+                .subscribe();
 
-                // Update user tasks left
-                if (cachedUserTasks.length) {
-                    for (let task of cachedUserTasks) {
-                        const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
-                        const filled = counts.approved + counts.pending + counts.pendingReject;
-                        task.left = Math.max(0, (task.requiredUsers || 0) - filled);
+            realtimeSubscriptions.push(sub);
+
+            // Subscribe to task deletions
+            const taskSub = supabase
+                .channel('tasks-changes')
+                .on('postgres_changes',
+                    { event: 'DELETE', schema: 'public', table: 'tasks' },
+                    (payload) => {
+                        const deletedId = payload.old.id;
+                        cachedOfficialTasks = cachedOfficialTasks.filter(t => t.id !== deletedId);
+                        cachedUserTasks = cachedUserTasks.filter(t => t.id !== deletedId);
+                        displayFilteredTasks();
+                        displayOfficialTasks();
+                        updateTaskCounts();
+                        if (currentTask && currentTask.id === deletedId) closeTaskDetail();
+                        showToast('Task deleted by admin');
                     }
-                    displayFilteredTasks();
-                    updateTaskCounts();
-                }
+                )
+                .subscribe();
 
-                if (currentTask) {
-                    updateTaskDetailSlots(currentTask.id);
-                }
-            });
-            realtimeListeners.push(() => subRef.off('value', listener));
+            realtimeSubscriptions.push(taskSub);
 
-            // Listen for task deletions (admin)
-            const userTasksRef = db.ref('tasks/user');
-            const userDelListener = userTasksRef.on('child_removed', (snap) => {
-                const taskId = snap.key;
-                cachedUserTasks = cachedUserTasks.filter(t => t.id !== taskId);
-                displayFilteredTasks();
-                updateTaskCounts();
-                if (currentTask && currentTask.id === taskId) closeTaskDetail();
-                // Refresh my task details if open
-                if (document.getElementById('myTaskDetailsScreen').style.display === 'block') {
-                    openMyTaskDetails();
-                }
-                showToast('Task deleted by admin');
-            });
-            realtimeListeners.push(() => userTasksRef.off('child_removed', userDelListener));
-
-            const officialTasksRef = db.ref('tasks/official');
-            const officialDelListener = officialTasksRef.on('child_removed', (snap) => {
-                const taskId = snap.key;
-                cachedOfficialTasks = cachedOfficialTasks.filter(t => t.id !== taskId);
-                displayOfficialTasks();
-                if (currentTask && currentTask.id === taskId) closeTaskDetail();
-                showToast('Official task deleted by admin');
-            });
-            realtimeListeners.push(() => officialTasksRef.off('child_removed', officialDelListener));
-
-            // User coins updates
-            if (currentUser) {
-                const coinRef = db.ref(`users/${currentUser.uid}/coins`);
-                const coinListener = coinRef.on('value', snap => {
-                    if (currentUserData) {
-                        currentUserData.coins = snap.val() || 0;
-                        updateUI();
+            // User coin updates (using RLS so we only get our own)
+            const userSub = supabase
+                .channel('user-changes')
+                .on('postgres_changes',
+                    { event: 'UPDATE', schema: 'public', table: 'users', filter: `id=eq.${currentUser?.id}` },
+                    (payload) => {
+                        if (currentUserData) {
+                            currentUserData.coins = payload.new.coins;
+                            updateUI();
+                        }
                     }
-                });
-                realtimeListeners.push(() => coinRef.off('value', coinListener));
-            }
+                )
+                .subscribe();
+
+            realtimeSubscriptions.push(userSub);
         }
 
         function updateTaskDetailSlots(taskId) {
@@ -3521,7 +3550,7 @@
             const counts = { all: 0, youtube: 0, tiktok: 0, instagram: 0, whatsapp: 0, download: 0, other: 0 };
             for (let t of cachedUserTasks) {
                 if (userSubmissionsMap[t.id]) continue;
-                if (t.creatorId === currentUser?.uid) continue;
+                if (t.creatorId === currentUser?.id) continue;
                 if (t.left <= 0) continue;
                 counts.all++;
                 const plat = t.platform || 'other';
@@ -3540,14 +3569,14 @@
         function getFilteredUserTasks(platform, limit = 5) {
             let filtered = cachedUserTasks.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
-                if (t.creatorId === currentUser?.uid) return false;
+                if (t.creatorId === currentUser?.id) return false;
                 if (t.left <= 0) return false;
                 return true;
             });
             if (platform !== 'all') {
                 filtered = filtered.filter(t => t.platform === platform);
             }
-            filtered.sort((a, b) => b.timestamp - a.timestamp);
+            filtered.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
             return limit > 0 ? filtered.slice(0, limit) : filtered;
         }
 
@@ -3556,16 +3585,13 @@
             const container = document.getElementById(containerId);
             if (!container) return;
 
-            // Remove old listener if any
             if (container._clickHandler) {
                 container.removeEventListener('click', container._clickHandler);
             }
 
             const handler = function(e) {
-                // Find the closest .task-item
                 const item = e.target.closest('.task-item');
                 if (!item) return;
-                // Check if it's clickable (not full/submitted)
                 if (item.style.cursor === 'default') return;
 
                 const id = item.dataset.taskId;
@@ -3578,7 +3604,6 @@
                 const creator = item.dataset.taskCreator;
                 const proofType = item.dataset.taskProoftype || 'image';
 
-                // Prevent double click
                 if (item.dataset.clicked === 'true') return;
                 item.dataset.clicked = 'true';
                 setTimeout(() => { item.dataset.clicked = 'false'; }, 500);
@@ -3627,7 +3652,7 @@
                     default:
                         iconHtml = '<i class="fas fa-tasks" style="color:#1e3c72"></i>';
                 }
-                let proofBadge = t.proofType === 'text' ?
+                let proofBadge = t.proof_type === 'text' ?
                     '<span class="proof-type-badge text" style="font-size:9px;">📝 Text</span>' :
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
                 let slotsBadge = '';
@@ -3638,9 +3663,9 @@
                 } else {
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
-
+                // Store data attributes
                 allHtml += `
-                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.description)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creator_id}" data-task-prooftype="${t.proof_type || 'image'}">
                         <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge}<br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                     </div>
                 `;
@@ -3656,19 +3681,16 @@
                 return;
             }
 
-            // Filter: only tasks with left > 0 and not submitted by user
             let available = cachedOfficialTasks.filter(t => {
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.left <= 0) return false;
                 return true;
             });
 
-            // Show submitted tasks (these are hidden but we show a "submitted" placeholder)
             const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
 
             let officialHtml = '';
 
-            // Show submitted tasks (as disabled)
             for (let t of submitted) {
                 officialHtml += `
                     <div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
@@ -3678,8 +3700,7 @@
                 `;
             }
 
-            // Show available tasks (latest 5)
-            const sortedAvailable = [...available].sort((a, b) => b.timestamp - a.timestamp);
+            const sortedAvailable = [...available].sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
             const latestAvailable = sortedAvailable.slice(0, 5);
             const totalAvailable = sortedAvailable.length;
             let viewAllHtml = '';
@@ -3698,7 +3719,7 @@
                     slotsBadge = `<span class="task-slots-badge">${t.left} left</span>`;
                 }
                 officialHtml += `
-                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.description)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creator_id}" data-task-prooftype="${t.proof_type || 'image'}">
                         <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                     </div>
                 `;
@@ -3745,15 +3766,15 @@
             const list = document.getElementById('fullscreenTasksList');
             let tasks = [];
 
-            // User tasks (not submitted, not own, left > 0)
+            // User tasks
             for (let t of cachedUserTasks) {
                 if (userSubmissionsMap[t.id]) continue;
-                if (t.creatorId === currentUser?.uid) continue;
+                if (t.creatorId === currentUser?.id) continue;
                 if (t.left <= 0) continue;
                 tasks.push({ ...t, isOfficial: false });
             }
 
-            // Official tasks (not submitted, left > 0)
+            // Official tasks
             for (let t of cachedOfficialTasks) {
                 if (userSubmissionsMap[t.id]) continue;
                 if (t.left <= 0) continue;
@@ -3764,7 +3785,7 @@
                 tasks = tasks.filter(t => t.platform === platform);
             }
 
-            tasks.sort((a, b) => b.timestamp - a.timestamp);
+            tasks.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
 
             if (tasks.length === 0) {
                 list.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No tasks available.</p>';
@@ -3794,7 +3815,7 @@
                         iconHtml = '<i class="fas fa-tasks" style="color:#1e3c72"></i>';
                 }
                 let typeLabel = t.isOfficial ? '📢 Official' : '👤 User';
-                let proofBadge = t.proofType === 'text' ?
+                let proofBadge = t.proof_type === 'text' ?
                     '<span class="proof-type-badge text" style="font-size:9px;">📝 Text</span>' :
                     '<span class="proof-type-badge image" style="font-size:9px;">🖼️ Image</span>';
                 let slotsBadge = '';
@@ -3807,7 +3828,7 @@
                 }
 
                 html += `
-                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.desc)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creatorId}" data-task-prooftype="${t.proofType || 'image'}">
+                    <div class="task-item" data-task-id="${t.id}" data-task-type="${t.type}" data-task-title="${escapeHtml(t.title)}" data-task-desc="${escapeHtml(t.description)}" data-task-steps="${escapeHtml(t.steps)}" data-task-link="${escapeHtml(t.link)}" data-task-reward="${t.reward}" data-task-creator="${t.creator_id}" data-task-prooftype="${t.proof_type || 'image'}">
                         <div><strong>${iconHtml} ${escapeHtml(t.title)}</strong> ${proofBadge} <span style="font-size:10px;color:#888;">${typeLabel}</span><br><small>${slotsBadge}</small></div><div>+${t.reward}</div>
                     </div>
                 `;
@@ -3833,7 +3854,7 @@
         // TASK DETAIL
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
-            if (creatorId === currentUser.uid) {
+            if (creatorId === currentUser?.id) {
                 showToast("You cannot do your own task");
                 return;
             }
@@ -3990,28 +4011,37 @@
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Submit Task'; return; }
 
-                    const taskRef = currentTask.type === 'official' ?
-                        db.ref(`tasks/official/${currentTask.id}`) :
-                        db.ref(`tasks/user/${currentTask.id}`);
-                    await taskRef.transaction((currentData) => {
-                        if (!currentData) return currentData;
-                        currentData.pending = (currentData.pending || 0) + 1;
-                        return currentData;
-                    });
+                    // Insert submission
+                    const { data, error } = await supabase
+                        .from('submissions')
+                        .insert({
+                            task_id: currentTask.id,
+                            user_id: currentUser.id,
+                            username: currentUserData.username,
+                            task_title: currentTask.title,
+                            task_type: currentTask.type,
+                            proof_type: 'text',
+                            proof_text: proofText,
+                            images: [],
+                            status: 'pending',
+                            reward: currentTask.reward,
+                            timestamp: new Date().toISOString()
+                        })
+                        .select();
 
-                    await db.ref('task_submissions').push({
-                        userId: currentUser.uid,
-                        username: currentUserData.username,
-                        taskId: currentTask.id,
-                        taskTitle: currentTask.title,
-                        taskType: currentTask.type,
-                        proofType: 'text',
-                        proofText: proofText,
-                        images: [],
-                        status: 'pending',
-                        timestamp: Date.now(),
-                        reward: currentTask.reward
-                    });
+                    if (error) {
+                        showToast('Error submitting proof: ' + error.message);
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
+
+                    // Increment pending count on task
+                    await supabase
+                        .from('tasks')
+                        .update({ pending: (currentTask.pending || 0) + 1 })
+                        .eq('id', currentTask.id);
 
                     userSubmissionsMap[currentTask.id] = true;
                     showToast(`✅ Text proof submitted!`);
@@ -4055,29 +4085,35 @@
                     return;
                 }
 
-                const taskRef = currentTask.type === 'official' ?
-                    db.ref(`tasks/official/${currentTask.id}`) :
-                    db.ref(`tasks/user/${currentTask.id}`);
-                await taskRef.transaction((currentData) => {
-                    if (!currentData) return currentData;
-                    currentData.pending = (currentData.pending || 0) + 1;
-                    return currentData;
-                });
+                const { data, error } = await supabase
+                    .from('submissions')
+                    .insert({
+                        task_id: currentTask.id,
+                        user_id: currentUser.id,
+                        username: currentUserData.username,
+                        task_title: currentTask.title,
+                        task_type: currentTask.type,
+                        proof_type: 'image',
+                        images: [uploadedUrl],
+                        proof_link: uploadedUrl,
+                        status: 'pending',
+                        reward: currentTask.reward,
+                        timestamp: new Date().toISOString()
+                    })
+                    .select();
 
-                await db.ref('task_submissions').push({
-                    userId: currentUser.uid,
-                    username: currentUserData.username,
-                    taskId: currentTask.id,
-                    taskTitle: currentTask.title,
-                    taskType: currentTask.type,
-                    proofType: 'image',
-                    images: [uploadedUrl],
-                    proofText: '',
-                    status: 'pending',
-                    timestamp: Date.now(),
-                    reward: currentTask.reward,
-                    proofLink: uploadedUrl
-                });
+                if (error) {
+                    showToast('Error submitting proof: ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.innerText = 'Submit Task';
+                    return;
+                }
+
+                await supabase
+                    .from('tasks')
+                    .update({ pending: (currentTask.pending || 0) + 1 })
+                    .eq('id', currentTask.id);
 
                 userSubmissionsMap[currentTask.id] = true;
                 showToast(`✅ Image proof submitted!`);
@@ -4216,12 +4252,11 @@
                 showToast(`Insufficient coins (need ${total})`);
                 return;
             }
-            if (!isOnline) { showToast("📴 You are offline."); return; }
 
             const interval = showLoadingOverlay('Creating Task...', 'Please wait...');
 
             try {
-                let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
+                let nonWithdrawable = currentUserData.non_withdrawable_coins || 0;
                 let deductFromNon = Math.min(nonWithdrawable, total);
                 let deductFromCoins = total - deductFromNon;
                 let newNonWithdrawable = nonWithdrawable - deductFromNon;
@@ -4230,28 +4265,33 @@
                 if (newCoins < 0) { newCoins = 0; }
                 if (newNonWithdrawable < 0) { newNonWithdrawable = 0; }
 
-                await db.ref(`users/${currentUser.uid}/coins`).set(newCoins);
-                await db.ref(`users/${currentUser.uid}/nonWithdrawableCoins`).set(newNonWithdrawable);
-                await db.ref(`users/${currentUser.uid}/depositCoins`).set(newNonWithdrawable);
+                await supabase.from('users')
+                    .update({
+                        coins: newCoins,
+                        non_withdrawable_coins: newNonWithdrawable,
+                        deposit_coins: newNonWithdrawable
+                    })
+                    .eq('id', currentUser.id);
+
                 currentUserData.coins = newCoins;
-                currentUserData.nonWithdrawableCoins = newNonWithdrawable;
-                currentUserData.depositCoins = newNonWithdrawable;
+                currentUserData.non_withdrawable_coins = newNonWithdrawable;
+                currentUserData.deposit_coins = newNonWithdrawable;
                 updateUI();
 
-                await db.ref('task_requests').push({
-                    creatorId: currentUser.uid,
-                    creatorName: currentUserData.username,
+                await supabase.from('task_requests').insert({
+                    creator_id: currentUser.id,
+                    creator_name: currentUserData.username,
                     platform: selectedPlatform,
-                    title,
+                    title: title,
                     description: desc,
-                    steps,
-                    link,
-                    coinsPerMember: coins,
-                    membersRequired: members,
-                    totalCost: total,
-                    proofType: proofType,
+                    steps: steps,
+                    link: link,
+                    coins_per_member: coins,
+                    members_required: members,
+                    total_cost: total,
+                    proof_type: proofType,
                     status: 'pending',
-                    timestamp: Date.now()
+                    timestamp: new Date().toISOString()
                 });
 
                 hideLoadingOverlay(interval);
@@ -4268,14 +4308,19 @@
         // ============================================================
         async function openMyPostedTasks() {
             try {
-                let snap = await db.ref('task_requests').orderByChild('creatorId').equalTo(currentUser.uid).once(
-                'value');
-                let list = snap.val() || {};
-                let tasksArray = [];
-                for (let id in list) tasksArray.push({ id, ...list[id] });
-                tasksArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                const { data, error } = await supabase
+                    .from('task_requests')
+                    .select('*')
+                    .eq('creator_id', currentUser.id)
+                    .order('timestamp', { ascending: false });
+
+                if (error || !data) {
+                    document.getElementById('myPostedTasksList').innerHTML = '<p>No posted tasks</p>';
+                    return;
+                }
+
                 let html = '';
-                for (let t of tasksArray) {
+                for (let t of data) {
                     let statusClass = t.status === 'approved' ? 'badge-approved' : (t.status === 'rejected' ?
                         'badge-rejected' : 'badge-pending');
                     let clickAttr = '';
@@ -4283,9 +4328,9 @@
                         clickAttr =
                             ` onclick="openMyTaskDetailsFromPosted('${escapeJs(t.title)}')" style="cursor:pointer; transition:0.3s;"`;
                     }
-                    let proofLabel = t.proofType === 'text' ? '📝 Text' : '🖼️ Image';
+                    let proofLabel = t.proof_type === 'text' ? '📝 Text' : '🖼️ Image';
                     html +=
-                        `<div class="submission-item"${clickAttr}><div><strong>${escapeHtml(t.title)}</strong> <span style="font-size:11px;color:#999;">${proofLabel}</span><br>${t.coinsPerMember} coins | ${t.membersRequired} users</div><div><span class="${statusClass}">${t.status}</span></div></div>`;
+                        `<div class="submission-item"${clickAttr}><div><strong>${escapeHtml(t.title)}</strong> <span style="font-size:11px;color:#999;">${proofLabel}</span><br>${t.coins_per_member} coins | ${t.members_required} users</div><div><span class="${statusClass}">${t.status}</span></div></div>`;
                 }
                 document.getElementById('myPostedTasksList').innerHTML = html || '<p>No posted tasks</p>';
                 document.getElementById('myPostedTasksModal').style.display = 'flex';
@@ -4305,83 +4350,93 @@
         async function openMyTaskDetails(scrollToTaskTitle) {
             try {
                 await cleanupCompletedTasks();
-                let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid)
-                    .once('value');
-                let tasks = userTasksSnap.val() || {};
-                let allSubsSnap = await db.ref('task_submissions').once('value');
-                let allSubs = allSubsSnap.val() || {};
-                let html = '<h3 style="margin-bottom:12px;color:#1e3c72;">📋 Your Approved Tasks</h3>';
-                let hasTasks = false;
-                let taskIds = Object.keys(tasks);
-                taskIds.sort((a, b) => (tasks[b].timestamp || 0) - (tasks[a].timestamp || 0));
-                let targetTaskId = null;
-                if (scrollToTaskTitle) {
-                    for (let taskId of taskIds) {
-                        if (tasks[taskId].title === scrollToTaskTitle) { targetTaskId = taskId; break; }
+                const { data: userTasks, error } = await supabase
+                    .from('tasks')
+                    .select('*')
+                    .eq('creator_id', currentUser.id)
+                    .eq('type', 'user')
+                    .order('created_at', { ascending: false });
+
+                if (error || !userTasks) {
+                    document.getElementById('myTaskDetailBody').innerHTML = '<p style="color:#666;">No approved tasks yet.</p>';
+                    return;
+                }
+
+                const { data: allSubs } = await supabase
+                    .from('submissions')
+                    .select('*');
+
+                const subsMap = {};
+                if (allSubs) {
+                    for (let s of allSubs) {
+                        if (!subsMap[s.task_id]) subsMap[s.task_id] = [];
+                        subsMap[s.task_id].push(s);
                     }
                 }
 
-                for (let taskId of taskIds) {
-                    let t = tasks[taskId];
+                let html = '<h3 style="margin-bottom:12px;color:#1e3c72;">📋 Your Approved Tasks</h3>';
+                let hasTasks = false;
+                let targetTaskId = null;
+
+                if (scrollToTaskTitle) {
+                    for (let t of userTasks) {
+                        if (t.title === scrollToTaskTitle) { targetTaskId = t.id; break; }
+                    }
+                }
+
+                for (let t of userTasks) {
                     if (t.status !== 'approved') continue;
-                    hasTasks = true;
+                    const subs = subsMap[t.id] || [];
                     let pendingCount = 0,
                         approvedCount = 0,
                         rejectedCount = 0,
                         pendingRejectCount = 0;
-                    let subsForTask = [];
-                    for (let sid in allSubs) {
-                        let s = allSubs[sid];
-                        if (s.adminDeleted) continue;
-                        if (s.taskId === taskId) {
-                            subsForTask.push({ id: sid, ...s });
-                            if (s.status === 'pending') pendingCount++;
-                            else if (s.status === 'approved') approvedCount++;
-                            else if (s.status === 'rejected') rejectedCount++;
-                            else if (s.status === 'pending_reject') pendingRejectCount++;
-                        }
+                    for (let s of subs) {
+                        if (s.admin_deleted) continue;
+                        if (s.status === 'pending') pendingCount++;
+                        else if (s.status === 'approved') approvedCount++;
+                        else if (s.status === 'rejected') rejectedCount++;
+                        else if (s.status === 'pending_reject') pendingRejectCount++;
                     }
-                    subsForTask.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    let required = t.requiredUsers || 0;
-                    let isCompleted = (approvedCount >= required);
-                    let progressPct = Math.min(100, Math.round((approvedCount / required) * 100));
-
+                    const required = t.required_users || 0;
+                    const isCompleted = (approvedCount >= required);
                     if (isCompleted) continue;
-
-                    let isTarget = (targetTaskId === taskId);
-                    let statusBadge = progressPct >= 100 ? 'completed' : (approvedCount > 0 ? 'active' : 'pending');
+                    hasTasks = true;
+                    const progressPct = Math.min(100, Math.round((approvedCount / required) * 100));
+                    const isTarget = (targetTaskId === t.id);
+                    const statusBadge = progressPct >= 100 ? 'completed' : (approvedCount > 0 ? 'active' : 'pending');
 
                     html += `
-                                <div class="my-task-card" ${isTarget ? 'style="border:2px solid #1e3c72;background:#f8faff;"' : ''} id="task_${taskId}">
-                                    <div class="task-title">${escapeHtml(t.title)}</div>
-                                    <div class="task-meta">
-                                        <span class="meta-item"><i class="fas fa-coins"></i> ${t.rewardPerUser} coins/user</span>
-                                        <span class="meta-item"><i class="fas fa-users"></i> ${approvedCount}/${required} completed</span>
-                                        <span class="task-status-badge ${statusBadge}">${statusBadge === 'completed' ? '✅ Done' : (statusBadge === 'active' ? '🔄 In Progress' : '⏳ Pending')}</span>
-                                    </div>
-                                    <div class="task-progress">
-                                        <div class="progress-fill" style="width:${progressPct}%;"></div>
-                                    </div>
-                                    <div style="font-size:12px;color:#888;margin:4px 0;">
-                                        Pending: ${pendingCount} | Pending Reject: ${pendingRejectCount} | Rejected: ${rejectedCount}
-                                    </div>`;
+                        <div class="my-task-card" ${isTarget ? 'style="border:2px solid #1e3c72;background:#f8faff;"' : ''} id="task_${t.id}">
+                            <div class="task-title">${escapeHtml(t.title)}</div>
+                            <div class="task-meta">
+                                <span class="meta-item"><i class="fas fa-coins"></i> ${t.reward} coins/user</span>
+                                <span class="meta-item"><i class="fas fa-users"></i> ${approvedCount}/${required} completed</span>
+                                <span class="task-status-badge ${statusBadge}">${statusBadge === 'completed' ? '✅ Done' : (statusBadge === 'active' ? '🔄 In Progress' : '⏳ Pending')}</span>
+                            </div>
+                            <div class="task-progress">
+                                <div class="progress-fill" style="width:${progressPct}%;"></div>
+                            </div>
+                            <div style="font-size:12px;color:#888;margin:4px 0;">
+                                Pending: ${pendingCount} | Pending Reject: ${pendingRejectCount} | Rejected: ${rejectedCount}
+                            </div>`;
 
-                    if (subsForTask.length > 0) {
+                    if (subs.length > 0) {
                         html += `<div style="margin-top:8px;"><strong>Submissions:</strong>`;
-                        let displaySubs = subsForTask.slice(0, 3);
+                        let displaySubs = subs.slice(0, 3);
                         for (let s of displaySubs) {
-                            html += buildSubmissionHtml(s, taskId, t.rewardPerUser);
+                            html += buildSubmissionHtml(s, t.id, t.reward);
                         }
                         html += `</div>`;
-                        if (subsForTask.length > 3) {
+                        if (subs.length > 3) {
                             html +=
-                                `<button class="view-all-submissions-btn" onclick="viewTaskDetails('${taskId}')">📋 View All (${subsForTask.length} submissions)</button>`;
+                                `<button class="view-all-submissions-btn" onclick="viewTaskDetails('${t.id}')">📋 View All (${subs.length} submissions)</button>`;
                         }
                     } else {
                         html += `<div style="color:#999;font-size:12px;margin-top:6px;">No submissions yet.</div>`;
                     }
                     html +=
-                        `<div class="task-actions"><button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
+                        `<div class="task-actions"><button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${t.id}')">View Details</button></div>`;
                     html += `</div>`;
                 }
 
@@ -4417,9 +4472,9 @@
                 'pending_reject' ? 'orange' : 'orange'));
             let proofHtml = '';
             if (s.status === 'pending' || s.status === 'pending_reject') {
-                if (s.proofType === 'text' && s.proofText) {
+                if (s.proof_type === 'text' && s.proof_text) {
                     proofHtml =
-                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
+                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proof_text)}</div>`;
                 } else if (s.images && s.images.length > 0) {
                     proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
                 }
@@ -4430,54 +4485,60 @@
             let actionButtons = '';
             if (s.status === 'pending' && currentUser && currentUserData) {
                 actionButtons = `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">
-                                            <button class="btn btn-success btn-sm" onclick="approveSubmissionByCreator('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject</button>
-                                        </div>`;
+                            <button class="btn btn-success btn-sm" onclick="approveSubmissionByCreator('${s.id}','${taskId}','${s.user_id}',${rewardPerUser||0})">✅ Approve</button>
+                            <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.user_id}',${rewardPerUser||0})">❌ Reject</button>
+                        </div>`;
             }
             let rejectReasonHtml = '';
-            if (s.status === 'rejected' && s.rejectReason) {
+            if (s.status === 'rejected' && s.reject_reason) {
                 rejectReasonHtml =
-                    `<div class="reject-reason-box"><strong>❌ Rejected:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    `<div class="reject-reason-box"><strong>❌ Rejected:</strong> ${escapeHtml(s.reject_reason)}</div>`;
             }
-            if (s.status === 'pending_reject' && s.rejectReason) {
+            if (s.status === 'pending_reject' && s.reject_reason) {
                 rejectReasonHtml =
-                    `<div class="pending-reject-box" style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    `<div class="pending-reject-box" style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.reject_reason)}</div>`;
             }
             let label = s.status === 'pending_reject' ? 'pending (admin)' : s.status;
-            let proofTypeLabel = s.proofType === 'text' ? '📝 Text' : '🖼️ Image';
+            let proofTypeLabel = s.proof_type === 'text' ? '📝 Text' : '🖼️ Image';
             return `<div class="submission-item" style="margin:5px 0;padding:8px;display:flex;flex-direction:column;align-items:flex-start;width:100%;">
-                                        <div style="display:flex;align-items:center;flex-wrap:wrap;width:100%;">
-                                            <div style="margin-right:10px;flex:1;font-size:13px;">
-                                                User: ${s.username} <span style="color:${statusColor};">(${label})</span> 
-                                                ${s.status==='approved'?`+${s.reward}`:''}
-                                                <span style="font-size:11px;color:#999;margin-left:6px;">[${proofTypeLabel}]</span>
-                                            </div>
-                                        </div>
-                                        ${proofHtml}
-                                        ${rejectReasonHtml}
-                                        ${actionButtons}
-                                        <div class="submission-status-msg"></div>
-                                    </div>`;
+                        <div style="display:flex;align-items:center;flex-wrap:wrap;width:100%;">
+                            <div style="margin-right:10px;flex:1;font-size:13px;">
+                                User: ${s.username} <span style="color:${statusColor};">(${label})</span> 
+                                ${s.status==='approved'?`+${s.reward}`:''}
+                                <span style="font-size:11px;color:#999;margin-left:6px;">[${proofTypeLabel}]</span>
+                            </div>
+                        </div>
+                        ${proofHtml}
+                        ${rejectReasonHtml}
+                        ${actionButtons}
+                        <div class="submission-status-msg"></div>
+                    </div>`;
         }
 
         window.viewTaskDetails = async function(taskId) {
             try {
-                let snap = await db.ref(`tasks/user/${taskId}`).once('value');
-                let task = snap.val();
-                if (!task) return;
-                let subsSnap = await db.ref('task_submissions').orderByChild('taskId').equalTo(taskId).once('value');
-                let subs = subsSnap.val() || {};
-                let html = `<div class="card"><h3>${escapeHtml(task.title)}</h3><p>${escapeHtml(task.description)}</p><p>Reward: ${task.rewardPerUser} coins/user</p><p>Completed: ${task.completed||0}/${task.requiredUsers}</p><h4>All Submissions:</h4>`;
-                let subArray = [];
-                for (let sid in subs) { let s = subs[sid]; if (!s.adminDeleted) subArray.push({ id: sid, ...s }); }
+                const { data: task, error } = await supabase
+                    .from('tasks')
+                    .select('*')
+                    .eq('id', taskId)
+                    .maybeSingle();
+
+                if (error || !task) return;
+                const { data: subs } = await supabase
+                    .from('submissions')
+                    .select('*')
+                    .eq('task_id', taskId);
+
+                let html = `<div class="card"><h3>${escapeHtml(task.title)}</h3><p>${escapeHtml(task.description)}</p><p>Reward: ${task.reward} coins/user</p><p>Completed: ${task.completed||0}/${task.required_users}</p><h4>All Submissions:</h4>`;
+                let subArray = subs || [];
                 subArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 for (let s of subArray) {
-                    html += buildSubmissionHtml(s, taskId, task.rewardPerUser);
+                    html += buildSubmissionHtml(s, taskId, task.reward);
                 }
                 html += `<button class="btn" onclick="closeViewDetails()">Back to My Tasks</button>`;
                 document.getElementById('viewDetailsBody').innerHTML = html;
                 document.getElementById('viewDetailsTitle').innerText = task.title;
-                document.getElementById('viewDetailsReward').innerHTML = `+${task.rewardPerUser} coins/user`;
+                document.getElementById('viewDetailsReward').innerHTML = `+${task.reward} coins/user`;
                 document.getElementById('viewDetailsScreen').style.display = 'block';
                 currentViewTaskId = taskId;
             } catch (e) { showToast('Error loading task details'); }
@@ -4488,8 +4549,8 @@
 
         async function deleteMyCompletedTask(taskId) {
             if (confirm('Delete this completed task?')) {
-                await db.ref(`tasks/user/${taskId}`).remove();
-                await db.ref(`task_requests/${taskId}`).remove();
+                await supabase.from('tasks').delete().eq('id', taskId);
+                await supabase.from('task_requests').delete().eq('id', taskId);
                 showToast('Task deleted!');
                 openMyTaskDetails();
                 loadAllTasks();
@@ -4564,32 +4625,43 @@
                 taskId = pendingRejectTaskId,
                 workerId = pendingRejectWorkerId,
                 reward = pendingRejectReward;
-            const creatorId = currentUser.uid,
+            const creatorId = currentUser.id,
                 creatorName = currentUserData.username;
             try {
-                await db.ref(`task_submissions/${subId}/status`).set('pending_reject');
-                await db.ref(`task_submissions/${subId}/rejectReason`).set(reason);
-                await db.ref(`task_submissions/${subId}/rejectedBy`).set(creatorId);
-                await db.ref(`task_submissions/${subId}/rejectedAt`).set(Date.now());
-                await db.ref('admin_rejected_submissions').push({
-                    submissionId: subId,
-                    taskId: taskId,
-                    creatorId: creatorId,
-                    creatorName: creatorName,
-                    workerId: workerId,
-                    workerName: (await db.ref(`users/${workerId}/username`).once('value')).val() || workerId
-                        .substring(0, 8),
-                    taskTitle: (await db.ref(`tasks/user/${taskId}/title`).once('value')).val() ||
-                        'Unknown Task',
-                    reason: reason,
-                    timestamp: Date.now(),
-                    images: (await db.ref(`task_submissions/${subId}/images`).once('value')).val() || [],
-                    proofText: (await db.ref(`task_submissions/${subId}/proofText`).once('value')).val() || '',
-                    proofType: (await db.ref(`task_submissions/${subId}/proofType`).once('value')).val() ||
-                        'image',
-                    reward: reward,
-                    status: 'pending'
-                });
+                // Update submission to pending_reject
+                await supabase.from('submissions')
+                    .update({
+                        status: 'pending_reject',
+                        reject_reason: reason,
+                        rejected_by: creatorId,
+                        rejected_at: new Date().toISOString()
+                    })
+                    .eq('id', subId);
+
+                // Insert into admin_rejected_submissions
+                await supabase.from('admin_rejected_submissions')
+                    .insert({
+                        submission_id: subId,
+                        task_id: taskId,
+                        creator_id: creatorId,
+                        creator_name: creatorName,
+                        worker_id: workerId,
+                        worker_name: (await supabase.from('users').select('username').eq('id', workerId)
+                            .maybeSingle()).data?.username || workerId.substring(0, 8),
+                        task_title: (await supabase.from('tasks').select('title').eq('id', taskId).maybeSingle())
+                            .data?.title || 'Unknown Task',
+                        reason: reason,
+                        images: (await supabase.from('submissions').select('images').eq('id', subId)
+                            .maybeSingle()).data?.images || [],
+                        proof_text: (await supabase.from('submissions').select('proof_text').eq('id', subId)
+                            .maybeSingle()).data?.proof_text || '',
+                        proof_type: (await supabase.from('submissions').select('proof_type').eq('id', subId)
+                            .maybeSingle()).data?.proof_type || 'image',
+                        reward: reward,
+                        timestamp: new Date().toISOString(),
+                        status: 'pending'
+                    });
+
                 showToast('✅ Rejection request sent to admin for review.');
                 closeRejectModal();
                 refreshAfterAction(taskId);
@@ -4600,18 +4672,39 @@
         async function approveSubmissionByCreator(submissionId, taskId, workerId, reward) {
             if (!confirm('Approve this submission?')) return;
             try {
-                await db.ref(`task_submissions/${submissionId}/status`).set('approved');
-                const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
-                await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
-                const taskSnap = await db.ref(`tasks/user/${taskId}`).once('value');
-                const task = taskSnap.val();
+                await supabase.from('submissions')
+                    .update({ status: 'approved' })
+                    .eq('id', submissionId);
+
+                // Add coins to worker
+                const { data: worker } = await supabase
+                    .from('users')
+                    .select('coins')
+                    .eq('id', workerId)
+                    .maybeSingle();
+                const newCoins = (worker ? worker.coins : 0) + reward;
+                await supabase.from('users')
+                    .update({ coins: newCoins })
+                    .eq('id', workerId);
+
+                // Increment task completed count
+                const { data: task } = await supabase
+                    .from('tasks')
+                    .select('completed, required_users')
+                    .eq('id', taskId)
+                    .maybeSingle();
                 if (task) {
                     const newCompleted = (task.completed || 0) + 1;
-                    await db.ref(`tasks/user/${taskId}/completed`).set(newCompleted);
-                    if (newCompleted >= (task.requiredUsers || 0) && !task.completedAt) {
-                        await db.ref(`tasks/user/${taskId}/completedAt`).set(Date.now());
+                    await supabase.from('tasks')
+                        .update({ completed: newCompleted })
+                        .eq('id', taskId);
+                    if (newCompleted >= (task.required_users || 0) && !task.completed_at) {
+                        await supabase.from('tasks')
+                            .update({ completed_at: new Date().toISOString() })
+                            .eq('id', taskId);
                     }
                 }
+
                 await updateReferralProgress(workerId);
                 showToast('Approved! Worker earned +' + reward + ' coins.');
                 refreshAfterAction(taskId);
@@ -4634,31 +4727,34 @@
         // ============================================================
         async function cleanupCompletedTasks() {
             try {
-                const now = Date.now();
+                const now = new Date();
                 const sevenHours = 7 * 60 * 60 * 1000;
-                let tasksToRemove = [];
-                let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid)
-                    .once('value');
-                let tasks = userTasksSnap.val() || {};
-                let allSubsSnap = await db.ref('task_submissions').once('value');
-                let allSubs = allSubsSnap.val() || {};
-                for (let taskId in tasks) {
-                    let t = tasks[taskId];
-                    if (t.status !== 'approved') continue;
-                    let approvedCount = 0;
-                    for (let sid in allSubs) {
-                        let s = allSubs[sid];
-                        if (s.taskId === taskId && s.status === 'approved' && !s.adminDeleted) approvedCount++;
-                    }
-                    let required = t.requiredUsers || 0;
-                    if (approvedCount >= required) {
-                        if (!t.completedAt) { await db.ref(`tasks/user/${taskId}/completedAt`).set(now); continue; }
-                        if ((now - t.completedAt) > sevenHours) tasksToRemove.push(taskId);
+                const { data: tasks, error } = await supabase
+                    .from('tasks')
+                    .select('id, completed, required_users, completed_at')
+                    .eq('creator_id', currentUser.id)
+                    .eq('type', 'user')
+                    .eq('status', 'approved');
+
+                if (error || !tasks) return;
+                const tasksToRemove = [];
+                for (let t of tasks) {
+                    if ((t.completed || 0) >= (t.required_users || 0)) {
+                        if (!t.completed_at) {
+                            await supabase.from('tasks')
+                                .update({ completed_at: new Date().toISOString() })
+                                .eq('id', t.id);
+                            continue;
+                        }
+                        const completedDate = new Date(t.completed_at);
+                        if ((now - completedDate) > sevenHours) {
+                            tasksToRemove.push(t.id);
+                        }
                     }
                 }
-                for (let taskId of tasksToRemove) {
-                    await db.ref(`tasks/user/${taskId}`).remove();
-                    await db.ref(`task_requests/${taskId}`).remove();
+                for (let id of tasksToRemove) {
+                    await supabase.from('tasks').delete().eq('id', id);
+                    await supabase.from('task_requests').delete().eq('id', id);
                 }
                 if (tasksToRemove.length > 0) {
                     if (document.getElementById('myTaskDetailsScreen').style.display === 'block') openMyTaskDetails();
@@ -4733,21 +4829,21 @@
             if (!amt || amt < minDeposit) return showToast(`Min deposit is ${minDeposit} coins`);
             if (!tid) return showToast("Enter TID");
             if (!depositImage) return showToast("Upload screenshot");
-            if (!isOnline) { showToast("📴 You are offline."); return; }
 
             const interval = showLoadingOverlay('Processing Deposit...', 'Please wait...');
 
             try {
-                await db.ref('deposit_requests').push({
-                    userId: currentUser.uid,
+                await supabase.from('deposit_requests').insert({
+                    user_id: currentUser.id,
                     username: currentUserData.username,
                     amount: amt,
-                    method,
-                    tid,
+                    method: method,
+                    tid: tid,
                     image: depositImage,
                     status: 'pending',
-                    timestamp: Date.now()
+                    timestamp: new Date().toISOString()
                 });
+
                 hideLoadingOverlay(interval);
                 showToast("✅ Deposit request sent!");
                 closeModal('depositModal');
@@ -4778,33 +4874,38 @@
 
         async function renderFullscreenDepositHistory() {
             try {
-                let snap = await db.ref('deposit_requests').orderByChild('userId').equalTo(currentUser.uid).once(
-                'value');
-                let items = snap.val() || {};
-                let arr = [];
-                for (let id in items) arr.push({ id, ...items[id] });
-                arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                const { data, error } = await supabase
+                    .from('deposit_requests')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('timestamp', { ascending: false });
+
+                if (error || !data) {
+                    document.getElementById('fullscreenDepositHistoryBody').innerHTML =
+                        '<p style="color:#666;text-align:center;padding:20px;">No deposit history</p>';
+                    return;
+                }
 
                 let html = '';
-                if (arr.length === 0) {
+                if (data.length === 0) {
                     html = '<p style="color:#666;text-align:center;padding:20px;">No deposit history</p>';
                 } else {
-                    for (let it of arr) {
+                    for (let it of data) {
                         let statusClass = it.status || 'pending';
                         let amountClass = statusClass === 'approved' ? 'positive' : 'negative';
                         html += `
-                                    <div class="history-card">
-                                        <div class="h-left">
-                                            <div class="h-title">💰 ${it.amount} coins</div>
-                                            <div class="h-meta">${it.method || 'Easypaisa'} • TID: ${it.tid || '-'}</div>
-                                        </div>
-                                        <div class="h-right">
-                                            <div class="h-amount ${amountClass}">${it.amount} coins</div>
-                                            <span class="h-status ${statusClass}">${statusClass}</span>
-                                            <div class="h-meta">${new Date(it.timestamp).toLocaleString()}</div>
-                                        </div>
-                                    </div>
-                                `;
+                            <div class="history-card">
+                                <div class="h-left">
+                                    <div class="h-title">💰 ${it.amount} coins</div>
+                                    <div class="h-meta">${it.method || 'Easypaisa'} • TID: ${it.tid || '-'}</div>
+                                </div>
+                                <div class="h-right">
+                                    <div class="h-amount ${amountClass}">${it.amount} coins</div>
+                                    <span class="h-status ${statusClass}">${statusClass}</span>
+                                    <div class="h-meta">${new Date(it.timestamp).toLocaleString()}</div>
+                                </div>
+                            </div>
+                        `;
                     }
                 }
                 document.getElementById('fullscreenDepositHistoryBody').innerHTML = html;
@@ -4831,33 +4932,39 @@
 
         async function renderFullscreenWithdrawHistory() {
             try {
-                let snap = await db.ref('withdrawals').orderByChild('userId').equalTo(currentUser.uid).once('value');
-                let items = snap.val() || {};
-                let arr = [];
-                for (let id in items) arr.push({ id, ...items[id] });
-                arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                const { data, error } = await supabase
+                    .from('withdrawals')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('timestamp', { ascending: false });
+
+                if (error || !data) {
+                    document.getElementById('fullscreenWithdrawHistoryBody').innerHTML =
+                        '<p style="color:#666;text-align:center;padding:20px;">No withdraw history</p>';
+                    return;
+                }
 
                 let html = '';
-                if (arr.length === 0) {
+                if (data.length === 0) {
                     html = '<p style="color:#666;text-align:center;padding:20px;">No withdraw history</p>';
                 } else {
-                    for (let it of arr) {
+                    for (let it of data) {
                         let statusClass = it.status || 'pending';
                         let amountClass = statusClass === 'approved' ? 'negative' : 'negative';
-                        let fee = Math.round((it.amount || 0) * 0.1);
+                        let fee = it.fee || 0;
                         html += `
-                                    <div class="history-card">
-                                        <div class="h-left">
-                                            <div class="h-title">💸 ${it.amount} coins (fee: ${fee})</div>
-                                            <div class="h-meta">${it.method || 'Easypaisa'} • ${it.account || '-'} (${it.accountName || '-'})</div>
-                                        </div>
-                                        <div class="h-right">
-                                            <div class="h-amount ${amountClass}">-${it.amount} coins</div>
-                                            <span class="h-status ${statusClass}">${statusClass}</span>
-                                            <div class="h-meta">${new Date(it.timestamp).toLocaleString()}</div>
-                                        </div>
-                                    </div>
-                                `;
+                            <div class="history-card">
+                                <div class="h-left">
+                                    <div class="h-title">💸 ${it.amount} coins (fee: ${fee})</div>
+                                    <div class="h-meta">${it.method || 'Easypaisa'} • ${it.account || '-'} (${it.account_name || '-'})</div>
+                                </div>
+                                <div class="h-right">
+                                    <div class="h-amount ${amountClass}">-${it.amount} coins</div>
+                                    <span class="h-status ${statusClass}">${statusClass}</span>
+                                    <div class="h-meta">${new Date(it.timestamp).toLocaleString()}</div>
+                                </div>
+                            </div>
+                        `;
                     }
                 }
                 document.getElementById('fullscreenWithdrawHistoryBody').innerHTML = html;
@@ -4871,7 +4978,7 @@
         // WITHDRAW
         // ============================================================
         function showWithdrawModal() {
-            let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
+            let nonWithdrawable = currentUserData.non_withdrawable_coins || 0;
             let free = (currentUserData.coins || 0) - nonWithdrawable;
             document.getElementById('withdrawableBalance').innerText = free;
             loadBonusAndCommissionSettings();
@@ -4885,7 +4992,7 @@
 
         async function requestWithdraw() {
             let amt = parseInt(document.getElementById('withdrawAmount').value);
-            let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
+            let nonWithdrawable = currentUserData.non_withdrawable_coins || 0;
             let free = (currentUserData.coins || 0) - nonWithdrawable;
             let method = document.getElementById('withdrawMethod').value;
             let acc = document.getElementById('withdrawAccount').value.trim();
@@ -4897,28 +5004,31 @@
             if (!amt || amt < minWithdraw) return showToast(`Min withdraw is ${minWithdraw} coins`);
             if (totalNeeded > free) return showToast(`Insufficient coins. Need ${totalNeeded} coins (${amt} + ${fee} fee)`);
             if (!acc || !name) return showToast("Fill account details");
-            if (!isOnline) { showToast("📴 You are offline."); return; }
 
             const interval = showLoadingOverlay('Processing Withdrawal...', 'Please wait...');
 
             try {
                 let newCoins = currentUserData.coins - totalNeeded;
                 if (newCoins < 0) newCoins = 0;
-                await db.ref(`users/${currentUser.uid}/coins`).set(newCoins);
+                await supabase.from('users')
+                    .update({ coins: newCoins })
+                    .eq('id', currentUser.id);
+
                 currentUserData.coins = newCoins;
                 updateUI();
 
-                await db.ref('withdrawals').push({
-                    userId: currentUser.uid,
+                await supabase.from('withdrawals').insert({
+                    user_id: currentUser.id,
                     username: currentUserData.username,
                     amount: amt,
                     fee: fee,
-                    method,
+                    method: method,
                     account: acc,
-                    accountName: name,
+                    account_name: name,
                     status: 'pending',
-                    timestamp: Date.now()
+                    timestamp: new Date().toISOString()
                 });
+
                 hideLoadingOverlay(interval);
                 showToast(`✅ Withdrawal request sent! (${fee} coins fee deducted)`);
                 closeModal('withdrawModal');
@@ -4933,10 +5043,21 @@
         // ============================================================
         async function loadBonusAndCommissionSettings() {
             try {
-                const platformSnap = await db.ref('settings/platform').once('value');
-                const plat = platformSnap.val() || {};
-                depositBonusPercent = plat.depositBonusPercent || 0;
-                withdrawCommissionPercent = plat.withdrawCommission || 10;
+                const { data: plat, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'platform')
+                    .maybeSingle();
+                if (error || !plat) {
+                    depositBonusPercent = 0;
+                    withdrawCommissionPercent = 10;
+                    document.getElementById('depositBonusInfo').innerText = `🎁 Deposit Bonus: 0%`;
+                    document.getElementById('withdrawCommissionInfo').innerText = `💸 Fee: 10% (deducted from request)`;
+                    return;
+                }
+                const p = plat.value || {};
+                depositBonusPercent = p.depositBonusPercent || 0;
+                withdrawCommissionPercent = p.withdrawCommission || 10;
                 document.getElementById('depositBonusInfo').innerText =
                     `🎁 Deposit Bonus: ${depositBonusPercent}% (extra on approval)`;
                 document.getElementById('withdrawCommissionInfo').innerText =
@@ -4955,16 +5076,16 @@
         async function loadDailyRewardGrid() {
             try {
                 const rewards = [10, 20, 30, 40, 50, 60, 70];
-                let lastClaim = currentUserData.dailyReward?.lastClaim || null;
+                let lastClaim = currentUserData.daily_reward_last_claim || null;
                 let currentDay = 0;
                 if (lastClaim) {
                     let last = new Date(lastClaim).toDateString();
                     let today = new Date().toDateString();
                     if (last === today) {
-                        currentDay = currentUserData.dailyReward?.day || 0;
+                        currentDay = currentUserData.daily_reward_day || 0;
                     } else {
                         let diff = Math.floor((Date.now() - new Date(lastClaim)) / (24 * 60 * 60 * 1000));
-                        let prevDay = currentUserData.dailyReward?.day || 0;
+                        let prevDay = currentUserData.daily_reward_day || 0;
                         let newDay = prevDay + diff;
                         if (newDay > rewards.length) { currentDay = 1; } else { currentDay = newDay; }
                     }
@@ -4985,7 +5106,7 @@
                 const btn = document.getElementById('dailyCheckinBtn');
                 if (btn) {
                     const todayStr = new Date().toDateString();
-                    const lastClaimStr = currentUserData.dailyReward?.lastClaim ? new Date(currentUserData.dailyReward.lastClaim).toDateString() : null;
+                    const lastClaimStr = currentUserData.daily_reward_last_claim ? new Date(currentUserData.daily_reward_last_claim).toDateString() : null;
                     if (!lastClaimStr || lastClaimStr !== todayStr) {
                         btn.disabled = false;
                         btn.style.opacity = '1';
@@ -5004,16 +5125,16 @@
         async function claimDailyReward(day, amount) {
             if (typeof day === 'undefined' || typeof amount === 'undefined') {
                 const rewards = [10, 20, 30, 40, 50, 60, 70];
-                let lastClaim = currentUserData.dailyReward?.lastClaim || null;
+                let lastClaim = currentUserData.daily_reward_last_claim || null;
                 let currentDay = 0;
                 if (lastClaim) {
                     let last = new Date(lastClaim).toDateString();
                     let today = new Date().toDateString();
                     if (last === today) {
-                        currentDay = currentUserData.dailyReward?.day || 0;
+                        currentDay = currentUserData.daily_reward_day || 0;
                     } else {
                         let diff = Math.floor((Date.now() - new Date(lastClaim)) / (24 * 60 * 60 * 1000));
-                        let prevDay = currentUserData.dailyReward?.day || 0;
+                        let prevDay = currentUserData.daily_reward_day || 0;
                         let newDay = prevDay + diff;
                         if (newDay > rewards.length) { currentDay = 1; } else { currentDay = newDay; }
                     }
@@ -5023,17 +5144,24 @@
                 day = currentDay;
                 amount = rewards[day - 1] || 0;
             }
-            let lastClaim = currentUserData.dailyReward?.lastClaim;
+            let lastClaim = currentUserData.daily_reward_last_claim;
             let today = new Date().toDateString();
             if (lastClaim && new Date(lastClaim).toDateString() === today) {
                 showToast("Already claimed today");
                 return;
             }
             let newCoins = (currentUserData.coins || 0) + amount;
-            await db.ref(`users/${currentUser.uid}/coins`).set(newCoins);
-            await db.ref(`users/${currentUser.uid}/dailyReward`).set({ lastClaim: Date.now(), day: day });
+            await supabase.from('users')
+                .update({
+                    coins: newCoins,
+                    daily_reward_last_claim: new Date().toISOString(),
+                    daily_reward_day: day
+                })
+                .eq('id', currentUser.id);
+
             currentUserData.coins = newCoins;
-            currentUserData.dailyReward = { lastClaim: Date.now(), day: day };
+            currentUserData.daily_reward_last_claim = new Date().toISOString();
+            currentUserData.daily_reward_day = day;
             updateUI();
             showToast(`+${amount} coins claimed!`);
             loadDailyRewardGrid();
@@ -5043,28 +5171,23 @@
         // MAIL BOX
         // ============================================================
         async function loadMailBox() {
-            try {
-                let snap = await db.ref(`mailbox/${currentUser.uid}`).once('value');
-                let mails = snap.val() || {};
-                mailItems = [];
-                let unread = 0;
-                for (let id in mails) {
-                    let m = mails[id];
-                    if (!m.deleted) {
-                        mailItems.push({ id, ...m });
-                        if (!m.read) unread++;
-                    }
-                }
-                mailItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                unreadCount = unread;
-                updateMailBadge();
-                return mailItems;
-            } catch (e) {
-                mailItems = [];
-                unreadCount = 0;
-                updateMailBadge();
-                return [];
+            if (!currentUser) return;
+            const { data, error } = await supabase
+                .from('mailbox')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .eq('deleted', false)
+                .order('timestamp', { ascending: false });
+
+            if (error) {
+                console.error('Error loading mailbox:', error);
+                return;
             }
+
+            mailItems = data || [];
+            unreadCount = mailItems.filter(m => !m.read).length;
+            updateMailBadge();
+            return mailItems;
         }
 
         function updateMailBadge() {
@@ -5130,11 +5253,20 @@
 
         async function openMailDetail(mailId) {
             try {
-                let snap = await db.ref(`mailbox/${currentUser.uid}/${mailId}`).once('value');
-                let mail = snap.val();
-                if (!mail || mail.deleted) { showToast('Mail not found'); return; }
-                if (!mail.read) { await db.ref(`mailbox/${currentUser.uid}/${mailId}/read`).set(true);
-                    await loadMailBox(); }
+                const { data: mail, error } = await supabase
+                    .from('mailbox')
+                    .select('*')
+                    .eq('id', mailId)
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+
+                if (error || !mail || mail.deleted) { showToast('Mail not found'); return; }
+                if (!mail.read) {
+                    await supabase.from('mailbox')
+                        .update({ read: true })
+                        .eq('id', mailId);
+                    await loadMailBox();
+                }
                 document.getElementById('mailDetailTitle').innerText = mail.title || 'Mail';
                 document.getElementById('mailDetailContent').innerHTML = `
                             <div class="mail-meta">📅 ${mail.timestamp ? new Date(mail.timestamp).toLocaleString() : 'Unknown'}</div>
@@ -5152,7 +5284,10 @@
         async function deleteMail(mailId) {
             if (!confirm('Delete this mail?')) return;
             try {
-                await db.ref(`mailbox/${currentUser.uid}/${mailId}/deleted`).set(true);
+                await supabase.from('mailbox')
+                    .update({ deleted: true })
+                    .eq('id', mailId)
+                    .eq('user_id', currentUser.id);
                 await loadMailBox();
                 if (document.getElementById('mailModal').style.display === 'flex') openMailBox();
                 showToast('🗑️ Mail deleted');
@@ -5168,7 +5303,7 @@
         // COPY FULL SHARE TEXT
         // ============================================================
         function copyFullShareText() {
-            const code = currentUserData?.referralCode || '910372';
+            const code = currentUserData?.referral_code || '910372';
             const link = `https://taskexpertapp.pages.dev/?ref=${code}`;
             const fullText =
                 `🔥\nEarn Daily Money From Home!\nComplete simple tasks & start earning 💰\n👇👇\n${link}`;
@@ -5230,14 +5365,20 @@
         };
 
         // ============================================================
-        // AUTH STATE
+        // AUTH STATE (Supabase)
         // ============================================================
-        auth.onAuthStateChanged(async user => {
-            if (user) {
-                currentUser = user;
+        async function handleAuthSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error('Auth session error:', error);
+                return;
+            }
+
+            if (session) {
+                currentUser = session.user;
                 updateLoader(30, 'Loading profile...');
                 try {
-                    await loadUserData();
+                    await loadUserData(currentUser.id);
                     await loadPlatformMinSettings();
                     await loadMinLimits();
                     if (currentUserData.suspended) {
@@ -5254,16 +5395,17 @@
                     loadMailBox();
                     loadMaintenanceAndUpdate();
                     if (currentUser) {
-                        db.ref('referrals').orderByChild('referredBy').equalTo(currentUser.uid).once('value')
-                            .then(snap => {
-                                const refs = snap.val() || {};
-                                for (let id in refs) {
-                                    const ref = refs[id];
-                                    if (ref.referredUserId && !ref.bonusClaimed) {
-                                        updateReferralProgress(ref.referredUserId);
-                                    }
-                                }
-                            }).catch(() => {});
+                        // Update referral progress for users who referred this user
+                        const { data: refs } = await supabase
+                            .from('referrals')
+                            .select('referred_by')
+                            .eq('referred_user_id', currentUser.id)
+                            .eq('bonus_claimed', false);
+                        if (refs && refs.length) {
+                            for (let r of refs) {
+                                await updateReferralProgress(currentUser.id);
+                            }
+                        }
                     }
                 } catch (e) {
                     console.error(e);
@@ -5271,6 +5413,7 @@
                     setTimeout(finishLoading, 500);
                 }
             } else {
+                // No session – show login
                 currentUser = null;
                 currentUserData = null;
                 userSubmissionsMap = {};
@@ -5278,11 +5421,19 @@
                 cachedOfficialTasks = [];
                 tasksLoaded = false;
                 isAdmin = false;
-                // Clean up realtime listeners
-                realtimeListeners.forEach(unsub => unsub());
-                realtimeListeners = [];
+                realtimeSubscriptions.forEach(sub => sub.unsubscribe());
+                realtimeSubscriptions = [];
                 updateLoader(100, 'Please sign in');
                 setTimeout(finishLoading, 300);
+            }
+        }
+
+        // Listen to auth changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                handleAuthSession();
+            } else if (event === 'SIGNED_OUT') {
+                location.reload();
             }
         });
 
@@ -5300,6 +5451,9 @@
             mailBannerShown = false;
             document.getElementById('newMailBanner').style.display = 'none';
             loadBankDetails();
+
+            // Check initial auth session
+            handleAuthSession();
         });
 
         // Expose functions
@@ -5322,7 +5476,6 @@
         window.closeMailDetail = closeMailDetail;
         window.hideMailBanner = hideMailBanner;
         window.loginWithGoogle = loginWithGoogle;
-        window.signupWithGoogle = signupWithGoogle;
         window.logout = logout;
         window.showRegister = showRegister;
         window.showLogin = showLogin;
