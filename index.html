@@ -1,127 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Google Login Test Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Login Test</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             background: #0f172a;
-            color: #e2e8f0;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            margin: 0;
         }
-        .card {
+        .box {
             background: #1e293b;
             padding: 40px;
             border-radius: 16px;
-            border: 1px solid #334155;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             text-align: center;
+            max-width: 400px;
+            border: 1px solid #334155;
         }
-        h1 {
-            font-size: 24px;
-            color: #38bdf8;
-            margin-bottom: 8px;
-        }
-        .subtitle {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
+        h1 { color: #38bdf8; }
         .btn {
-            padding: 12px 30px;
+            padding: 14px 30px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
             color: white;
+            background: #4285F4;
             width: 100%;
             margin-top: 10px;
         }
-        .btn:hover {
-            transform: scale(1.02);
-            opacity: 0.9;
-        }
-        .btn-google {
-            background: #4285F4;
-        }
-        .btn-google:hover {
-            background: #357ae8;
-        }
-        .btn-danger {
-            background: #dc2626;
-        }
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-        .user-info {
-            background: #0f172a;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: left;
-            border: 1px solid #334155;
-        }
-        .user-info p {
-            margin: 6px 0;
-            font-size: 14px;
-            word-break: break-all;
-        }
-        .user-info .label {
-            color: #94a3b8;
-            font-weight: 600;
-        }
-        .user-info .value {
-            color: #e2e8f0;
-        }
-        .status-badge {
-            display: inline-block;
+        .btn:hover { opacity: 0.9; }
+        .btn-danger { background: #dc2626; }
+        .info { background: #0f172a; padding: 16px; border-radius: 8px; margin: 16px 0; text-align: left; }
+        .info p { margin: 6px 0; font-size: 14px; }
+        .badge {
             padding: 4px 14px;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
+            display: inline-block;
         }
-        .status-badge.logged-in {
-            background: #065f46;
-            color: #34d399;
-        }
-        .status-badge.logged-out {
-            background: #451a03;
-            color: #fbbf24;
-        }
-        .error-msg {
-            color: #f87171;
-            font-size: 14px;
-            margin-top: 10px;
-            background: #7f1d1d;
-            padding: 10px;
-            border-radius: 6px;
-        }
-        .success-msg {
-            color: #34d399;
-            font-size: 14px;
-            margin-top: 10px;
-            background: #065f46;
-            padding: 10px;
-            border-radius: 6px;
-        }
+        .badge-in { background: #065f46; color: #34d399; }
+        .badge-out { background: #451a03; color: #fbbf24; }
+        .error-msg { color: #f87171; background: #7f1d1d; padding: 10px; border-radius: 6px; margin-top: 10px; }
+        .success-msg { color: #34d399; background: #065f46; padding: 10px; border-radius: 6px; margin-top: 10px; }
         .redirect-note {
             background: #1e3a5f;
             border: 1px solid #2563eb;
@@ -131,186 +61,164 @@
             color: #93c5fd;
             margin-top: 16px;
         }
-        .redirect-note strong {
-            color: #60a5fa;
-        }
+        .redirect-note strong { color: #60a5fa; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🔐 Google Login Test</h1>
-        <p class="subtitle">Test Panel for taskexpert.pages.dev</p>
 
-        <!-- Status Badge -->
-        <div id="statusBadge" class="status-badge logged-out">⏳ Checking...</div>
+<div class="box">
+    <h1>🔐 Google Login</h1>
+    <p style="color:#94a3b8;">Test Panel</p>
 
-        <!-- User Info (Hidden by default) -->
-        <div id="userInfoDiv" style="display: none;">
-            <div class="user-info">
-                <p><span class="label">👤 Name:</span> <span class="value" id="userName">-</span></p>
-                <p><span class="label">📧 Email:</span> <span class="value" id="userEmail">-</span></p>
-                <p><span class="label">🆔 User ID:</span> <span class="value" id="userId">-</span></p>
-                <p><span class="label">✅ Verified:</span> <span class="value" id="userVerified">-</span></p>
-            </div>
-            <button class="btn btn-danger" id="logoutBtn">🚪 Sign Out</button>
+    <div id="badge" class="badge badge-out">⏳ Checking...</div>
+
+    <div id="userInfo" style="display:none;">
+        <div class="info">
+            <p><strong>👤 Name:</strong> <span id="name">-</span></p>
+            <p><strong>📧 Email:</strong> <span id="email">-</span></p>
+            <p><strong>🆔 ID:</strong> <span id="id">-</span></p>
         </div>
-
-        <!-- Login Button (Hidden when logged in) -->
-        <div id="loginDiv">
-            <button class="btn btn-google" id="loginBtn">🔑 Sign in with Google</button>
-        </div>
-
-        <!-- Messages -->
-        <div id="message"></div>
-
-        <!-- Redirect Info -->
-        <div class="redirect-note">
-            ⚡ Redirect URL: <strong>https://taskexpert.pages.dev</strong>
-            <br><small>(Is panel ke login ke baad wapas yahi page aayega)</small>
-        </div>
+        <button class="btn btn-danger" id="logoutBtn">🚪 Logout</button>
     </div>
 
-    <script>
-        // ============================================================
-        // 🔥 SUPABASE CREDENTIALS (Aap ki hi settings)
-        // ============================================================
-        const SUPABASE_URL = 'https://bfqkwwkvnioreeagyvco.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_BVS4gTa_FpesnI8t3CTUjw_qxNUwiHG';
+    <div id="loginDiv">
+        <button class="btn" id="loginBtn">🔑 Sign in with Google</button>
+    </div>
 
-        // ============================================================
-        // ✅ REDIRECT URL – HARDCODED TO PRODUCTION (LOCALHOST NAHI)
-        // ============================================================
-        const REDIRECT_URL = 'https://taskexpert.pages.dev';
+    <div id="message"></div>
 
-        // ============================================================
-        // INIT SUPABASE
-        // ============================================================
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <div class="redirect-note">
+        ✅ Redirect: <strong>https://taskexpert.pages.dev</strong>
+    </div>
+</div>
 
-        // ============================================================
-        // DOM REFS
-        // ============================================================
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const loginDiv = document.getElementById('loginDiv');
-        const userInfoDiv = document.getElementById('userInfoDiv');
-        const statusBadge = document.getElementById('statusBadge');
-        const userName = document.getElementById('userName');
-        const userEmail = document.getElementById('userEmail');
-        const userId = document.getElementById('userId');
-        const userVerified = document.getElementById('userVerified');
-        const messageDiv = document.getElementById('message');
+<script>
+    console.log('🚀 Script loaded!');
 
-        function showMessage(text, type = 'error') {
-            messageDiv.innerHTML = `<div class="${type === 'error' ? 'error-msg' : 'success-msg'}">${text}</div>`;
-            setTimeout(() => { messageDiv.innerHTML = ''; }, 6000);
+    // ============= CONFIG =============
+    const SUPABASE_URL = 'https://bfqkwwkvnioreeagyvco.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_BVS4gTa_FpesnI8t3CTUjw_qxNUwiHG';
+    const REDIRECT_URL = 'https://taskexpert.pages.dev';
+
+    // ============= CHECK SUPABASE =============
+    if (typeof supabase === 'undefined') {
+        document.getElementById('message').innerHTML = 
+            '<div class="error-msg">❌ Supabase library not loaded! Check internet.</div>';
+        console.error('Supabase not loaded!');
+    } else {
+        console.log('✅ Supabase loaded');
+    }
+
+    // ============= INIT =============
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ============= DOM REFS =============
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginDiv = document.getElementById('loginDiv');
+    const userInfo = document.getElementById('userInfo');
+    const badge = document.getElementById('badge');
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const idEl = document.getElementById('id');
+    const msg = document.getElementById('message');
+
+    function showMsg(text, type = 'error') {
+        msg.innerHTML = `<div class="${type === 'error' ? 'error-msg' : 'success-msg'}">${text}</div>`;
+        setTimeout(() => msg.innerHTML = '', 5000);
+    }
+
+    function updateUI(user) {
+        if (user) {
+            badge.textContent = '✅ Logged In';
+            badge.className = 'badge badge-in';
+            loginDiv.style.display = 'none';
+            userInfo.style.display = 'block';
+            nameEl.textContent = user.user_metadata?.full_name || user.email || 'N/A';
+            emailEl.textContent = user.email || 'N/A';
+            idEl.textContent = user.id || 'N/A';
+            showMsg('✅ Welcome ' + (user.user_metadata?.full_name || user.email), 'success');
+        } else {
+            badge.textContent = '🔴 Logged Out';
+            badge.className = 'badge badge-out';
+            loginDiv.style.display = 'block';
+            userInfo.style.display = 'none';
         }
+    }
 
-        // ============================================================
-        // UPDATE UI
-        // ============================================================
-        function updateUI(user) {
-            if (user) {
-                // Logged In
-                statusBadge.textContent = '✅ Logged In';
-                statusBadge.className = 'status-badge logged-in';
-                loginDiv.style.display = 'none';
-                userInfoDiv.style.display = 'block';
-                userName.textContent = user.user_metadata?.full_name || user.email || 'N/A';
-                userEmail.textContent = user.email || 'N/A';
-                userId.textContent = user.id || 'N/A';
-                userVerified.textContent = user.email_confirmed_at ? '✅ Yes' : '❌ No';
-                showMessage('✅ Login successful! Welcome back.', 'success');
+    // ============= LOGIN =============
+    async function login() {
+        console.log('🔑 Login button clicked!');
+        showMsg('⏳ Redirecting to Google...', 'success');
+        try {
+            const { data, error } = await sb.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: REDIRECT_URL }
+            });
+            console.log('Login response:', { data, error });
+            if (error) {
+                showMsg('❌ Error: ' + error.message, 'error');
+                console.error('Login error:', error);
             } else {
-                // Logged Out
-                statusBadge.textContent = '🔴 Logged Out';
-                statusBadge.className = 'status-badge logged-out';
-                loginDiv.style.display = 'block';
-                userInfoDiv.style.display = 'none';
-                showMessage('Please sign in to continue.', 'error');
+                console.log('✅ Redirect initiated');
+                showMsg('🔄 Redirecting to Google...', 'success');
             }
+        } catch (err) {
+            showMsg('❌ Exception: ' + err.message, 'error');
+            console.error('Exception:', err);
         }
+    }
 
-        // ============================================================
-        // LOGIN FUNCTION
-        // ============================================================
-        async function loginWithGoogle() {
-            messageDiv.innerHTML = '<div class="success-msg">⏳ Redirecting to Google...</div>';
-            try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        // ✅ YAHAN LOCALHOST NAHI, SIRF PRODUCTION URL
-                        redirectTo: REDIRECT_URL 
-                    }
-                });
+    // ============= LOGOUT =============
+    async function logout() {
+        await sb.auth.signOut();
+        updateUI(null);
+        showMsg('👋 Logged out', 'error');
+    }
 
-                if (error) {
-                    showMessage('❌ Login Error: ' + error.message, 'error');
-                } else {
-                    // Browser Google par redirect ho jayega
-                    showMessage('🔄 Redirecting to Google...', 'success');
-                }
-            } catch (err) {
-                showMessage('❌ Exception: ' + err.message, 'error');
+    // ============= CHECK SESSION =============
+    async function checkSession() {
+        console.log('Checking session...');
+        try {
+            const { data: { session }, error } = await sb.auth.getSession();
+            console.log('Session:', session);
+            if (error) {
+                console.error('Session error:', error);
+                updateUI(null);
+                return;
             }
-        }
-
-        // ============================================================
-        // LOGOUT FUNCTION
-        // ============================================================
-        async function logout() {
-            await supabase.auth.signOut();
+            if (session) {
+                updateUI(session.user);
+            } else {
+                updateUI(null);
+            }
+        } catch (err) {
+            console.error('Check error:', err);
             updateUI(null);
-            showMessage('👋 Logged out successfully.', 'error');
         }
+    }
 
-        // ============================================================
-        // CHECK SESSION ON PAGE LOAD
-        // ============================================================
-        async function checkSession() {
-            try {
-                const { data: { session }, error } = await supabase.auth.getSession();
-                if (error) {
-                    showMessage('Session error: ' + error.message, 'error');
-                    updateUI(null);
-                    return;
-                }
-                if (session) {
-                    updateUI(session.user);
-                } else {
-                    updateUI(null);
-                }
-            } catch (err) {
-                showMessage('Check error: ' + err.message, 'error');
-                updateUI(null);
-            }
+    // ============= AUTH STATE CHANGE =============
+    sb.auth.onAuthStateChange((event, session) => {
+        console.log('Auth event:', event, session);
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            if (session) updateUI(session.user);
+        } else if (event === 'SIGNED_OUT') {
+            updateUI(null);
         }
+    });
 
-        // ============================================================
-        // AUTH STATE CHANGE LISTENER (For callback handling)
-        // ============================================================
-        supabase.auth.onAuthStateChange((event, session) => {
-            console.log('Auth Event:', event);
-            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                if (session) {
-                    updateUI(session.user);
-                    showMessage('🎉 Successfully logged in!', 'success');
-                }
-            } else if (event === 'SIGNED_OUT') {
-                updateUI(null);
-                showMessage('👋 Logged out.', 'error');
-            }
-        });
+    // ============= EVENT LISTENERS =============
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM ready');
+        loginBtn.addEventListener('click', login);
+        logoutBtn.addEventListener('click', logout);
+        checkSession();
+    });
 
-        // ============================================================
-        // ATTACH EVENTS
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            loginBtn.addEventListener('click', loginWithGoogle);
-            logoutBtn.addEventListener('click', logout);
-            checkSession();
-        });
-    </script>
+    // Extra: Agar button par click nahi ho raha, toh console se manually test karein
+    console.log('ℹ️ Type "loginTest()" in console to test manually');
+    window.loginTest = login;
+</script>
 </body>
 </html>
