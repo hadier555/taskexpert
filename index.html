@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Supabase Test Panel</title>
+    <title>Google Login Test Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
@@ -16,39 +16,79 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0f172a;
             color: #e2e8f0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #38bdf8;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 12px;
-        }
-        h1 small {
-            font-size: 14px;
-            color: #94a3b8;
-            font-weight: 400;
+            min-height: 100vh;
+            padding: 20px;
         }
         .card {
             background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+        .btn-google {
+            background: #4285F4;
+        }
+        .btn-google:hover {
+            background: #357ae8;
+        }
+        .btn-danger {
+            background: #dc2626;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .user-info {
+            background: #0f172a;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
             border: 1px solid #334155;
         }
-        .card h2 {
-            font-size: 16px;
+        .user-info p {
+            margin: 6px 0;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .user-info .label {
             color: #94a3b8;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .user-info .value {
+            color: #e2e8f0;
         }
         .status-badge {
             display: inline-block;
@@ -56,781 +96,219 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
+            margin-bottom: 16px;
         }
-        .status-badge.success {
+        .status-badge.logged-in {
             background: #065f46;
             color: #34d399;
         }
-        .status-badge.error {
-            background: #7f1d1d;
-            color: #f87171;
-        }
-        .status-badge.pending {
+        .status-badge.logged-out {
             background: #451a03;
             color: #fbbf24;
         }
-        .status-badge.info {
-            background: #1e3a5f;
-            color: #60a5fa;
-        }
-        .btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .error-msg {
+            color: #f87171;
             font-size: 14px;
-            font-weight: 600;
-            transition: 0.3s;
-            color: white;
-        }
-        .btn:hover {
-            transform: scale(1.03);
-            opacity: 0.9;
-        }
-        .btn-primary {
-            background: #2563eb;
-        }
-        .btn-danger {
-            background: #dc2626;
-        }
-        .btn-success {
-            background: #059669;
-        }
-        .btn-secondary {
-            background: #475569;
-        }
-        .btn-warning {
-            background: #d97706;
-        }
-        .flex {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .log {
-            background: #0f172a;
-            padding: 10px 14px;
+            margin-top: 10px;
+            background: #7f1d1d;
+            padding: 10px;
             border-radius: 6px;
-            font-size: 13px;
-            font-family: monospace;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #334155;
-            margin-top: 8px;
         }
-        .log .entry {
-            padding: 3px 0;
-            border-bottom: 1px solid #1e293b;
-        }
-        .log .entry .time {
-            color: #64748b;
-            margin-right: 10px;
-        }
-        .log .entry .ok {
+        .success-msg {
             color: #34d399;
-        }
-        .log .entry .err {
-            color: #f87171;
-        }
-        .log .entry .info {
-            color: #38bdf8;
-        }
-        .log .entry .warn {
-            color: #fbbf24;
-        }
-        .table-wrap {
-            overflow-x: auto;
-            margin-top: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        th,
-        td {
-            padding: 8px 12px;
-            text-align: left;
-            border-bottom: 1px solid #334155;
-        }
-        th {
-            color: #94a3b8;
-            font-weight: 600;
-            background: #0f172a;
-        }
-        tr:hover td {
-            background: #1e293b;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .user-info .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #2563eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-            color: white;
-        }
-        .empty {
-            color: #64748b;
             font-size: 14px;
-            padding: 12px 0;
+            margin-top: 10px;
+            background: #065f46;
+            padding: 10px;
+            border-radius: 6px;
         }
-        .test-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 12px;
-        }
-        .test-result {
-            font-size: 14px;
-            margin-left: 8px;
-        }
-        .test-result.ok {
-            color: #34d399;
-        }
-        .test-result.err {
-            color: #f87171;
-        }
-        .test-result.wait {
-            color: #fbbf24;
-        }
-        .test-result.warn {
-            color: #fbbf24;
-        }
-        .login-prompt {
+        .redirect-note {
             background: #1e3a5f;
             border: 1px solid #2563eb;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 12px;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 13px;
             color: #93c5fd;
+            margin-top: 16px;
         }
-        .login-prompt strong {
+        .redirect-note strong {
             color: #60a5fa;
-        }
-        @media (max-width: 600px) {
-            .test-row {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
+        <h1>🔐 Google Login Test</h1>
+        <p class="subtitle">Test Panel for taskexpert.pages.dev</p>
 
-        <h1>🧪 Supabase Test Panel <small>Diagnose your connection</small></h1>
+        <!-- Status Badge -->
+        <div id="statusBadge" class="status-badge logged-out">⏳ Checking...</div>
 
-        <!-- STATUS -->
-        <div class="card">
-            <div class="flex-between">
-                <div>
-                    <span class="status-badge pending" id="connStatus">⏳ Initializing...</span>
-                    <span style="margin-left:12px;font-size:13px;color:#94a3b8;" id="connDetails">-</span>
-                </div>
-                <div class="flex">
-                    <button class="btn btn-secondary" id="runAllBtn" disabled>🔄 Run All Tests (Login First)</button>
-                    <button class="btn btn-danger" id="clearLogBtn">🗑️ Clear Log</button>
-                </div>
+        <!-- User Info (Hidden by default) -->
+        <div id="userInfoDiv" style="display: none;">
+            <div class="user-info">
+                <p><span class="label">👤 Name:</span> <span class="value" id="userName">-</span></p>
+                <p><span class="label">📧 Email:</span> <span class="value" id="userEmail">-</span></p>
+                <p><span class="label">🆔 User ID:</span> <span class="value" id="userId">-</span></p>
+                <p><span class="label">✅ Verified:</span> <span class="value" id="userVerified">-</span></p>
             </div>
+            <button class="btn btn-danger" id="logoutBtn">🚪 Sign Out</button>
         </div>
 
-        <!-- LOGIN PROMPT -->
-        <div id="loginPrompt" class="login-prompt" style="display:none;">
-            🔑 <strong>Login required</strong> – Click <strong>"Login with Google"</strong> below to authenticate, then run tests.
+        <!-- Login Button (Hidden when logged in) -->
+        <div id="loginDiv">
+            <button class="btn btn-google" id="loginBtn">🔑 Sign in with Google</button>
         </div>
 
-        <!-- AUTH -->
-        <div class="card">
-            <h2>🔐 Authentication</h2>
-            <div id="authSection">
-                <div class="flex-between">
-                    <div class="user-info" id="userInfo">
-                        <span style="color:#94a3b8;">Not logged in</span>
-                    </div>
-                    <div class="flex">
-                        <button class="btn btn-primary" id="loginBtn">🔑 Login with Google</button>
-                        <button class="btn btn-danger" id="logoutBtn" style="display:none;">🚪 Logout</button>
-                    </div>
-                </div>
-                <div id="authError" style="color:#f87171;font-size:13px;margin-top:8px;"></div>
-            </div>
-        </div>
+        <!-- Messages -->
+        <div id="message"></div>
 
-        <!-- TEST RESULTS -->
-        <div class="card">
-            <h2>📊 Test Results</h2>
-            <div class="test-row">
-                <div>
-                    <button class="btn btn-primary" id="testConnBtn" disabled>🌐 Test Connection</button>
-                    <span id="connResult" class="test-result wait">⏳</span>
-                </div>
-                <div>
-                    <button class="btn btn-primary" id="testUsersBtn" disabled>👥 Test Users Table</button>
-                    <span id="usersResult" class="test-result wait">⏳</span>
-                </div>
-                <div>
-                    <button class="btn btn-primary" id="testTasksBtn" disabled>📋 Test Tasks Table</button>
-                    <span id="tasksResult" class="test-result wait">⏳</span>
-                </div>
-                <div>
-                    <button class="btn btn-primary" id="testInsertBtn" disabled>➕ Test Insert User</button>
-                    <span id="insertResult" class="test-result wait">⏳</span>
-                </div>
-            </div>
+        <!-- Redirect Info -->
+        <div class="redirect-note">
+            ⚡ Redirect URL: <strong>https://taskexpert.pages.dev</strong>
+            <br><small>(Is panel ke login ke baad wapas yahi page aayega)</small>
         </div>
-
-        <!-- DATA VIEW -->
-        <div class="card">
-            <h2>📦 Quick Data View</h2>
-            <div class="flex" style="margin-bottom:10px;">
-                <button class="btn btn-secondary" id="viewUsersBtn" disabled>👥 View Users</button>
-                <button class="btn btn-secondary" id="viewTasksBtn" disabled>📋 View Tasks</button>
-                <button class="btn btn-secondary" id="viewSubmissionsBtn" disabled>📸 View Submissions</button>
-                <button class="btn btn-secondary" id="viewSettingsBtn" disabled>⚙️ View Settings</button>
-            </div>
-            <div id="dataView"><span class="empty">Click a button above to view data.</span></div>
-        </div>
-
-        <!-- LOG -->
-        <div class="card">
-            <h2>📝 Activity Log</h2>
-            <div class="log" id="logContainer">
-                <div class="entry"><span class="time">[Start]</span> <span class="info">Test panel ready. Login first, then run tests.</span></div>
-            </div>
-        </div>
-
     </div>
 
     <script>
         // ============================================================
-        // SUPABASE CONFIG – REPLACE WITH YOUR CREDENTIALS
+        // 🔥 SUPABASE CREDENTIALS (Aap ki hi settings)
         // ============================================================
         const SUPABASE_URL = 'https://bfqkwwkvnioreeagyvco.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_BVS4gTa_FpesnI8t3CTUjw_qxNUwiHG';
 
         // ============================================================
-        // ✅ FIX: REDIRECT TO PRODUCTION SITE (LOCALHOST HATAYA)
+        // ✅ REDIRECT URL – HARDCODED TO PRODUCTION (LOCALHOST NAHI)
         // ============================================================
         const REDIRECT_URL = 'https://taskexpert.pages.dev';
 
         // ============================================================
-        // CHECK IF SUPABASE IS LOADED
+        // INIT SUPABASE
         // ============================================================
-        if (typeof supabase === 'undefined') {
-            document.getElementById('connStatus').textContent = '❌ Supabase JS not loaded!';
-            document.getElementById('connStatus').className = 'status-badge error';
-            document.getElementById('connDetails').textContent = 'Check CDN or internet connection.';
-            document.getElementById('logContainer').innerHTML +=
-                `<div class="entry"><span class="time">[Error]</span> <span class="err">❌ Supabase JS library not loaded. Check CDN URL.</span></div>`;
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginDiv = document.getElementById('loginDiv');
+        const userInfoDiv = document.getElementById('userInfoDiv');
+        const statusBadge = document.getElementById('statusBadge');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const userId = document.getElementById('userId');
+        const userVerified = document.getElementById('userVerified');
+        const messageDiv = document.getElementById('message');
+
+        function showMessage(text, type = 'error') {
+            messageDiv.innerHTML = `<div class="${type === 'error' ? 'error-msg' : 'success-msg'}">${text}</div>`;
+            setTimeout(() => { messageDiv.innerHTML = ''; }, 6000);
         }
 
         // ============================================================
-        // CREATE SUPABASE CLIENT
+        // UPDATE UI
         // ============================================================
-        const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase client initialized');
-
-        // ============================================================
-        // STATE
-        // ============================================================
-        let currentUser = null;
-        let isLoggedIn = false;
-
-        // ============================================================
-        // LOGGING
-        // ============================================================
-        function log(msg, type = 'info') {
-            const container = document.getElementById('logContainer');
-            const time = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = 'entry';
-            const cls = type === 'error' ? 'err' : type === 'success' ? 'ok' : type === 'warn' ? 'warn' : 'info';
-            entry.innerHTML = `<span class="time">[${time}]</span> <span class="${cls}">${msg}</span>`;
-            container.appendChild(entry);
-            container.scrollTop = container.scrollHeight;
-            while (container.children.length > 100) container.removeChild(container.firstChild);
-        }
-
-        function clearLogs() {
-            const container = document.getElementById('logContainer');
-            container.innerHTML =
-                `<div class="entry"><span class="time">[Clear]</span> <span class="info">Log cleared.</span></div>`;
-        }
-
-        function setStatus(text, type = 'pending') {
-            const badge = document.getElementById('connStatus');
-            badge.textContent = text;
-            badge.className = 'status-badge ' + type;
-        }
-
-        function setResult(id, text, type = 'wait') {
-            const el = document.getElementById(id);
-            if (el) { el.textContent = text;
-                el.className = 'test-result ' + type; }
-        }
-
-        function enableButtons(enabled) {
-            const btns = ['runAllBtn', 'testConnBtn', 'testUsersBtn', 'testTasksBtn', 'testInsertBtn',
-                'viewUsersBtn', 'viewTasksBtn', 'viewSubmissionsBtn', 'viewSettingsBtn'
-            ];
-            btns.forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.disabled = !enabled;
-            });
-            if (enabled) {
-                document.getElementById('runAllBtn').innerHTML = '🔄 Run All Tests';
+        function updateUI(user) {
+            if (user) {
+                // Logged In
+                statusBadge.textContent = '✅ Logged In';
+                statusBadge.className = 'status-badge logged-in';
+                loginDiv.style.display = 'none';
+                userInfoDiv.style.display = 'block';
+                userName.textContent = user.user_metadata?.full_name || user.email || 'N/A';
+                userEmail.textContent = user.email || 'N/A';
+                userId.textContent = user.id || 'N/A';
+                userVerified.textContent = user.email_confirmed_at ? '✅ Yes' : '❌ No';
+                showMessage('✅ Login successful! Welcome back.', 'success');
             } else {
-                document.getElementById('runAllBtn').innerHTML = '🔄 Run All Tests (Login First)';
+                // Logged Out
+                statusBadge.textContent = '🔴 Logged Out';
+                statusBadge.className = 'status-badge logged-out';
+                loginDiv.style.display = 'block';
+                userInfoDiv.style.display = 'none';
+                showMessage('Please sign in to continue.', 'error');
             }
         }
 
         // ============================================================
-        // AUTH
+        // LOGIN FUNCTION
         // ============================================================
         async function loginWithGoogle() {
-            log('Initiating Google login...', 'info');
-            document.getElementById('authError').textContent = '';
+            messageDiv.innerHTML = '<div class="success-msg">⏳ Redirecting to Google...</div>';
             try {
-                const { data, error } = await sbClient.auth.signInWithOAuth({
+                const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
-                    options: { redirectTo: REDIRECT_URL } // ✅ SAHI – Production URL
-                });
-                if (error) {
-                    log('Login error: ' + error.message, 'error');
-                    document.getElementById('authError').textContent = '❌ ' + error.message;
-                } else {
-                    log('Login initiated. Redirecting to ' + REDIRECT_URL, 'success');
-                }
-            } catch (err) {
-                log('Login exception: ' + err.message, 'error');
-                document.getElementById('authError').textContent = '❌ ' + err.message;
-            }
-        }
-
-        async function logout() {
-            await sbClient.auth.signOut();
-            log('Logged out.', 'info');
-            currentUser = null;
-            isLoggedIn = false;
-            updateUI();
-            enableButtons(false);
-            document.getElementById('loginPrompt').style.display = 'block';
-            setStatus('Not logged in', 'pending');
-            document.getElementById('connDetails').textContent = '-';
-            // Reset results
-            setResult('connResult', '⏳ Login required', 'warn');
-            setResult('usersResult', '⏳ Login required', 'warn');
-            setResult('tasksResult', '⏳ Login required', 'warn');
-            setResult('insertResult', '⏳ Login required', 'warn');
-        }
-
-        // ============================================================
-        // TESTS
-        // ============================================================
-        async function testConnection() {
-            if (!isLoggedIn) {
-                setResult('connResult', '❌ Login first!', 'err');
-                log('Connection test skipped – not logged in.', 'warn');
-                return;
-            }
-            setResult('connResult', '⏳ Testing...', 'wait');
-            log('Testing Supabase connection...', 'info');
-            try {
-                const { data, error } = await sbClient.from('users').select('id').limit(1);
-                if (error) {
-                    if (error.code === '42P01') {
-                        setResult('connResult', '❌ Table "users" missing!', 'err');
-                        log('Connection OK but "users" table missing. Run SQL script first.', 'error');
-                        setStatus('Table missing', 'error');
-                        return;
+                    options: {
+                        // ✅ YAHAN LOCALHOST NAHI, SIRF PRODUCTION URL
+                        redirectTo: REDIRECT_URL 
                     }
-                    setResult('connResult', '❌ ' + error.message, 'err');
-                    log('Connection test failed: ' + error.message, 'error');
-                    setStatus('Error', 'error');
-                    return;
-                }
-                setResult('connResult', '✅ Connected!', 'ok');
-                log('✅ Supabase connection successful!', 'success');
-                setStatus('Connected', 'success');
-                document.getElementById('connDetails').textContent = 'Project: ' + SUPABASE_URL.replace('https://', '');
-            } catch (err) {
-                setResult('connResult', '❌ ' + err.message, 'err');
-                log('Connection exception: ' + err.message, 'error');
-                setStatus('Error', 'error');
-            }
-        }
-
-        async function testUsersTable() {
-            if (!isLoggedIn) {
-                setResult('usersResult', '❌ Login first!', 'err');
-                log('Users table test skipped – not logged in.', 'warn');
-                return;
-            }
-            setResult('usersResult', '⏳ Checking...', 'wait');
-            log('Checking "users" table...', 'info');
-            try {
-                const { data, error, count } = await sbClient
-                    .from('users')
-                    .select('*', { count: 'exact', head: true });
-                if (error) {
-                    setResult('usersResult', '❌ ' + error.message, 'err');
-                    log('Users table error: ' + error.message, 'error');
-                    return;
-                }
-                setResult('usersResult', `✅ Table exists (${count || 0} users)`, 'ok');
-                log(`✅ Users table OK. Total rows: ${count || 0}`, 'success');
-            } catch (err) {
-                setResult('usersResult', '❌ ' + err.message, 'err');
-                log('Users table exception: ' + err.message, 'error');
-            }
-        }
-
-        async function testTasksTable() {
-            if (!isLoggedIn) {
-                setResult('tasksResult', '❌ Login first!', 'err');
-                log('Tasks table test skipped – not logged in.', 'warn');
-                return;
-            }
-            setResult('tasksResult', '⏳ Checking...', 'wait');
-            log('Checking "tasks" table...', 'info');
-            try {
-                const { data, error, count } = await sbClient
-                    .from('tasks')
-                    .select('*', { count: 'exact', head: true });
-                if (error) {
-                    setResult('tasksResult', '❌ ' + error.message, 'err');
-                    log('Tasks table error: ' + error.message, 'error');
-                    return;
-                }
-                setResult('tasksResult', `✅ Table exists (${count || 0} tasks)`, 'ok');
-                log(`✅ Tasks table OK. Total rows: ${count || 0}`, 'success');
-            } catch (err) {
-                setResult('tasksResult', '❌ ' + err.message, 'err');
-                log('Tasks table exception: ' + err.message, 'error');
-            }
-        }
-
-        async function testInsertUser() {
-            if (!isLoggedIn) {
-                setResult('insertResult', '❌ Login first!', 'err');
-                log('Insert test skipped – not logged in.', 'warn');
-                return;
-            }
-            setResult('insertResult', '⏳ Trying...', 'wait');
-            log('Testing insert into "users" table...', 'info');
-
-            const testId = currentUser.id;
-            const testUsername = 'test_' + Date.now().toString().slice(-6);
-
-            try {
-                const { data, error } = await sbClient
-                    .from('users')
-                    .upsert({
-                        id: testId,
-                        username: testUsername,
-                        email: currentUser.email || 'test@example.com',
-                        coins: 100,
-                        created_at: new Date().toISOString(),
-                        role: 'user',
-                        suspended: false
-                    }, { onConflict: 'id' })
-                    .select();
+                });
 
                 if (error) {
-                    setResult('insertResult', '❌ ' + error.message, 'err');
-                    log('Insert test failed: ' + error.message, 'error');
-                    return;
+                    showMessage('❌ Login Error: ' + error.message, 'error');
+                } else {
+                    // Browser Google par redirect ho jayega
+                    showMessage('🔄 Redirecting to Google...', 'success');
                 }
-                setResult('insertResult', '✅ Insert successful!', 'ok');
-                log(`✅ Test user "${testUsername}" upserted successfully!`, 'success');
             } catch (err) {
-                setResult('insertResult', '❌ ' + err.message, 'err');
-                log('Insert exception: ' + err.message, 'error');
+                showMessage('❌ Exception: ' + err.message, 'error');
             }
         }
 
         // ============================================================
-        // VIEW DATA (all now check login)
+        // LOGOUT FUNCTION
         // ============================================================
-        async function viewUsers() {
-            if (!isLoggedIn) {
-                document.getElementById('dataView').innerHTML =
-                    `<span style="color:#fbbf24;">⏳ Login required to view users.</span>`;
-                log('View users skipped – not logged in.', 'warn');
-                return;
-            }
-            const container = document.getElementById('dataView');
-            container.innerHTML = '<span class="empty">⏳ Loading users...</span>';
-            log('Loading users...', 'info');
-            try {
-                const { data, error } = await sbClient
-                    .from('users')
-                    .select('id, username, email, coins, role, suspended, created_at')
-                    .order('created_at', { ascending: false })
-                    .limit(20);
-                if (error) { container.innerHTML = `<span style="color:#f87171;">❌ ${error.message}</span>`;
-                    log('Error loading users: ' + error.message, 'error'); return; }
-                if (!data || data.length === 0) { container.innerHTML = '<span class="empty">No users found.</span>';
-                    log('No users found.', 'info'); return; }
-                let html =
-                    `<div class="table-wrap"><table><thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Coins</th><th>Role</th><th>Status</th><th>Created</th></tr></thead><tbody>`;
-                data.forEach(u => {
-                    html += `<tr><td style="font-size:11px;">${u.id?.substring(0,8)||'N/A'}</td><td>${u.username||'-'}</td><td>${u.email||'-'}</td><td>${u.coins||0}</td><td>${u.role||'user'}</td><td>${u.suspended ? '⛔ Suspended' : '✅ Active'}</td><td style="font-size:11px;">${u.created_at ? new Date(u.created_at).toLocaleString() : '-'}</td></tr>`;
-                });
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-                log(`✅ Loaded ${data.length} users.`, 'success');
-            } catch (err) { container.innerHTML = `<span style="color:#f87171;">❌ ${err.message}</span>`;
-                log('View users error: ' + err.message, 'error'); }
-        }
-
-        async function viewTasks() {
-            if (!isLoggedIn) {
-                document.getElementById('dataView').innerHTML =
-                    `<span style="color:#fbbf24;">⏳ Login required to view tasks.</span>`;
-                log('View tasks skipped – not logged in.', 'warn');
-                return;
-            }
-            const container = document.getElementById('dataView');
-            container.innerHTML = '<span class="empty">⏳ Loading tasks...</span>';
-            log('Loading tasks...', 'info');
-            try {
-                const { data, error } = await sbClient
-                    .from('tasks')
-                    .select('id, title, reward, max_limit, type, status, platform')
-                    .order('created_at', { ascending: false })
-                    .limit(20);
-                if (error) { container.innerHTML = `<span style="color:#f87171;">❌ ${error.message}</span>`;
-                    log('Error loading tasks: ' + error.message, 'error'); return; }
-                if (!data || data.length === 0) { container.innerHTML = '<span class="empty">No tasks found.</span>';
-                    log('No tasks found.', 'info'); return; }
-                let html =
-                    `<div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Reward</th><th>Slots</th><th>Type</th><th>Status</th><th>Platform</th></tr></thead><tbody>`;
-                data.forEach(t => {
-                    html += `<tr><td style="font-size:11px;">${t.id?.substring(0,8)||'N/A'}</td><td>${t.title||'-'}</td><td>${t.reward||0}</td><td>${t.max_limit||0}</td><td>${t.type||'-'}</td><td>${t.status||'-'}</td><td>${t.platform||'-'}</td></tr>`;
-                });
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-                log(`✅ Loaded ${data.length} tasks.`, 'success');
-            } catch (err) { container.innerHTML = `<span style="color:#f87171;">❌ ${err.message}</span>`;
-                log('View tasks error: ' + err.message, 'error'); }
-        }
-
-        async function viewSubmissions() {
-            if (!isLoggedIn) {
-                document.getElementById('dataView').innerHTML =
-                    `<span style="color:#fbbf24;">⏳ Login required to view submissions.</span>`;
-                log('View submissions skipped – not logged in.', 'warn');
-                return;
-            }
-            const container = document.getElementById('dataView');
-            container.innerHTML = '<span class="empty">⏳ Loading submissions...</span>';
-            log('Loading submissions...', 'info');
-            try {
-                const { data, error } = await sbClient
-                    .from('submissions')
-                    .select('id, task_title, username, status, reward, proof_type, timestamp')
-                    .order('timestamp', { ascending: false })
-                    .limit(20);
-                if (error) { container.innerHTML = `<span style="color:#f87171;">❌ ${error.message}</span>`;
-                    log('Error loading submissions: ' + error.message, 'error'); return; }
-                if (!data || data.length === 0) { container.innerHTML = '<span class="empty">No submissions found.</span>';
-                    log('No submissions found.', 'info'); return; }
-                let html =
-                    `<div class="table-wrap"><table><thead><tr><th>Task</th><th>User</th><th>Status</th><th>Reward</th><th>Type</th><th>Date</th></tr></thead><tbody>`;
-                data.forEach(s => {
-                    html += `<tr><td>${s.task_title||'-'}</td><td>${s.username||'-'}</td><td>${s.status||'pending'}</td><td>${s.reward||0}</td><td>${s.proof_type||'-'}</td><td style="font-size:11px;">${s.timestamp ? new Date(s.timestamp).toLocaleString() : '-'}</td></tr>`;
-                });
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-                log(`✅ Loaded ${data.length} submissions.`, 'success');
-            } catch (err) { container.innerHTML = `<span style="color:#f87171;">❌ ${err.message}</span>`;
-                log('View submissions error: ' + err.message, 'error'); }
-        }
-
-        async function viewSettings() {
-            if (!isLoggedIn) {
-                document.getElementById('dataView').innerHTML =
-                    `<span style="color:#fbbf24;">⏳ Login required to view settings.</span>`;
-                log('View settings skipped – not logged in.', 'warn');
-                return;
-            }
-            const container = document.getElementById('dataView');
-            container.innerHTML = '<span class="empty">⏳ Loading settings...</span>';
-            log('Loading settings...', 'info');
-            try {
-                const { data, error } = await sbClient.from('settings').select('*').limit(50);
-                if (error) { container.innerHTML = `<span style="color:#f87171;">❌ ${error.message}</span>`;
-                    log('Error loading settings: ' + error.message, 'error'); return; }
-                if (!data || data.length === 0) { container.innerHTML = '<span class="empty">No settings found.</span>';
-                    log('No settings found.', 'info'); return; }
-                let html =
-                    `<div class="table-wrap"><table><thead><tr><th>Key</th><th>Value</th><th>Updated</th></tr></thead><tbody>`;
-                data.forEach(s => {
-                    const val = typeof s.value === 'object' ? JSON.stringify(s.value, null, 2) : s.value;
-                    html += `<tr><td><strong>${s.key}</strong></td><td style="font-size:12px;max-width:200px;word-break:break-all;">${val}</td><td style="font-size:11px;">${s.updated_at ? new Date(s.updated_at).toLocaleString() : '-'}</td></tr>`;
-                });
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-                log(`✅ Loaded ${data.length} settings.`, 'success');
-            } catch (err) { container.innerHTML = `<span style="color:#f87171;">❌ ${err.message}</span>`;
-                log('View settings error: ' + err.message, 'error'); }
+        async function logout() {
+            await supabase.auth.signOut();
+            updateUI(null);
+            showMessage('👋 Logged out successfully.', 'error');
         }
 
         // ============================================================
-        // RUN ALL TESTS
-        // ============================================================
-        async function runAllTests() {
-            if (!isLoggedIn) {
-                log('⏳ Please login first to run tests.', 'warn');
-                document.getElementById('loginPrompt').style.display = 'block';
-                return;
-            }
-            document.getElementById('loginPrompt').style.display = 'none';
-            log('=== Running all tests ===', 'info');
-            setResult('connResult', '⏳', 'wait');
-            setResult('usersResult', '⏳', 'wait');
-            setResult('tasksResult', '⏳', 'wait');
-            setResult('insertResult', '⏳', 'wait');
-            await testConnection();
-            await new Promise(r => setTimeout(r, 300));
-            await testUsersTable();
-            await new Promise(r => setTimeout(r, 300));
-            await testTasksTable();
-            await new Promise(r => setTimeout(r, 300));
-            await testInsertUser();
-            log('=== All tests complete ===', 'success');
-        }
-
-        // ============================================================
-        // UI UPDATE
-        // ============================================================
-        function updateUI() {
-            const userInfo = document.getElementById('userInfo');
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            if (currentUser) {
-                const name = currentUser.user_metadata?.full_name || currentUser.email || 'User';
-                const initial = name.charAt(0).toUpperCase();
-                userInfo.innerHTML =
-                    `<div class="avatar">${initial}</div><div><div style="font-weight:600;">${name}</div><div style="font-size:12px;color:#94a3b8;">${currentUser.email}</div><div style="font-size:11px;color:#64748b;">ID: ${currentUser.id.substring(0,16)}...</div></div>`;
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-block';
-                isLoggedIn = true;
-                enableButtons(true);
-                document.getElementById('loginPrompt').style.display = 'none';
-                log(`👤 Logged in as ${name}`, 'success');
-            } else {
-                userInfo.innerHTML = `<span style="color:#94a3b8;">Not logged in</span>`;
-                loginBtn.style.display = 'inline-block';
-                logoutBtn.style.display = 'none';
-                isLoggedIn = false;
-                enableButtons(false);
-                document.getElementById('loginPrompt').style.display = 'block';
-            }
-        }
-
-        // ============================================================
-        // SESSION CHECK
+        // CHECK SESSION ON PAGE LOAD
         // ============================================================
         async function checkSession() {
             try {
-                const { data: { session }, error } = await sbClient.auth.getSession();
-                if (error) { log('Session check error: ' + error.message, 'error'); return; }
-                if (session) {
-                    currentUser = session.user;
-                    log(`✅ Session found: ${currentUser.email}`, 'success');
-                    updateUI();
-                    setStatus('Authenticated', 'success');
-                    document.getElementById('connDetails').textContent = 'Logged in as ' + currentUser.email;
-                    // Auto-run connection test and basic table checks
-                    await testConnection();
-                    await testUsersTable();
-                    await testTasksTable();
-                } else {
-                    log('No session found. Please login.', 'info');
-                    setStatus('Not logged in', 'pending');
-                    updateUI();
-                    document.getElementById('connDetails').textContent = '-';
-                    // Show login prompt
-                    document.getElementById('loginPrompt').style.display = 'block';
-                    setResult('connResult', '⏳ Login required', 'warn');
-                    setResult('usersResult', '⏳ Login required', 'warn');
-                    setResult('tasksResult', '⏳ Login required', 'warn');
-                    setResult('insertResult', '⏳ Login required', 'warn');
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) {
+                    showMessage('Session error: ' + error.message, 'error');
+                    updateUI(null);
+                    return;
                 }
-            } catch (err) { log('Session check exception: ' + err.message, 'error'); }
+                if (session) {
+                    updateUI(session.user);
+                } else {
+                    updateUI(null);
+                }
+            } catch (err) {
+                showMessage('Check error: ' + err.message, 'error');
+                updateUI(null);
+            }
         }
 
         // ============================================================
-        // AUTH STATE CHANGE
+        // AUTH STATE CHANGE LISTENER (For callback handling)
         // ============================================================
-        sbClient.auth.onAuthStateChange((event, session) => {
-            log(`Auth event: ${event}`, 'info');
-            if (event === 'SIGNED_IN') {
-                currentUser = session.user;
-                updateUI();
-                setStatus('Authenticated', 'success');
-                document.getElementById('connDetails').textContent = 'Logged in as ' + currentUser.email;
-                log(`✅ Signed in: ${currentUser.email}`, 'success');
-                setTimeout(() => {
-                    testConnection();
-                    testUsersTable();
-                    testTasksTable();
-                }, 500);
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth Event:', event);
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                if (session) {
+                    updateUI(session.user);
+                    showMessage('🎉 Successfully logged in!', 'success');
+                }
             } else if (event === 'SIGNED_OUT') {
-                currentUser = null;
-                isLoggedIn = false;
-                updateUI();
-                setStatus('Not logged in', 'pending');
-                document.getElementById('connDetails').textContent = '-';
-                log('Signed out.', 'info');
-                enableButtons(false);
-                document.getElementById('loginPrompt').style.display = 'block';
-                setResult('connResult', '⏳ Login required', 'warn');
-                setResult('usersResult', '⏳ Login required', 'warn');
-                setResult('tasksResult', '⏳ Login required', 'warn');
-                setResult('insertResult', '⏳ Login required', 'warn');
+                updateUI(null);
+                showMessage('👋 Logged out.', 'error');
             }
         });
 
         // ============================================================
-        // ATTACH EVENT LISTENERS
+        // ATTACH EVENTS
         // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            log('🔄 Test panel initializing...', 'info');
-
-            document.getElementById('runAllBtn').addEventListener('click', runAllTests);
-            document.getElementById('clearLogBtn').addEventListener('click', clearLogs);
-            document.getElementById('testConnBtn').addEventListener('click', testConnection);
-            document.getElementById('testUsersBtn').addEventListener('click', testUsersTable);
-            document.getElementById('testTasksBtn').addEventListener('click', testTasksTable);
-            document.getElementById('testInsertBtn').addEventListener('click', testInsertUser);
-            document.getElementById('loginBtn').addEventListener('click', loginWithGoogle);
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            document.getElementById('viewUsersBtn').addEventListener('click', viewUsers);
-            document.getElementById('viewTasksBtn').addEventListener('click', viewTasks);
-            document.getElementById('viewSubmissionsBtn').addEventListener('click', viewSubmissions);
-            document.getElementById('viewSettingsBtn').addEventListener('click', viewSettings);
-
+        document.addEventListener('DOMContentLoaded', () => {
+            loginBtn.addEventListener('click', loginWithGoogle);
+            logoutBtn.addEventListener('click', logout);
             checkSession();
         });
     </script>
