@@ -46,6 +46,7 @@
             min-height: 100vh;
             position: relative;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            padding-bottom: 80px;
         }
         .screen {
             display: none;
@@ -275,75 +276,6 @@
             transform: translateX(-50%) translateY(-100px);
             opacity: 0;
             transition: transform 0.5s ease, opacity 0.5s ease;
-        }
-        .new-mail-banner .banner-icon {
-            font-size: 30px;
-            animation: ringBell 1.5s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-        @keyframes ringBell {
-            0%,
-            100% {
-                transform: rotate(0);
-            }
-            10% {
-                transform: rotate(20deg);
-            }
-            20% {
-                transform: rotate(-20deg);
-            }
-            30% {
-                transform: rotate(15deg);
-            }
-            40% {
-                transform: rotate(-15deg);
-            }
-            50% {
-                transform: rotate(10deg);
-            }
-            60% {
-                transform: rotate(-10deg);
-            }
-            70% {
-                transform: rotate(5deg);
-            }
-            80% {
-                transform: rotate(-5deg);
-            }
-            90% {
-                transform: rotate(2deg);
-            }
-        }
-        .new-mail-banner .banner-text {
-            flex: 1;
-        }
-        .new-mail-banner .banner-text strong {
-            font-size: 18px;
-        }
-        .new-mail-banner .banner-text small {
-            font-weight: 400;
-            opacity: 0.85;
-            font-size: 13px;
-            display: block;
-        }
-        .new-mail-banner .banner-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: 0.3s;
-        }
-        .new-mail-banner .banner-close:hover {
-            background: rgba(255, 255, 255, 0.35);
-            transform: rotate(90deg);
         }
 
         /* ===== BOTTOM NAV ===== */
@@ -654,7 +586,13 @@
             color: #1b5e20;
         }
 
-        /* ===== VIEW ALL BUTTON ===== */
+        /* ===== VIEW ALL BUTTON (نیچے) ===== */
+        .view-all-wrapper {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
         .view-all-btn-enhanced {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
@@ -669,7 +607,6 @@
             gap: 10px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 16px rgba(30, 60, 114, 0.25);
-            margin-top: 8px;
         }
         .view-all-btn-enhanced:hover {
             transform: translateY(-2px) scale(1.02);
@@ -679,7 +616,7 @@
             font-size: 18px;
         }
 
-        /* ===== OTHER STYLES (unchanged) ===== */
+        /* ===== OTHER STYLES ===== */
         .task-item {
             background: #f8f9fa;
             padding: 15px;
@@ -870,51 +807,6 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .fullscreen-history .history-body .history-card .h-left {
-            flex: 1;
-        }
-        .fullscreen-history .history-body .history-card .h-left .h-title {
-            font-weight: 600;
-            font-size: 14px;
-            color: #1e3c72;
-        }
-        .fullscreen-history .history-body .history-card .h-left .h-meta {
-            font-size: 12px;
-            color: #888;
-            margin-top: 2px;
-        }
-        .fullscreen-history .history-body .history-card .h-right {
-            text-align: right;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-amount {
-            font-weight: 700;
-            font-size: 16px;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-amount.positive {
-            color: #28a745;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-amount.negative {
-            color: #dc3545;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-status {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-top: 2px;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-status.pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-status.approved {
-            background: #d4edda;
-            color: #155724;
-        }
-        .fullscreen-history .history-body .history-card .h-right .h-status.rejected {
-            background: #f8d7da;
-            color: #721c24;
-        }
 
         .task-detail-modal,
         .my-task-details-screen {
@@ -1084,11 +976,6 @@
         }
         .referral-share-simple .share-link-box .copy-btn-sm:hover {
             background: #2a5298;
-        }
-        .referral-share-simple .share-arrow {
-            font-size: 24px;
-            color: #1e3c72;
-            margin: 4px 0;
         }
 
         .daily-grid {
@@ -1518,40 +1405,6 @@
             color: white;
         }
 
-        .task-slots-badge {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            background: #e8f0fe;
-            color: #1e3c72;
-        }
-        .task-slots-badge.few {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .task-slots-badge.none {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .view-all-btn {
-            background: none;
-            border: none;
-            color: #1e3c72;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 8px 0;
-            transition: 0.3s;
-            display: inline-block;
-        }
-        .view-all-btn:hover {
-            color: #2a5298;
-            text-decoration: underline;
-        }
-
         .view-details-screen {
             position: fixed;
             top: 0;
@@ -1611,28 +1464,6 @@
         }
         #rejectReasonModal .modal-content {
             max-width: 380px;
-        }
-        #rejectReasonModal .reason-preview {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 14px;
-            color: #333;
-            border-left: 4px solid #1e3c72;
-        }
-
-        .reject-reason-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin: 6px 0;
-            font-size: 13px;
-            color: #721c24;
-        }
-        .reject-reason-box strong {
-            color: #dc3545;
         }
 
         .mail-detail-screen {
@@ -1733,23 +1564,6 @@
             background: #e8f0fe;
         }
 
-        .proof-type-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-left: 6px;
-        }
-        .proof-type-badge.image {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-        .proof-type-badge.text {
-            background: #e8f5e9;
-            color: #1b5e20;
-        }
-
         .upload-area {
             border: 2.5px dashed #1e3c72;
             border-radius: 16px;
@@ -1768,12 +1582,6 @@
             border-color: #2a5298;
             transform: scale(1.01);
             box-shadow: 0 4px 20px rgba(30, 60, 114, 0.08);
-        }
-        .upload-area.dragover {
-            background: #e0eaff;
-            border-color: #1e3c72;
-            border-style: solid;
-            transform: scale(1.02);
         }
         .upload-area i {
             font-size: 36px;
@@ -1953,15 +1761,6 @@
         .task-pending-badge {
             background: #ffc107;
             color: #333;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        .task-full-badge {
-            background: #dc3545;
-            color: white;
             padding: 2px 10px;
             border-radius: 12px;
             font-size: 10px;
@@ -2292,19 +2091,13 @@
                 width: 100%;
                 text-align: center;
             }
-            .history-table {
-                font-size: 11px;
-            }
-            .history-table th,
-            .history-table td {
-                padding: 6px 4px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="user-container" id="userContainer">
 
+        <!-- ===== MAIL BANNER ===== -->
         <div id="newMailBanner" class="new-mail-banner" onclick="openMailBox()">
             <span class="banner-icon">📬</span>
             <div class="banner-text">
@@ -2314,6 +2107,7 @@
             <button class="banner-close" onclick="event.stopPropagation(); hideMailBanner()">✕</button>
         </div>
 
+        <!-- ===== LOADING SCREEN ===== -->
         <div id="loadingScreen">
             <div class="logo-icon"><i class="fas fa-tasks"></i></div>
             <div class="app-title">Task Expert</div>
@@ -2331,6 +2125,7 @@
             <div class="loader-footer">v1.0</div>
         </div>
 
+        <!-- ===== UPLOAD OVERLAY ===== -->
         <div id="uploadOverlay" class="upload-overlay">
             <div class="spinner"></div>
             <div class="progress-text" id="uploadProgressText">Processing...</div>
@@ -2340,11 +2135,13 @@
             </div>
         </div>
 
+        <!-- ===== IMAGE MODAL ===== -->
         <div id="imageModal" class="image-modal" onclick="closeImageModal()">
             <button class="close-btn" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
             <img id="modalImage" src="" alt="Preview">
         </div>
 
+        <!-- ===== MAIL DETAIL ===== -->
         <div id="mailDetailScreen" class="mail-detail-screen">
             <div class="mail-detail-header">
                 <i class="fas fa-arrow-left" onclick="closeMailDetail()"></i>
@@ -2353,6 +2150,7 @@
             <div class="mail-detail-content" id="mailDetailContent"></div>
         </div>
 
+        <!-- ===== REJECT REASON MODAL ===== -->
         <div id="rejectReasonModal" class="modal">
             <div class="modal-content">
                 <h3>❌ Reject Submission</h3>
@@ -2367,6 +2165,7 @@
             </div>
         </div>
 
+        <!-- ===== LOGIN SCREEN ===== -->
         <div class="screen" id="googleSignInScreen">
             <div class="header"><h1>✅ Task Expert</h1><p>Earn Coins • Complete Tasks</p></div>
             <div class="card" style="margin-top:30px;text-align:center;">
@@ -2400,6 +2199,7 @@
             </div>
         </div>
 
+        <!-- ===== SUSPENDED SCREEN ===== -->
         <div class="screen" id="suspendedScreen">
             <div class="suspended-screen">
                 <div class="icon-box"><i class="fas fa-ban" style="color:#ff4757;"></i></div>
@@ -2410,6 +2210,7 @@
             </div>
         </div>
 
+        <!-- ===== MAINTENANCE SCREEN ===== -->
         <div class="screen" id="maintenanceScreen">
             <div class="maintenance-screen">
                 <div class="icon-box"><i class="fas fa-tools" style="color:#ffc107;"></i></div>
@@ -2419,6 +2220,7 @@
             </div>
         </div>
 
+        <!-- ===== UPDATE SCREEN ===== -->
         <div class="screen" id="updateScreen">
             <div class="update-screen">
                 <div class="icon-box"><i class="fas fa-download" style="color:#ffd43b;"></i></div>
@@ -2430,8 +2232,10 @@
             </div>
         </div>
 
+        <!-- ===== MAIN SCREEN ===== -->
         <div class="screen" id="mainScreen">
-            <div class="header"><h1>✅ Task Expert</h1>
+            <div class="header">
+                <h1>✅ Task Expert</h1>
                 <div class="user-info">
                     <div><i class="fas fa-user"></i> @<span id="displayUsername">user</span></div>
                     <div class="mail-box-icon" onclick="openMailBox()">
@@ -2440,17 +2244,32 @@
                     </div>
                 </div>
             </div>
-            <div class="card wallet-card"><i class="fas fa-coins" style="font-size:30px"></i>
+
+            <div class="card wallet-card">
+                <i class="fas fa-coins" style="font-size:30px"></i>
                 <div class="coin-amount"><span id="walletCoins">0</span> Coins</div>
                 <p>Today: +<span id="todayEarnings">0</span> | Total: <span id="totalEarnings">0</span></p>
             </div>
-            <div style="display:flex;gap:10px;margin-bottom:20px"><button class="btn" onclick="showDepositModal()">💳 Deposit</button><button class="btn btn-danger" onclick="showWithdrawModal()">💸 Withdraw</button></div>
+
+            <div style="display:flex;gap:10px;margin-bottom:20px">
+                <button class="btn" onclick="showDepositModal()">💳 Deposit</button>
+                <button class="btn btn-danger" onclick="showWithdrawModal()">💸 Withdraw</button>
+            </div>
+
             <div id="homeContent">
-                <div class="card"><h3>📢 Official Tasks</h3><div id="officialTasksList"></div></div>
-                <div class="card"><h3>➕ Create Task</h3><button class="btn" onclick="showCreateTaskModal()">Create Task</button><button class="btn btn-warning btn-sm" onclick="openMyPostedTasks()">My Posted Tasks</button><button class="btn btn-sm" style="background:#764ba2" onclick="openMyTaskDetails()">My Task Details</button>
+                <div class="card">
+                    <h3>📢 Official Tasks</h3>
+                    <div id="officialTasksList"></div>
+                </div>
+                <div class="card">
+                    <h3>➕ Create Task</h3>
+                    <button class="btn" onclick="showCreateTaskModal()">Create Task</button>
+                    <button class="btn btn-warning btn-sm" onclick="openMyPostedTasks()">My Posted Tasks</button>
+                    <button class="btn btn-sm" style="background:#764ba2" onclick="openMyTaskDetails()">My Task Details</button>
                     <div class="commission-info">20% commission deducted</div>
                 </div>
             </div>
+
             <div id="tasksContent" style="display:none">
                 <div class="card">
                     <h3>🔥 Available Tasks <button class="btn btn-sm refresh-btn" onclick="manualRefreshTasks()"><i class="fas fa-sync-alt"></i> Refresh</button></h3>
@@ -2466,6 +2285,7 @@
                     <div id="allTasksList"></div>
                 </div>
             </div>
+
             <div id="earnContent" style="display:none">
                 <div class="card"><h3>⏳ Pending Earnings</h3><div id="pendingEarnings">0</div></div>
                 <div class="card"><h3>✅ Approved Earnings</h3><div id="approvedEarnings">0</div></div>
@@ -2473,6 +2293,7 @@
                     <div id="submissionsContainer"></div>
                 </div>
             </div>
+
             <div id="inviteContent" style="display:none">
                 <div class="card"><h3>👥 Invite Friends</h3>
                     <div class="referral-share-simple">
@@ -2483,9 +2304,7 @@
                             <button class="copy-btn-sm" onclick="copyFullShareText()"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>
-                    <div style="display:none;">
-                        <span id="referralCode">910372</span>
-                    </div>
+                    <div style="display:none;"><span id="referralCode">910372</span></div>
                     <div style="text-align:center;margin:10px">1 Refer = <span id="refBonusAmount">100</span> Coins</div>
                     <div class="referral-stats">
                         <div><div id="totalReferrals">0</div><div>Total Referrals</div></div>
@@ -2494,8 +2313,14 @@
                     <div id="referralsContainer"></div>
                 </div>
             </div>
+
             <div id="profileContent" style="display:none">
-                <div class="card"><h3>👤 My Profile</h3><p>Username: @<span id="profileUsername"></span></p><p>Email: <span id="profileEmail"></span></p><p>Coins: <span id="profileCoins"></span></p><button class="btn btn-danger" onclick="logout()">Logout</button></div>
+                <div class="card"><h3>👤 My Profile</h3>
+                    <p>Username: @<span id="profileUsername"></span></p>
+                    <p>Email: <span id="profileEmail"></span></p>
+                    <p>Coins: <span id="profileCoins"></span></p>
+                    <button class="btn btn-danger" onclick="logout()">Logout</button>
+                </div>
                 <div class="card">
                     <h3>📅 Daily Reward</h3>
                     <div id="dailyRewardGrid"></div>
@@ -2506,6 +2331,8 @@
                     <p style="color:#999;font-size:12px;">Admin panel coming soon.</p>
                 </div>
             </div>
+
+            <!-- ===== BOTTOM NAV ===== -->
             <div class="bottom-nav">
                 <div class="nav-item active" onclick="navigateTo('home',event)"><i class="fas fa-home"></i><span>Home</span></div>
                 <div class="nav-item" onclick="navigateTo('tasks',event)"><i class="fas fa-tasks"></i><span>Tasks</span></div>
@@ -2516,6 +2343,7 @@
         </div>
     </div>
 
+    <!-- ===== FULLSCREEN TASKS ===== -->
     <div id="fullscreenTasks" class="fullscreen-tasks">
         <div class="tasks-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenTasks()"></i>
@@ -2535,6 +2363,7 @@
         </div>
     </div>
 
+    <!-- ===== FULLSCREEN DEPOSIT HISTORY ===== -->
     <div id="fullscreenDepositHistory" class="fullscreen-history">
         <div class="history-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenDepositHistory()"></i>
@@ -2543,6 +2372,7 @@
         <div class="history-body" id="fullscreenDepositHistoryBody"></div>
     </div>
 
+    <!-- ===== FULLSCREEN WITHDRAW HISTORY ===== -->
     <div id="fullscreenWithdrawHistory" class="fullscreen-history">
         <div class="history-header">
             <i class="fas fa-arrow-left" onclick="closeFullscreenWithdrawHistory()"></i>
@@ -2551,6 +2381,7 @@
         <div class="history-body" id="fullscreenWithdrawHistoryBody"></div>
     </div>
 
+    <!-- ===== VIEW DETAILS SCREEN ===== -->
     <div id="viewDetailsScreen" class="view-details-screen">
         <div class="task-detail-header">
             <i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeViewDetails()"></i>
@@ -2560,6 +2391,7 @@
         <div class="task-detail-body" id="viewDetailsBody"></div>
     </div>
 
+    <!-- ===== DEPOSIT MODAL ===== -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openFullscreenDepositHistory()"><i class="fas fa-history"></i></div>
@@ -2592,6 +2424,7 @@
         </div>
     </div>
 
+    <!-- ===== WITHDRAW MODAL ===== -->
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openFullscreenWithdrawHistory()"><i class="fas fa-history"></i></div>
@@ -2617,6 +2450,7 @@
         </div>
     </div>
 
+    <!-- ===== CREATE TASK MODAL ===== -->
     <div id="createTaskModal" class="modal">
         <div class="modal-content">
             <div class="history-icon" onclick="openMyPostedTasks()"><i class="fas fa-history"></i></div>
@@ -2666,6 +2500,7 @@
         </div>
     </div>
 
+    <!-- ===== ALL SUBMISSIONS MODAL ===== -->
     <div id="allSubmissionsModal" class="modal">
         <div class="modal-content">
             <h3>📋 All Submissions</h3>
@@ -2674,6 +2509,7 @@
         </div>
     </div>
 
+    <!-- ===== ALL REFERRALS MODAL ===== -->
     <div id="allReferralsModal" class="modal">
         <div class="modal-content">
             <h3>👥 All Referrals</h3>
@@ -2682,19 +2518,23 @@
         </div>
     </div>
 
+    <!-- ===== MAIL MODAL ===== -->
     <div id="mailModal" class="modal">
         <div class="modal-content"><h3>📬 Mail Box</h3><div id="mailList"></div><button class="btn btn-danger" onclick="closeModal('mailModal')" style="width:100%;">Close</button></div>
     </div>
 
+    <!-- ===== MY POSTED TASKS MODAL ===== -->
     <div id="myPostedTasksModal" class="modal">
         <div class="modal-content" style="max-width:400px"><h3>📋 My Posted Tasks</h3><div id="myPostedTasksList"></div><button class="btn btn-danger" onclick="closeModal('myPostedTasksModal')" style="width:100%;">Close</button></div>
     </div>
 
+    <!-- ===== MY TASK DETAILS SCREEN ===== -->
     <div id="myTaskDetailsScreen" class="my-task-details-screen">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeMyTaskDetails()"></i><h2>📋 My Task Details</h2></div>
         <div class="task-detail-body" id="myTaskDetailBody" style="padding:16px;"></div>
     </div>
 
+    <!-- ===== TASK DETAIL MODAL ===== -->
     <div id="taskDetailModal" class="task-detail-modal">
         <div class="task-detail-header"><i class="fas fa-arrow-left" style="font-size:24px;cursor:pointer" onclick="closeTaskDetail()"></i><h2 id="taskDetailTitle">Task</h2><p id="taskDetailReward"></p></div>
         <div class="task-detail-body" style="padding:16px;">
@@ -2722,14 +2562,18 @@
         </div>
     </div>
 
+    <!-- ===== SUBMISSION DETAIL MODAL ===== -->
     <div id="submissionDetailModal" class="modal">
         <div class="modal-content"><h3>📄 Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')" style="width:100%;">Close</button></div>
     </div>
 
+    <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
 
     <script>
-        // ===== FIREBASE CONFIG =====
+        // ============================================================
+        // FIREBASE CONFIG
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAFlpqi5e3EI1loNu3QWFLOMBjfYyyAusk",
             authDomain: "taskexpert7.firebaseapp.com",
@@ -2786,12 +2630,6 @@
             download: { minMembers: 10, minCoins: 5 },
             other: { minMembers: 10, minCoins: 5 }
         };
-
-        // ============================================================
-        // CONNECTION
-        // ============================================================
-        const connectedRef = db.ref('.info/connected');
-        connectedRef.on('value', (snap) => { isOnline = snap.val() === true; });
 
         // ============================================================
         // HELPERS
@@ -3453,7 +3291,7 @@
         }
 
         // ============================================================
-        // TASKS - LOAD ALL (UPDATED WITH STATUS FILTER)
+        // TASKS - LOAD ALL (UPDATED)
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -3505,7 +3343,9 @@
                             creatorId: 'admin',
                             timestamp: t.createdAt || 0,
                             proofType: 'image',
-                            status: t.status || 'active'
+                            status: t.status || 'active',
+                            completed: counts.approved,
+                            pending: counts.pending
                         });
                     }
                     cachedOfficialTasks.sort((a, b) => b.timestamp - a.timestamp);
@@ -3523,27 +3363,26 @@
                             const filledSlots = counts.approved + counts.pending + counts.pendingReject;
                             const required = t.requiredUsers || 0;
                             const remaining = required - filledSlots;
-                            if (remaining > 0) {
-                                cachedUserTasks.push({
-                                    id,
-                                    type: 'user',
-                                    title: t.title,
-                                    desc: t.description || '',
-                                    steps: t.steps || '',
-                                    link: t.link || '#',
-                                    reward: t.rewardPerUser,
-                                    left: remaining,
-                                    platform: t.type || 'other',
-                                    creatorId: t.creatorId,
-                                    timestamp: t.publishedAt || t.timestamp || 0,
-                                    requiredUsers: required,
-                                    completed: counts.approved,
-                                    pending: counts.pending,
-                                    pendingReject: counts.pendingReject,
-                                    proofType: t.proofType || 'image',
-                                    status: t.status || 'active'
-                                });
-                            }
+                            cachedUserTasks.push({
+                                id,
+                                type: 'user',
+                                title: t.title,
+                                desc: t.description || '',
+                                steps: t.steps || '',
+                                link: t.link || '#',
+                                reward: t.rewardPerUser,
+                                left: remaining > 0 ? remaining : 0,
+                                platform: t.type || 'other',
+                                creatorId: t.creatorId,
+                                timestamp: t.publishedAt || t.timestamp || 0,
+                                requiredUsers: required,
+                                completed: counts.approved,
+                                pending: counts.pending,
+                                pendingReject: counts.pendingReject,
+                                proofType: t.proofType || 'image',
+                                status: remaining > 0 ? 'active' : (counts.approved >= required ? 'completed' :
+                                    'hidden')
+                            });
                         }
                     }
                     cachedUserTasks.sort((a, b) => b.timestamp - a.timestamp);
@@ -3595,7 +3434,8 @@
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         task.left = Math.max(0, (task.maxLimit || 0) - filled);
-                        // Update status based on left and completed
+                        task.completed = counts.approved;
+                        task.pending = counts.pending;
                         if (task.left === 0 && task.completed >= task.maxLimit) {
                             task.status = 'completed';
                         } else if (task.left === 0) {
@@ -3613,7 +3453,8 @@
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
                         const filled = counts.approved + counts.pending + counts.pendingReject;
                         task.left = Math.max(0, (task.requiredUsers || 0) - filled);
-                        // Update status
+                        task.completed = counts.approved;
+                        task.pending = counts.pending;
                         if (task.left === 0 && counts.approved >= task.requiredUsers) {
                             task.status = 'completed';
                         } else if (task.left === 0) {
@@ -3632,7 +3473,6 @@
             });
             realtimeListeners.push(() => subRef.off('value', listener));
 
-            // User coins updates
             if (currentUser) {
                 const coinRef = db.ref(`users/${currentUser.uid}/coins`);
                 const coinListener = coinRef.on('value', snap => {
@@ -3669,12 +3509,11 @@
         }
 
         // ============================================================
-        // TASK DISPLAY FUNCTIONS (UPDATED WITH STATUS FILTER)
+        // TASK DISPLAY FUNCTIONS
         // ============================================================
         function updateTaskCounts() {
             const counts = { all: 0, youtube: 0, tiktok: 0, instagram: 0, whatsapp: 0, download: 0, other: 0 };
             for (let t of cachedUserTasks) {
-                // Only count tasks that are active and available
                 if (t.status !== 'active') continue;
                 if (userSubmissionsMap[t.id]) continue;
                 if (t.creatorId === currentUser?.uid) continue;
@@ -3693,9 +3532,8 @@
             document.getElementById('countOther').innerText = counts.other;
         }
 
-        function getFilteredUserTasks(platform, limit = 5) {
+        function getFilteredUserTasks(platform, limit = 0) {
             let filtered = cachedUserTasks.filter(t => {
-                // status must be active
                 if (t.status !== 'active') return false;
                 if (userSubmissionsMap[t.id]) return false;
                 if (t.creatorId === currentUser?.uid) return false;
@@ -3710,7 +3548,7 @@
         }
 
         // ============================================================
-        // ENHANCED TASK CLICK HANDLER (FIXED)
+        // TASK CLICK HANDLER (FIXED - first click works)
         // ============================================================
         window.handleTaskClick = function(element) {
             if (element._clicking) return;
@@ -3726,18 +3564,18 @@
             const creator = element.dataset.taskCreator;
             const proofType = element.dataset.taskProoftype || 'image';
 
-            // Open detail immediately
+            // Open detail immediately - no delay
             showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
 
             setTimeout(() => { element._clicking = false; }, 300);
         };
 
         // ============================================================
-        // DISPLAY TASKS (with enhanced UI)
+        // DISPLAY TASKS (with View All at bottom)
         // ============================================================
         function displayFilteredTasks() {
             const container = document.getElementById('allTasksList');
-            let tasks = getFilteredUserTasks(currentPlatformFilter, 0); // get all filtered
+            const tasks = getFilteredUserTasks(currentPlatformFilter, 0);
             const totalAvailable = tasks.length;
             const showAll = document.getElementById('fullscreenTasks').style.display === 'block';
             const displayTasks = showAll ? tasks : tasks.slice(0, 5);
@@ -3802,10 +3640,11 @@
                 `;
             }
 
+            // View All button at the bottom (as shown in image)
             let viewAllHtml = '';
             if (!showAll && totalAvailable > 5) {
                 viewAllHtml = `
-                    <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid #eee;">
+                    <div class="view-all-wrapper">
                         <button class="view-all-btn-enhanced" onclick="openFullscreenTasks()">
                             <i class="fas fa-th-list"></i> View All (${totalAvailable} tasks)
                             <i class="fas fa-chevron-right"></i>
@@ -3818,7 +3657,6 @@
 
         function displayOfficialTasks() {
             const container = document.getElementById('officialTasksList');
-            // Only show active official tasks with slots left and not submitted by user
             let available = cachedOfficialTasks.filter(t => {
                 if (t.status !== 'active') return false;
                 if (userSubmissionsMap[t.id]) return false;
@@ -3826,7 +3664,6 @@
                 return true;
             });
 
-            // Show submitted tasks (disabled)
             const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
 
             let officialHtml = '';
@@ -3839,16 +3676,17 @@
                 `;
             }
 
-            // Show available official tasks (latest 5)
             const sortedAvailable = [...available].sort((a, b) => b.timestamp - a.timestamp);
             const latestAvailable = sortedAvailable.slice(0, 5);
             const totalAvailable = sortedAvailable.length;
+
             let viewAllHtml = '';
             if (totalAvailable > 5) {
                 viewAllHtml = `
-                    <div style="text-align:center;margin-top:8px;">
+                    <div class="view-all-wrapper">
                         <button class="view-all-btn-enhanced" onclick="openFullscreenTasks()">
                             <i class="fas fa-th-list"></i> View All Official (${totalAvailable})
+                            <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 `;
@@ -3859,6 +3697,9 @@
                 let slotClass = 'task-slots';
                 if (slotsLeft <= 0) slotClass += ' none';
                 else if (slotsLeft <= 3) slotClass += ' few';
+                const totalSlots = t.maxLimit || 100;
+                const progressPct = Math.round(((totalSlots - slotsLeft) / totalSlots) * 100);
+
                 officialHtml += `
                     <div class="task-item-enhanced" 
                          data-task-id="${t.id}" 
@@ -3883,7 +3724,7 @@
                                     <span class="${slotClass}">🎯 ${slotsLeft} left</span>
                                 </div>
                                 <div class="task-progress-bar">
-                                    <div class="task-progress-fill" style="width:${Math.round(((t.maxLimit - slotsLeft)/t.maxLimit)*100)}%;"></div>
+                                    <div class="task-progress-fill" style="width:${progressPct}%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -3946,7 +3787,6 @@
             const list = document.getElementById('fullscreenTasksList');
             let tasks = [];
 
-            // User tasks (active, not submitted, not own, left > 0)
             for (let t of cachedUserTasks) {
                 if (t.status !== 'active') continue;
                 if (userSubmissionsMap[t.id]) continue;
@@ -3955,7 +3795,6 @@
                 tasks.push({ ...t, isOfficial: false });
             }
 
-            // Official tasks (active, not submitted, left > 0)
             for (let t of cachedOfficialTasks) {
                 if (t.status !== 'active') continue;
                 if (userSubmissionsMap[t.id]) continue;
@@ -4227,11 +4066,12 @@
                         images: [],
                         status: 'pending',
                         timestamp: Date.now(),
-                        reward: currentTask.reward
+                        reward: currentTask.reward,
+                        adminDeleted: false
                     });
 
                     userSubmissionsMap[currentTask.id] = true;
-                    showToast(`✅ Text proof submitted!`);
+                    showToast("✅ Task Submitted Successfully");
                     closeTaskDetail();
                     tasksLoaded = false;
                     await loadAllTasks();
@@ -4300,11 +4140,12 @@
                     status: 'pending',
                     timestamp: Date.now(),
                     reward: currentTask.reward,
-                    proofLink: uploadedUrl
+                    proofLink: uploadedUrl,
+                    adminDeleted: false
                 });
 
                 userSubmissionsMap[currentTask.id] = true;
-                showToast(`✅ Image proof submitted!`);
+                showToast("✅ Task Submitted Successfully");
                 closeTaskDetail();
                 tasksLoaded = false;
                 await loadAllTasks();
@@ -4710,16 +4551,6 @@
         function closeViewDetails() { document.getElementById('viewDetailsScreen').style.display = 'none';
             currentViewTaskId = null; }
 
-        async function deleteMyCompletedTask(taskId) {
-            if (confirm('Delete this completed task?')) {
-                await db.ref(`tasks/user/${taskId}`).remove();
-                await db.ref(`task_requests/${taskId}`).remove();
-                showToast('Task deleted!');
-                openMyTaskDetails();
-                loadAllTasks();
-            }
-        }
-
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
 
         // ============================================================
@@ -4791,9 +4622,6 @@
             const creatorId = currentUser.uid,
                 creatorName = currentUserData.username;
             try {
-                // Use transaction to return slot
-                const taskRef = db.ref(`tasks/official/${taskId}`); // assuming official tasks, but handle user tasks too
-                // Check if task exists in official
                 let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
                 let isOfficial = taskSnap.exists();
                 const ref = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
@@ -4840,8 +4668,6 @@
         async function approveSubmissionByCreator(submissionId, taskId, workerId, reward) {
             if (!confirm('Approve this submission?')) return;
             try {
-                // Use transaction to update task completion but not left
-                const taskRef = db.ref(`tasks/official/${taskId}`);
                 let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
                 let isOfficial = taskSnap.exists();
                 const ref = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
@@ -5556,7 +5382,9 @@
             loadBankDetails();
         });
 
-        // Expose functions
+        // ============================================================
+        // EXPOSE FUNCTIONS
+        // ============================================================
         window.filterTasksByPlatform = filterTasksByPlatform;
         window.navigateTo = navigateTo;
         window.showTaskDetail = window.showTaskDetail;
@@ -5568,7 +5396,6 @@
         window.closeViewDetails = closeViewDetails;
         window.approveSubmissionByCreator = approveSubmissionByCreator;
         window.openRejectModal = openRejectModal;
-        window.deleteMyCompletedTask = deleteMyCompletedTask;
         window.toggleProofTypeFields = toggleProofTypeFields;
         window.openMailBox = openMailBox;
         window.openMailDetail = openMailDetail;
@@ -5603,7 +5430,6 @@
         window.submitProof = submitProof;
         window.openImageModal = openImageModal;
         window.closeImageModal = closeImageModal;
-        window.copyReferralCode = copyReferralCode;
         window.copyFullShareText = copyFullShareText;
         window.openAllSubmissionsModal = openAllSubmissionsModal;
         window.openAllReferralsModal = openAllReferralsModal;
