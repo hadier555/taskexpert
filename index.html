@@ -326,6 +326,11 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_BVS4gTa_FpesnI8t3CTUjw_qxNUwiHG';
 
         // ============================================================
+        // ✅ FIX: REDIRECT TO PRODUCTION SITE (LOCALHOST HATAYA)
+        // ============================================================
+        const REDIRECT_URL = 'https://taskexpert.pages.dev';
+
+        // ============================================================
         // CHECK IF SUPABASE IS LOADED
         // ============================================================
         if (typeof supabase === 'undefined') {
@@ -405,13 +410,13 @@
             try {
                 const { data, error } = await sbClient.auth.signInWithOAuth({
                     provider: 'google',
-                    options: { redirectTo: window.location.origin }
+                    options: { redirectTo: REDIRECT_URL } // ✅ SAHI – Production URL
                 });
                 if (error) {
                     log('Login error: ' + error.message, 'error');
                     document.getElementById('authError').textContent = '❌ ' + error.message;
                 } else {
-                    log('Login initiated. Redirecting...', 'success');
+                    log('Login initiated. Redirecting to ' + REDIRECT_URL, 'success');
                 }
             } catch (err) {
                 log('Login exception: ' + err.message, 'error');
