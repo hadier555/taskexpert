@@ -586,34 +586,31 @@
             color: #1b5e20;
         }
 
-        /* ===== VIEW ALL BUTTON (نیچے) ===== */
-        .view-all-wrapper {
-            text-align: center;
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid #eee;
+        /* ===== VIEW ALL BUTTON (اوپر کی طرف) ===== */
+        .view-all-wrapper-top {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
         }
-        .view-all-btn-enhanced {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
+        .view-all-btn-top {
+            background: none;
             border: none;
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 700;
+            color: #1e3c72;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(30, 60, 114, 0.25);
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: 0.3s;
         }
-        .view-all-btn-enhanced:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(30, 60, 114, 0.35);
+        .view-all-btn-top:hover {
+            background: #e8f0fe;
         }
-        .view-all-btn-enhanced i {
-            font-size: 18px;
+        .view-all-btn-top i {
+            font-size: 14px;
         }
 
         /* ===== OTHER STYLES ===== */
@@ -2562,7 +2559,7 @@
         </div>
     </div>
 
-    <!-- ===== SUBMISSION DETAIL MODAL ===== -->
+    <!-- ===== SUBMISSION DETAIL MODAL (REJECT REASON SHOW) ===== -->
     <div id="submissionDetailModal" class="modal">
         <div class="modal-content"><h3>📄 Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')" style="width:100%;">Close</button></div>
     </div>
@@ -2956,7 +2953,7 @@
             let html = '';
             if (allSubmissions.length > 3) {
                 html += `<div style="margin-bottom:12px;">
-                            <button class="view-all-btn" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length})</button>
+                            <button class="view-all-btn-top" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length}) <i class="fas fa-chevron-right"></i></button>
                         </div>`;
             }
             const latest = allSubmissions.slice(0, 3);
@@ -2986,15 +2983,26 @@
                 let proofTypeBadge = s.proofType === 'text' ?
                     '<span class="proof-type-badge text">📝 Text</span>' :
                     '<span class="proof-type-badge image">🖼️ Image</span>';
+                let rejectReasonHtml = '';
+                if (s.status === 'rejected' && s.rejectReason) {
+                    rejectReasonHtml = `<div class="reject-reason-box"><strong>❌ Rejection Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                }
+                if (s.status === 'pending_reject' && s.rejectReason) {
+                    rejectReasonHtml = `<div style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                }
                 html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
                             <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
                             <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
-                        </div>`;
+                        </div>
+                        ${rejectReasonHtml}`;
             }
             list.innerHTML = html || '<p>No submissions</p>';
             modal.style.display = 'flex';
         }
 
+        // ============================================================
+        // VIEW SUBMISSION (WITH REJECT REASON)
+        // ============================================================
         window.viewSubmission = async function(id) {
             try {
                 let snap = await db.ref(`task_submissions/${id}`).once('value');
@@ -3015,6 +3023,16 @@
                 } else if (s.status === 'approved' || s.status === 'rejected') {
                     proofHtml = `<div style="color:#999;font-size:13px;">📎 Proof hidden (${s.status})</div>`;
                 }
+                
+                // 🔥 REJECT REASON SHOW
+                let rejectReasonHtml = '';
+                if (s.status === 'rejected' && s.rejectReason) {
+                    rejectReasonHtml = `<div class="reject-reason-box"><strong>❌ Rejection Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                }
+                if (s.status === 'pending_reject' && s.rejectReason) {
+                    rejectReasonHtml = `<div style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                }
+                
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 document.getElementById('submissionDetailContent').innerHTML = `
                             <p><strong>Task:</strong> ${escapeHtml(s.taskTitle)}</p>
@@ -3023,6 +3041,7 @@
                             <p><strong>Proof Type:</strong> ${s.proofType === 'text' ? '📝 Text' : '🖼️ Image'}</p>
                             <p><strong>Submitted:</strong> ${new Date(s.timestamp).toLocaleString()}</p>
                             ${proofHtml ? `<p><strong>Proof:</strong></p><div style="display:flex;flex-wrap:wrap;">${proofHtml}</div>` : ''}
+                            ${rejectReasonHtml}
                             <button class="btn" onclick="closeModal('submissionDetailModal')">Close</button>
                         `;
                 document.getElementById('submissionDetailModal').style.display = 'flex';
@@ -3076,7 +3095,7 @@
             let html = '';
             if (allReferrals.length > 3) {
                 html += `<div style="margin-bottom:12px;">
-                            <button class="view-all-btn" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length})</button>
+                            <button class="view-all-btn-top" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length}) <i class="fas fa-chevron-right"></i></button>
                         </div>`;
             }
 
@@ -3291,7 +3310,7 @@
         }
 
         // ============================================================
-        // TASKS - LOAD ALL (UPDATED)
+        // TASKS - LOAD ALL
         // ============================================================
         async function loadAllTasks() {
             try {
@@ -3428,7 +3447,6 @@
                     else if (s.status === 'pending_reject') countMap[taskId].pendingReject++;
                 }
 
-                // Update official tasks
                 if (cachedOfficialTasks.length) {
                     for (let task of cachedOfficialTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
@@ -3447,7 +3465,6 @@
                     displayOfficialTasks();
                 }
 
-                // Update user tasks
                 if (cachedUserTasks.length) {
                     for (let task of cachedUserTasks) {
                         const counts = countMap[task.id] || { approved: 0, pending: 0, pendingReject: 0 };
@@ -3548,9 +3565,10 @@
         }
 
         // ============================================================
-        // TASK CLICK HANDLER (FIXED - first click works)
+        // ⭐ TASK CLICK HANDLER (FIXED - FIRST CLICK WORKS)
         // ============================================================
         window.handleTaskClick = function(element) {
+            // Prevent double click
             if (element._clicking) return;
             element._clicking = true;
 
@@ -3564,14 +3582,15 @@
             const creator = element.dataset.taskCreator;
             const proofType = element.dataset.taskProoftype || 'image';
 
-            // Open detail immediately - no delay
+            // ✅ Open detail immediately - NO DELAY
             showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
 
+            // Allow next click after short cooldown
             setTimeout(() => { element._clicking = false; }, 300);
         };
 
         // ============================================================
-        // DISPLAY TASKS (with View All at bottom)
+        // DISPLAY TASKS (View All at TOP)
         // ============================================================
         function displayFilteredTasks() {
             const container = document.getElementById('allTasksList');
@@ -3591,7 +3610,19 @@
                 return;
             }
 
-            let html = '';
+            // 🔥 View All button at TOP (like Submissions)
+            let viewAllHtml = '';
+            if (!showAll && totalAvailable > 5) {
+                viewAllHtml = `
+                    <div class="view-all-wrapper-top">
+                        <button class="view-all-btn-top" onclick="openFullscreenTasks()">
+                            📋 View All (${totalAvailable}) <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            let html = viewAllHtml;
             for (let t of displayTasks) {
                 const platformIcon = getPlatformIcon(t.platform);
                 const slotsLeft = t.left;
@@ -3639,20 +3670,7 @@
                     </div>
                 `;
             }
-
-            // View All button at the bottom (as shown in image)
-            let viewAllHtml = '';
-            if (!showAll && totalAvailable > 5) {
-                viewAllHtml = `
-                    <div class="view-all-wrapper">
-                        <button class="view-all-btn-enhanced" onclick="openFullscreenTasks()">
-                            <i class="fas fa-th-list"></i> View All (${totalAvailable} tasks)
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                `;
-            }
-            container.innerHTML = html + viewAllHtml;
+            container.innerHTML = html;
         }
 
         function displayOfficialTasks() {
@@ -3680,17 +3698,19 @@
             const latestAvailable = sortedAvailable.slice(0, 5);
             const totalAvailable = sortedAvailable.length;
 
+            // 🔥 View All button at TOP for official tasks
             let viewAllHtml = '';
             if (totalAvailable > 5) {
                 viewAllHtml = `
-                    <div class="view-all-wrapper">
-                        <button class="view-all-btn-enhanced" onclick="openFullscreenTasks()">
-                            <i class="fas fa-th-list"></i> View All Official (${totalAvailable})
-                            <i class="fas fa-chevron-right"></i>
+                    <div class="view-all-wrapper-top">
+                        <button class="view-all-btn-top" onclick="openFullscreenTasks()">
+                            📋 View All Official (${totalAvailable}) <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 `;
             }
+
+            officialHtml += viewAllHtml;
 
             for (let t of latestAvailable) {
                 let slotsLeft = t.left;
@@ -3738,8 +3758,6 @@
             if (!officialHtml) {
                 officialHtml =
                     '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
-            } else {
-                officialHtml += viewAllHtml;
             }
             container.innerHTML = officialHtml;
         }
@@ -3959,6 +3977,9 @@
             document.getElementById('taskDetailModal').style.display = 'block';
         };
 
+        // ============================================================
+        // CLOSE TASK DETAIL (GO BACK TO TASKS)
+        // ============================================================
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
             currentTask = null;
@@ -3971,6 +3992,9 @@
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-submit-disabled');
             submitBtn.innerText = 'Submit Task';
+            
+            // 🔥 After closing, navigate back to Tasks tab
+            navigateTo('tasks');
         }
 
         // ============================================================
@@ -4016,7 +4040,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF (UPDATED WITH SLOT LOGIC)
+        // SUBMIT PROOF (UPDATED)
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -4072,7 +4096,7 @@
 
                     userSubmissionsMap[currentTask.id] = true;
                     showToast("✅ Task Submitted Successfully");
-                    closeTaskDetail();
+                    closeTaskDetail(); // This will navigate back to Tasks
                     tasksLoaded = false;
                     await loadAllTasks();
                     await loadMySubmissions();
@@ -4146,7 +4170,7 @@
 
                 userSubmissionsMap[currentTask.id] = true;
                 showToast("✅ Task Submitted Successfully");
-                closeTaskDetail();
+                closeTaskDetail(); // This will navigate back to Tasks
                 tasksLoaded = false;
                 await loadAllTasks();
                 await loadMySubmissions();
@@ -4554,7 +4578,7 @@
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
 
         // ============================================================
-        // REJECT LOGIC (UPDATED WITH SLOT RETURN)
+        // REJECT LOGIC (UPDATED)
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
             pendingRejectSubmissionId = submissionId;
