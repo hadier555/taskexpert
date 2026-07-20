@@ -2785,12 +2785,17 @@
         }
 
         // ============================================================
-        // USER DATA
+        // USER DATA (with non-withdrawable safety)
         // ============================================================
         async function loadUserData() {
             let snap = await db.ref(`users/${currentUser.uid}`).once('value');
             if (snap.exists()) {
                 currentUserData = snap.val();
+                // Ensure nonWithdrawableCoins never exceeds coins
+                if ((currentUserData.nonWithdrawableCoins || 0) > (currentUserData.coins || 0)) {
+                    currentUserData.coins = currentUserData.nonWithdrawableCoins;
+                    await db.ref(`users/${currentUser.uid}/coins`).set(currentUserData.coins);
+                }
                 if (currentUserData.nonWithdrawableCoins === undefined) {
                     currentUserData.nonWithdrawableCoins = currentUserData.depositCoins || 0;
                     await db.ref(`users/${currentUser.uid}/nonWithdrawableCoins`).set(currentUserData
@@ -2952,7 +2957,7 @@
             }
             let html = '';
             if (allSubmissions.length > 3) {
-                html += `<div style="margin-bottom:12px;">
+                html += `<div class="view-all-wrapper-top">
                             <button class="view-all-btn-top" onclick="openAllSubmissionsModal()">📋 View All (${allSubmissions.length}) <i class="fas fa-chevron-right"></i></button>
                         </div>`;
             }
@@ -3094,7 +3099,7 @@
 
             let html = '';
             if (allReferrals.length > 3) {
-                html += `<div style="margin-bottom:12px;">
+                html += `<div class="view-all-wrapper-top">
                             <button class="view-all-btn-top" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length}) <i class="fas fa-chevron-right"></i></button>
                         </div>`;
             }
@@ -4973,11 +4978,11 @@
         }
 
         // ============================================================
-        // WITHDRAW
+        // WITHDRAW (with non-withdrawable safety)
         // ============================================================
         function showWithdrawModal() {
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
-            let free = (currentUserData.coins || 0) - nonWithdrawable;
+            let free = Math.max(0, (currentUserData.coins || 0) - nonWithdrawable);
             document.getElementById('withdrawableBalance').innerText = free;
             loadBonusAndCommissionSettings();
             document.getElementById('withdrawModal').style.display = 'flex';
@@ -4991,7 +4996,7 @@
         async function requestWithdraw() {
             let amt = parseInt(document.getElementById('withdrawAmount').value);
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
-            let free = (currentUserData.coins || 0) - nonWithdrawable;
+            let free = Math.max(0, (currentUserData.coins || 0) - nonWithdrawable);
             let method = document.getElementById('withdrawMethod').value;
             let acc = document.getElementById('withdrawAccount').value.trim();
             let name = document.getElementById('withdrawName').value.trim();
