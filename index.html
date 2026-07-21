@@ -2775,7 +2775,7 @@
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.error(e));
 
         // ============================================================
-        // GEMINI API CONFIG
+        // GEMINI API CONFIG (from ai.html - latest version)
         // ============================================================
         const GEMINI_API_KEY = "AQ.Ab8RN6K3hKPPXxHrds7La8GQcQs3hFuDL8Irgpenf0C2fKpn0w";
         const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
@@ -2812,7 +2812,7 @@
         let minDeposit = 100;
         let minWithdraw = 1000;
         let isGeminiProcessing = false;
-        let _openedFromFullscreen = false; // <-- TRACK SOURCE
+        let _openedFromFullscreen = false;
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -3544,7 +3544,6 @@
 
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
-                    // Try Cloudinary first with timeout
                     const cloudinaryPromise = uploadToCloudinary(base64Data);
                     const timeoutPromise = new Promise((_, reject) =>
                         setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
@@ -3554,14 +3553,12 @@
                 } catch (cloudErr) {
                     console.warn(`Cloudinary attempt ${attempt} failed:`, cloudErr.message);
                     lastError = cloudErr;
-                    // Wait before retry
                     if (attempt < retries) {
                         await new Promise(r => setTimeout(r, 1000 * attempt));
                     }
                 }
             }
 
-            // If all Cloudinary attempts fail, try ImgBB
             try {
                 console.log('Trying ImgBB fallback...');
                 return await uploadToImgBB(base64Data);
@@ -3821,21 +3818,37 @@
             if (element._clicking) return;
             element._clicking = true;
 
-            // Check if task is opened from fullscreen
             const fullscreen = document.getElementById('fullscreenTasks');
             _openedFromFullscreen = fullscreen.style.display === 'block';
 
+            // Read data from dataset
             const id = element.dataset.taskId;
             const type = element.dataset.taskType;
-            const title = element.dataset.taskTitle;
-            const desc = element.dataset.taskDesc;
-            const steps = element.dataset.taskSteps;
-            const link = element.dataset.taskLink;
-            const reward = parseInt(element.dataset.taskReward);
-            const creator = element.dataset.taskCreator;
+            const title = element.dataset.taskTitle || 'Task';
+            const desc = element.dataset.taskDesc || '';
+            const steps = element.dataset.taskSteps || '';
+            const link = element.dataset.taskLink || '#';
+            const reward = parseInt(element.dataset.taskReward) || 0;
+            const creator = element.dataset.taskCreator || '';
             const proofType = element.dataset.taskProoftype || 'image';
 
-            showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
+            // Try to get full data from cache for better display
+            let cachedTask = null;
+            if (type === 'official') {
+                cachedTask = cachedOfficialTasks.find(t => t.id === id);
+            } else {
+                cachedTask = cachedUserTasks.find(t => t.id === id);
+            }
+
+            // Use cached data if available, otherwise use dataset
+            const finalTitle = cachedTask?.title || title;
+            const finalDesc = cachedTask?.desc || desc;
+            const finalSteps = cachedTask?.steps || steps;
+            const finalLink = cachedTask?.link || link;
+            const finalReward = cachedTask?.reward || reward;
+            const finalProofType = cachedTask?.proofType || proofType;
+
+            showTaskDetail(id, type, finalTitle, finalDesc, finalSteps, finalLink, finalReward, creator, finalProofType);
 
             setTimeout(() => { element._clicking = false; }, 300);
         };
@@ -4146,7 +4159,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL
+        // TASK DETAIL - FIXED to show data immediately
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) {
@@ -4158,6 +4171,13 @@
                 return;
             }
 
+            // Close fullscreen if open
+            const fullscreen = document.getElementById('fullscreenTasks');
+            if (fullscreen.style.display === 'block') {
+                fullscreen.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
             let task = null;
             if (type === 'official') {
                 task = cachedOfficialTasks.find(t => t.id === id);
@@ -4165,17 +4185,30 @@
                 task = cachedUserTasks.find(t => t.id === id);
             }
 
-            currentTask = { id, type, title, desc, steps, link, reward, proofType: proofType || 'image' };
-            document.getElementById('taskDetailTitle').innerText = title;
-            document.getElementById('taskDetailReward').innerHTML = `+${reward} coins`;
-            let proofTypeLabel = currentTask.proofType === 'text' ? '📝 Text Proof' : '🖼️ Image Proof';
+            // Use passed data, fallback to cached data
+            const finalTitle = title || task?.title || 'Task';
+            const finalDesc = desc || task?.desc || '';
+            const finalSteps = steps || task?.steps || '';
+            const finalLink = link || task?.link || '#';
+            const finalReward = reward || task?.reward || 0;
+            const finalProofType = proofType || task?.proofType || 'image';
+
+            currentTask = { id, type, title: finalTitle, desc: finalDesc, steps: finalSteps, link: finalLink,
+                reward: finalReward, proofType: finalProofType };
+
+            // Set UI elements immediately
+            document.getElementById('taskDetailTitle').innerText = finalTitle;
+            document.getElementById('taskDetailReward').innerHTML = `+${finalReward} coins`;
+
+            let proofTypeLabel = finalProofType === 'text' ? '📝 Text Proof' : '🖼️ Image Proof';
             document.getElementById('proofSectionTitle').innerHTML =
                 `📤 Submit Proof <span style="font-size:12px;color:#666;font-weight:normal;">(${proofTypeLabel})</span>`;
-            document.getElementById('taskDetailDesc').innerHTML = desc.replace(/\n/g, '<br>');
+
+            document.getElementById('taskDetailDesc').innerHTML = finalDesc.replace(/\n/g, '<br>');
 
             let stepsHtml = '';
-            if (steps) {
-                const stepLines = steps.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            if (finalSteps) {
+                const stepLines = finalSteps.split('\n').map(s => s.trim()).filter(s => s.length > 0);
                 if (stepLines.length === 0) {
                     stepsHtml = '<div>No steps</div>';
                 } else {
@@ -4189,9 +4222,10 @@
             }
             document.getElementById('taskDetailSteps').innerHTML = stepsHtml;
 
-            document.getElementById('taskDetailLink').href = link;
-            document.getElementById('taskDetailLink').innerText = link;
+            document.getElementById('taskDetailLink').href = finalLink;
+            document.getElementById('taskDetailLink').innerText = finalLink;
 
+            // Reset proof inputs
             selectedImage = null;
             document.getElementById('previewImages').innerHTML = '';
             document.getElementById('proofInput').value = '';
@@ -4216,13 +4250,14 @@
                 submitBtn.innerText = 'Submit Task';
             }
 
-            if (currentTask.proofType === 'text') {
+            if (finalProofType === 'text') {
                 document.getElementById('imageProofArea').style.display = 'none';
                 document.getElementById('textProofArea').style.display = 'block';
             } else {
                 document.getElementById('imageProofArea').style.display = 'block';
                 document.getElementById('textProofArea').style.display = 'none';
             }
+
             document.getElementById('taskDetailModal').style.display = 'block';
         };
 
@@ -4242,9 +4277,7 @@
             submitBtn.classList.remove('btn-submit-disabled');
             submitBtn.innerText = 'Submit Task';
 
-            // If opened from fullscreen, stay in fullscreen
             if (_openedFromFullscreen) {
-                // Fullscreen is already open, just make sure it's visible
                 const fs = document.getElementById('fullscreenTasks');
                 if (fs.style.display !== 'block') {
                     fs.style.display = 'block';
@@ -4253,7 +4286,6 @@
                 }
                 _openedFromFullscreen = false;
             } else {
-                // Navigate to tasks tab
                 navigateTo('tasks');
             }
         }
@@ -4356,14 +4388,12 @@
                     userSubmissionsMap[currentTask.id] = true;
                     showToast("✅ Task Submitted Successfully");
 
-                    // Close with smart navigation
                     const wasFullscreen = _openedFromFullscreen;
                     closeTaskDetail();
                     tasksLoaded = false;
                     await loadAllTasks();
                     await loadMySubmissions();
 
-                    // If it was from fullscreen, re-open fullscreen
                     if (wasFullscreen) {
                         _openedFromFullscreen = true;
                         setTimeout(() => {
@@ -4389,7 +4419,7 @@
                 const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                 let uploadedUrl;
                 try {
-                    uploadedUrl = await uploadImage(selectedImage, 3); // 3 retries
+                    uploadedUrl = await uploadImage(selectedImage, 3);
                 } catch (uploadErr) {
                     hideLoadingOverlay(interval);
                     showToast('Upload failed: ' + uploadErr.message);
@@ -4911,25 +4941,57 @@
         }
 
         // ============================================================
-        // GEMINI REJECT MODAL (for creator)
+        // GEMINI REJECT MODAL (for creator) - FIXED COUNTER
         // ============================================================
         let geminiRejectData = {};
 
         function openGeminiRejectModal(submissionId, taskId, workerId, reward) {
             geminiRejectData = { submissionId, taskId, workerId, reward };
-            document.getElementById('rejectReasonInput').value = '';
-            document.getElementById('reasonPreviewText').innerText = '';
-            document.getElementById('reasonPreview').style.display = 'none';
-            document.getElementById('charCounter').innerText = '0 words (min 3)';
-            document.getElementById('charCounter').className = 'char-counter invalid';
-            document.getElementById('submitRejectBtn').disabled = true;
-            document.getElementById('submitRejectBtn').innerHTML = '🤖 Submit to AI Verify';
-            document.getElementById('rejectReasonModal').style.display = 'flex';
+
+            // Reset and show modal
+            const input = document.getElementById('rejectReasonInput');
+            const counter = document.getElementById('charCounter');
+            const preview = document.getElementById('reasonPreview');
+            const previewText = document.getElementById('reasonPreviewText');
+            const submitBtn = document.getElementById('submitRejectBtn');
+
+            input.value = '';
+            previewText.innerText = '';
+            preview.style.display = 'none';
+            counter.innerText = '0 words (min 3)';
+            counter.className = 'char-counter invalid';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '🤖 Submit to AI Verify';
+
             pendingRejectSubmissionId = submissionId;
             pendingRejectTaskId = taskId;
             pendingRejectWorkerId = workerId;
             pendingRejectReward = reward;
             window._isGeminiReject = true;
+
+            // Attach input listener directly (re-attach to ensure it works)
+            input.oninput = function() {
+                const text = this.value.trim();
+                const words = text.split(/\s+/).filter(w => w.length > 0);
+                const count = words.length;
+                if (count > 0) {
+                    preview.style.display = 'block';
+                    previewText.innerText = text;
+                } else {
+                    preview.style.display = 'none';
+                }
+                if (count >= 3) {
+                    counter.innerText = `${count} words (valid)`;
+                    counter.className = 'char-counter valid';
+                    submitBtn.disabled = false;
+                } else {
+                    counter.innerText = `${count} words (min 3)`;
+                    counter.className = 'char-counter invalid';
+                    submitBtn.disabled = true;
+                }
+            };
+
+            document.getElementById('rejectReasonModal').style.display = 'flex';
         }
 
         function closeRejectModal() {
