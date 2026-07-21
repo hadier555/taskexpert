@@ -57,14 +57,8 @@
             display: block;
         }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== LOADING SCREEN ===== */
@@ -76,8 +70,16 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
             padding: 20px;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
             overflow: hidden;
+            margin: 0 auto;
+            max-width: 500px;
+            width: 100%;
         }
         #loadingScreen .logo-icon {
             font-size: 72px;
@@ -86,15 +88,8 @@
             animation: pulseIcon 1.8s ease-in-out infinite;
         }
         @keyframes pulseIcon {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.08);
-                opacity: 0.8;
-            }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.8; }
         }
         #loadingScreen .app-title {
             color: #fff;
@@ -104,7 +99,7 @@
             margin-bottom: 8px;
         }
         #loadingScreen .app-subtitle {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255,255,255,0.7);
             font-size: 14px;
             margin-bottom: 40px;
         }
@@ -120,20 +115,16 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.15);
+            border: 4px solid rgba(255,255,255,0.15);
             border-top-color: #fff;
             border-right-color: #38ef7d;
-            animation: spinRing 1s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+            animation: spinRing 1s cubic-bezier(0.6,0,0.4,1) infinite;
         }
-        @keyframes spinRing {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spinRing { to { transform: rotate(360deg); } }
         .loader-bar-track {
             width: 100%;
             height: 4px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.15);
             border-radius: 4px;
             overflow: hidden;
             position: relative;
@@ -146,7 +137,7 @@
             transition: width 0.15s linear;
         }
         .loader-status {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255,255,255,0.6);
             font-size: 13px;
             letter-spacing: 0.5px;
             text-align: center;
@@ -161,31 +152,19 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.3);
             animation: dotPulse 1.4s ease-in-out infinite;
         }
-        .loader-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .loader-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
+        .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes dotPulse {
-            0%,
-            80%,
-            100% {
-                transform: scale(0.6);
-                opacity: 0.3;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0%,80%,100% { transform: scale(0.6); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
         }
         .loader-footer {
             position: absolute;
             bottom: 40px;
-            color: rgba(255, 255, 255, 0.25);
+            color: rgba(255,255,255,0.25);
             font-size: 12px;
             letter-spacing: 2px;
         }
@@ -197,16 +176,13 @@
             padding: 20px;
             text-align: center;
             border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+            box-shadow: 0 4px 15px rgba(30,60,114,0.2);
             position: relative;
             overflow: hidden;
         }
-        .header h1 {
-            font-size: 26px;
-            letter-spacing: 1px;
-        }
+        .header h1 { font-size: 26px; letter-spacing: 1px; }
         .user-info {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             padding: 10px;
             border-radius: 15px;
             margin-top: 10px;
@@ -221,14 +197,11 @@
             cursor: pointer;
             font-size: 14px;
             transition: 0.3s;
-            position: relative;
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .mail-box-icon:hover {
-            transform: scale(1.05);
-        }
+        .mail-box-icon:hover { transform: scale(1.05); }
         .mail-box-icon .badge {
             background: #fff;
             color: #ff4757;
@@ -239,9 +212,7 @@
             min-width: 18px;
             text-align: center;
         }
-        .mail-box-icon .badge.hidden {
-            display: none;
-        }
+        .mail-box-icon .badge.hidden { display: none; }
 
         /* ===== BANNER ===== */
         .new-mail-banner {
@@ -256,16 +227,16 @@
             padding: 16px 20px;
             border-radius: 0 0 16px 16px;
             z-index: 999;
-            box-shadow: 0 8px 30px rgba(238, 90, 36, 0.4);
+            box-shadow: 0 8px 30px rgba(238,90,36,0.4);
             display: none;
             align-items: center;
             gap: 14px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            transition: transform 0.6s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
             opacity: 0;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255,255,255,0.2);
         }
         .new-mail-banner.show {
             display: flex;
@@ -289,7 +260,7 @@
             justify-content: space-around;
             padding: 12px 20px;
             border-top: 1px solid #e0e0e0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
             z-index: 100;
         }
         .nav-item {
@@ -302,13 +273,8 @@
             color: #1e3c72;
             transform: translateY(-2px);
         }
-        .nav-item i {
-            font-size: 24px;
-        }
-        .nav-item span {
-            font-size: 12px;
-            display: block;
-        }
+        .nav-item i { font-size: 24px; }
+        .nav-item span { font-size: 12px; display: block; }
 
         /* ===== CARDS ===== */
         .card {
@@ -316,13 +282,11 @@
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             border: 1px solid #f0f2f5;
             transition: 0.3s;
         }
-        .card:hover {
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-        }
+        .card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
         .wallet-card {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
@@ -347,40 +311,14 @@
             margin: 5px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-        }
-        .btn-warning {
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            color: #333;
-        }
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #1e3c72;
-            color: #1e3c72;
-        }
-        .btn-outline:hover {
-            background: #1e3c72;
-            color: white;
-        }
-        .refresh-btn {
-            background: #17a2b8;
-            padding: 5px 12px;
-            font-size: 12px;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-danger { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .btn-warning { background: linear-gradient(135deg, #fa709a, #fee140); color: #333; }
+        .btn-sm { padding: 6px 14px; font-size: 12px; }
+        .btn-success { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .btn-outline { background: transparent; border: 1px solid #1e3c72; color: #1e3c72; }
+        .btn-outline:hover { background: #1e3c72; color: white; }
+        .refresh-btn { background: #17a2b8; padding: 5px 12px; font-size: 12px; display: inline-block; }
         .btn-claim {
             background: linear-gradient(135deg, #f7971e, #ffd200);
             color: #333;
@@ -388,18 +326,15 @@
             border-radius: 25px;
             padding: 8px 20px;
             font-size: 13px;
-            box-shadow: 0 3px 12px rgba(247, 151, 30, 0.3);
+            box-shadow: 0 3px 12px rgba(247,151,30,0.3);
             transition: all 0.3s;
         }
-        .btn-claim:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(247, 151, 30, 0.5);
-        }
+        .btn-claim:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(247,151,30,0.5); }
         .google-btn {
             background: white;
             color: #444;
             border: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -410,14 +345,8 @@
             border-radius: 30px;
             transition: 0.3s;
         }
-        .google-btn:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transform: scale(1.01);
-        }
-        .google-btn img {
-            width: 20px;
-            height: 20px;
-        }
+        .google-btn:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: scale(1.01); }
+        .google-btn img { width: 20px; height: 20px; }
         .btn-group {
             display: flex;
             gap: 10px;
@@ -436,9 +365,7 @@
             cursor: pointer;
             text-decoration: none;
         }
-        .register-link a:hover {
-            text-decoration: underline;
-        }
+        .register-link a:hover { text-decoration: underline; }
         .back-to-login {
             margin-top: 15px;
             text-align: center;
@@ -449,9 +376,7 @@
             font-weight: 500;
             text-decoration: none;
         }
-        .back-to-login a:hover {
-            text-decoration: underline;
-        }
+        .back-to-login a:hover { text-decoration: underline; }
 
         /* ===== ENHANCED TASK ITEMS ===== */
         .task-item-enhanced {
@@ -463,7 +388,7 @@
             border-radius: 14px;
             margin-bottom: 10px;
             border: 1px solid #eef0f4;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             transition: all 0.25s ease;
             cursor: pointer;
             user-select: none;
@@ -473,12 +398,10 @@
         }
         .task-item-enhanced:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(30, 60, 114, 0.10);
+            box-shadow: 0 8px 24px rgba(30,60,114,0.10);
             border-color: #d0d8e8;
         }
-        .task-item-enhanced:active {
-            transform: scale(0.98);
-        }
+        .task-item-enhanced:active { transform: scale(0.98); }
         .task-item-left {
             display: flex;
             align-items: center;
@@ -539,14 +462,8 @@
             background: #e8f0fe;
             color: #1e3c72;
         }
-        .task-slots.few {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .task-slots.none {
-            background: #f8d7da;
-            color: #721c24;
-        }
+        .task-slots.few { background: #fff3cd; color: #856404; }
+        .task-slots.none { background: #f8d7da; color: #721c24; }
         .task-progress-bar {
             width: 100%;
             max-width: 140px;
@@ -577,16 +494,10 @@
             font-size: 9px;
             font-weight: 600;
         }
-        .proof-type-badge.image {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-        .proof-type-badge.text {
-            background: #e8f5e9;
-            color: #1b5e20;
-        }
+        .proof-type-badge.image { background: #e3f2fd; color: #0d47a1; }
+        .proof-type-badge.text { background: #e8f5e9; color: #1b5e20; }
 
-        /* ===== VIEW ALL BUTTON (اوپر کی طرف) ===== */
+        /* ===== VIEW ALL BUTTON ===== */
         .view-all-wrapper-top {
             display: flex;
             justify-content: flex-end;
@@ -606,12 +517,8 @@
             border-radius: 20px;
             transition: 0.3s;
         }
-        .view-all-btn-top:hover {
-            background: #e8f0fe;
-        }
-        .view-all-btn-top i {
-            font-size: 14px;
-        }
+        .view-all-btn-top:hover { background: #e8f0fe; }
+        .view-all-btn-top i { font-size: 14px; }
 
         /* ===== OTHER STYLES ===== */
         .task-item {
@@ -628,19 +535,10 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        .task-item:active {
-            transform: scale(0.98);
-        }
-        .task-item:hover {
-            transform: translateX(5px);
-            background: #e9ecef;
-        }
-        .task-item i {
-            width: 28px;
-            text-align: center;
-            font-size: 18px;
-            margin-right: 8px;
-        }
+        .task-item:active { transform: scale(0.98); }
+        .task-item:hover { transform: translateX(5px); background: #e9ecef; }
+        .task-item i { width: 28px; text-align: center; font-size: 18px; margin-right: 8px; }
+
         .submission-item {
             background: #f8f9fa;
             padding: 15px;
@@ -650,10 +548,7 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        .submission-item:hover {
-            transform: translateX(3px);
-            background: #e9ecef;
-        }
+        .submission-item:hover { transform: translateX(3px); background: #e9ecef; }
 
         .platform-filters {
             display: flex;
@@ -672,7 +567,6 @@
             font-weight: 600;
             transition: 0.3s;
             color: #333;
-            position: relative;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -682,14 +576,10 @@
             color: white;
             transform: scale(1.05);
         }
-        .platform-filter-btn:hover {
-            transform: scale(1.05);
-        }
-        .platform-filter-btn i {
-            margin-right: 4px;
-        }
+        .platform-filter-btn:hover { transform: scale(1.05); }
+        .platform-filter-btn i { margin-right: 4px; }
         .platform-filter-btn .task-count-badge {
-            background: rgba(0, 0, 0, 0.15);
+            background: rgba(0,0,0,0.15);
             border-radius: 12px;
             padding: 0 6px;
             font-size: 10px;
@@ -697,7 +587,7 @@
             margin-left: 2px;
         }
         .platform-filter-btn.active .task-count-badge {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255,255,255,0.25);
         }
 
         .modal {
@@ -707,7 +597,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -724,14 +614,8 @@
             animation: modalFadeIn 0.3s ease;
         }
         @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
         }
         .history-icon {
             position: absolute;
@@ -747,14 +631,11 @@
             cursor: pointer;
             color: white;
             font-size: 18px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             transition: 0.3s;
             z-index: 10;
         }
-        .history-icon:hover {
-            transform: scale(1.05);
-            background: #218838;
-        }
+        .history-icon:hover { transform: scale(1.05); background: #218838; }
 
         .fullscreen-history {
             position: fixed;
@@ -781,17 +662,9 @@
             top: 0;
             z-index: 10;
         }
-        .fullscreen-history .history-header i {
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .fullscreen-history .history-header h2 {
-            font-size: 20px;
-            flex: 1;
-        }
-        .fullscreen-history .history-body {
-            padding: 10px 0;
-        }
+        .fullscreen-history .history-header i { font-size: 24px; cursor: pointer; }
+        .fullscreen-history .history-header h2 { font-size: 20px; flex: 1; }
+        .fullscreen-history .history-body { padding: 10px 0; }
         .fullscreen-history .history-body .history-card {
             background: #f8f9fa;
             border-radius: 12px;
@@ -840,7 +713,7 @@
             margin: 8px auto;
             border: 3px solid #1e3c72;
             display: block;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .submission-img-thumb {
             width: 50px;
@@ -875,9 +748,7 @@
             transition: 0.3s;
             font-size: 13px;
         }
-        .copy-btn:hover {
-            transform: scale(1.05);
-        }
+        .copy-btn:hover { transform: scale(1.05); }
         .referral-stats {
             display: flex;
             justify-content: space-around;
@@ -911,18 +782,9 @@
             padding: 2px 12px;
             border-radius: 12px;
         }
-        .referral-row .progress.complete {
-            color: #28a745;
-            background: #e8f5e9;
-        }
-        .referral-row .claim-btn-wrap {
-            margin-left: auto;
-        }
-        .referral-row .claim-btn-wrap .btn {
-            padding: 4px 14px;
-            font-size: 12px;
-            margin: 0;
-        }
+        .referral-row .progress.complete { color: #28a745; background: #e8f5e9; }
+        .referral-row .claim-btn-wrap { margin-left: auto; }
+        .referral-row .claim-btn-wrap .btn { padding: 4px 14px; font-size: 12px; margin: 0; }
 
         .referral-share-simple {
             background: linear-gradient(135deg, #e8f0fe, #d4e0f5);
@@ -971,9 +833,7 @@
             font-size: 12px;
             flex-shrink: 0;
         }
-        .referral-share-simple .share-link-box .copy-btn-sm:hover {
-            background: #2a5298;
-        }
+        .referral-share-simple .share-link-box .copy-btn-sm:hover { background: #2a5298; }
 
         .daily-grid {
             display: grid;
@@ -990,19 +850,14 @@
             transition: 0.3s;
             font-size: 12px;
         }
-        .daily-day:hover {
-            transform: scale(1.05);
-        }
+        .daily-day:hover { transform: scale(1.05); }
         .daily-day.claimed {
             background: #28a745;
             color: white;
             opacity: 0.6;
             cursor: default;
         }
-        .daily-day.today {
-            border: 2px solid #1e3c72;
-            font-weight: bold;
-        }
+        .daily-day.today { border: 2px solid #1e3c72; font-weight: bold; }
 
         .checkin-btn {
             display: inline-block;
@@ -1014,31 +869,22 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+            box-shadow: 0 4px 15px rgba(56,239,125,0.4);
             transition: transform 0.3s, box-shadow 0.3s;
             animation: pulseCheckin 2s infinite;
             margin: 10px auto;
             display: block;
         }
-        .checkin-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(56, 239, 125, 0.6);
-        }
+        .checkin-btn:hover { transform: scale(1.05); box-shadow: 0 6px 25px rgba(56,239,125,0.6); }
         .checkin-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             animation: none;
         }
         @keyframes pulseCheckin {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.02);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
 
         .toast {
@@ -1056,14 +902,8 @@
             animation: toastIn 0.3s ease;
         }
         @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         .loading-spinner {
             text-align: center;
@@ -1101,74 +941,52 @@
             transition: all 0.25s ease;
             background: white;
             border: 2px solid #e0e0e0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        .platform-card i {
-            font-size: 32px;
-            margin-bottom: 8px;
-            transition: transform 0.2s;
-        }
-        .platform-card span {
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .platform-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
+        .platform-card i { font-size: 32px; margin-bottom: 8px; transition: transform 0.2s; }
+        .platform-card span { font-size: 11px; font-weight: 600; }
+        .platform-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .platform-card.selected {
             border-width: 3px;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         .platform-card[data-platform="youtube"]:hover,
         .platform-card[data-platform="youtube"].selected {
             border-color: #ff0000;
             background: #fff0f0;
         }
-        .platform-card[data-platform="youtube"] i {
-            color: #ff0000;
-        }
+        .platform-card[data-platform="youtube"] i { color: #ff0000; }
         .platform-card[data-platform="tiktok"]:hover,
         .platform-card[data-platform="tiktok"].selected {
             border-color: #000000;
             background: #f0f0f0;
         }
-        .platform-card[data-platform="tiktok"] i {
-            color: #010101;
-        }
+        .platform-card[data-platform="tiktok"] i { color: #010101; }
         .platform-card[data-platform="instagram"]:hover,
         .platform-card[data-platform="instagram"].selected {
             border-color: #e4405f;
             background: #fef0f3;
         }
-        .platform-card[data-platform="instagram"] i {
-            color: #e4405f;
-        }
+        .platform-card[data-platform="instagram"] i { color: #e4405f; }
         .platform-card[data-platform="whatsapp"]:hover,
         .platform-card[data-platform="whatsapp"].selected {
             border-color: #25D366;
             background: #e8f5e9;
         }
-        .platform-card[data-platform="whatsapp"] i {
-            color: #25D366;
-        }
+        .platform-card[data-platform="whatsapp"] i { color: #25D366; }
         .platform-card[data-platform="download"]:hover,
         .platform-card[data-platform="download"].selected {
             border-color: #3498db;
             background: #e8f0fe;
         }
-        .platform-card[data-platform="download"] i {
-            color: #3498db;
-        }
+        .platform-card[data-platform="download"] i { color: #3498db; }
         .platform-card[data-platform="other"]:hover,
         .platform-card[data-platform="other"].selected {
             border-color: #9b59b6;
             background: #f5eef8;
         }
-        .platform-card[data-platform="other"] i {
-            color: #9b59b6;
-        }
+        .platform-card[data-platform="other"] i { color: #9b59b6; }
 
         .mail-item {
             background: #f8f9fa;
@@ -1184,27 +1002,11 @@
             position: relative;
             overflow: hidden;
         }
-        .mail-item:hover {
-            transform: translateX(5px);
-            background: #e9ecef;
-        }
-        .mail-item.unread {
-            background: #e8f0fe;
-            border-left-color: #ff4757;
-        }
-        .mail-item.unread .mail-title {
-            font-weight: 700;
-            color: #1e3c72;
-        }
-        .mail-item .mail-content {
-            flex: 1;
-            min-width: 0;
-        }
-        .mail-item .mail-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-        }
+        .mail-item:hover { transform: translateX(5px); background: #e9ecef; }
+        .mail-item.unread { background: #e8f0fe; border-left-color: #ff4757; }
+        .mail-item.unread .mail-title { font-weight: 700; color: #1e3c72; }
+        .mail-item .mail-content { flex: 1; min-width: 0; }
+        .mail-item .mail-title { font-size: 14px; font-weight: 600; color: #333; }
         .mail-item .mail-preview {
             font-size: 12px;
             color: #666;
@@ -1213,11 +1015,7 @@
             text-overflow: ellipsis;
             margin-top: 2px;
         }
-        .mail-item .mail-date {
-            font-size: 10px;
-            color: #999;
-            margin-top: 2px;
-        }
+        .mail-item .mail-date { font-size: 10px; color: #999; margin-top: 2px; }
         .mail-item .mail-actions {
             display: flex;
             gap: 6px;
@@ -1235,7 +1033,7 @@
             color: #999;
         }
         .mail-item .mail-actions .btn-icon:hover {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(0,0,0,0.05);
             color: #dc3545;
         }
         .mail-item .unread-dot {
@@ -1248,23 +1046,12 @@
             animation: pulseDot 1.5s ease-in-out infinite;
         }
         @keyframes pulseDot {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.3);
-                opacity: 0.6;
-            }
+            0%,100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
         }
-        .mail-item .unread-dot.hidden {
-            display: none;
-        }
+        .mail-item .unread-dot.hidden { display: none; }
 
-        input,
-        textarea,
-        select {
+        input, textarea, select {
             width: 100%;
             padding: 12px 14px;
             margin: 6px 0;
@@ -1274,12 +1061,10 @@
             transition: 0.2s;
             background: #fafbfc;
         }
-        input:focus,
-        textarea:focus,
-        select:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #1e3c72;
-            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.08);
+            box-shadow: 0 0 0 3px rgba(30,60,114,0.08);
             background: #fff;
         }
         label.input-label {
@@ -1290,30 +1075,9 @@
             margin-top: 8px;
             margin-bottom: 2px;
         }
-        .badge-pending {
-            background: #ffc107;
-            color: #333;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .badge-approved {
-            background: #28a745;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .badge-rejected {
-            background: #dc3545;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+        .badge-pending { background: #ffc107; color: #333; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-approved { background: #28a745; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-rejected { background: #dc3545; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
 
         .fullscreen-tasks {
             position: fixed;
@@ -1340,20 +1104,10 @@
             top: 0;
             z-index: 10;
         }
-        .fullscreen-tasks .tasks-header i {
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .fullscreen-tasks .tasks-header h2 {
-            font-size: 20px;
-            flex: 1;
-        }
-        .fullscreen-tasks .tasks-body {
-            padding: 10px 0;
-        }
-        .fullscreen-tasks .tasks-body .platform-filters {
-            margin-bottom: 15px;
-        }
+        .fullscreen-tasks .tasks-header i { font-size: 24px; cursor: pointer; }
+        .fullscreen-tasks .tasks-header h2 { font-size: 20px; flex: 1; }
+        .fullscreen-tasks .tasks-body { padding: 10px 0; }
+        .fullscreen-tasks .tasks-body .platform-filters { margin-bottom: 15px; }
 
         .image-modal {
             display: none;
@@ -1362,14 +1116,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0,0,0,0.95);
             z-index: 3000;
             justify-content: center;
             align-items: center;
         }
-        .image-modal.active {
-            display: flex;
-        }
+        .image-modal.active { display: flex; }
         .image-modal img {
             max-width: 95%;
             max-height: 90%;
@@ -1390,17 +1142,14 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             border: none;
         }
         .image-modal .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             transform: rotate(90deg);
         }
-        .image-modal .close-btn i {
-            font-size: 30px;
-            color: white;
-        }
+        .image-modal .close-btn i { font-size: 30px; color: white; }
 
         .view-details-screen {
             position: fixed;
@@ -1420,9 +1169,7 @@
             position: sticky;
             top: 0;
         }
-        .view-details-screen .task-detail-body {
-            padding: 20px;
-        }
+        .view-details-screen .task-detail-body { padding: 20px; }
 
         .reject-reason-textarea {
             width: 100%;
@@ -1440,12 +1187,8 @@
             color: #999;
             margin-top: 5px;
         }
-        .char-counter.valid {
-            color: #28a745;
-        }
-        .char-counter.invalid {
-            color: #dc3545;
-        }
+        .char-counter.valid { color: #28a745; }
+        .char-counter.invalid { color: #dc3545; }
         .reason-preview {
             background: #f8f9fa;
             border-radius: 10px;
@@ -1456,12 +1199,8 @@
             border-left: 4px solid #1e3c72;
         }
 
-        #rejectReasonModal {
-            z-index: 9999 !important;
-        }
-        #rejectReasonModal .modal-content {
-            max-width: 380px;
-        }
+        #rejectReasonModal { z-index: 9999 !important; }
+        #rejectReasonModal .modal-content { max-width: 380px; }
 
         .mail-detail-screen {
             position: fixed;
@@ -1485,17 +1224,9 @@
             align-items: center;
             gap: 15px;
         }
-        .mail-detail-header i {
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .mail-detail-header h2 {
-            font-size: 18px;
-            flex: 1;
-        }
-        .mail-detail-content {
-            padding: 10px 0;
-        }
+        .mail-detail-header i { font-size: 24px; cursor: pointer; }
+        .mail-detail-header h2 { font-size: 18px; flex: 1; }
+        .mail-detail-content { padding: 10px 0; }
         .mail-detail-content .mail-meta {
             color: #666;
             font-size: 13px;
@@ -1548,9 +1279,7 @@
             border: 2px solid transparent;
             transition: 0.3s;
         }
-        .proof-type-selector label:hover {
-            background: #f0f0f0;
-        }
+        .proof-type-selector label:hover { background: #f0f0f0; }
         .proof-type-selector input[type="radio"] {
             width: auto;
             margin: 0;
@@ -1578,7 +1307,7 @@
             background: #eef4ff;
             border-color: #2a5298;
             transform: scale(1.01);
-            box-shadow: 0 4px 20px rgba(30, 60, 114, 0.08);
+            box-shadow: 0 4px 20px rgba(30,60,114,0.08);
         }
         .upload-area i {
             font-size: 36px;
@@ -1586,11 +1315,7 @@
             margin-bottom: 8px;
             color: #2a5298;
         }
-        .upload-area .upload-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: #1e3c72;
-        }
+        .upload-area .upload-text { font-size: 15px; font-weight: 600; color: #1e3c72; }
         .upload-area .upload-sub {
             font-size: 12px;
             color: #888;
@@ -1608,7 +1333,7 @@
             object-fit: cover;
             border-radius: 16px;
             border: 3px solid #28a745;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
             display: block;
         }
         .upload-preview-wrapper .remove-img-btn {
@@ -1627,12 +1352,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+            box-shadow: 0 2px 8px rgba(220,53,69,0.3);
         }
-        .upload-preview-wrapper .remove-img-btn:hover {
-            transform: scale(1.1);
-            background: #c82333;
-        }
+        .upload-preview-wrapper .remove-img-btn:hover { transform: scale(1.1); background: #c82333; }
 
         .proof-textarea {
             width: 100%;
@@ -1648,7 +1370,7 @@
         .proof-textarea:focus {
             outline: none;
             border-color: #1e3c72;
-            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+            box-shadow: 0 0 0 3px rgba(30,60,114,0.1);
         }
 
         .single-img-hint {
@@ -1657,10 +1379,7 @@
             text-align: center;
             margin-top: 6px;
         }
-        .single-img-hint i {
-            color: #1e3c72;
-            margin-right: 4px;
-        }
+        .single-img-hint i { color: #1e3c72; margin-right: 4px; }
 
         .upload-overlay {
             display: none;
@@ -1669,7 +1388,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             z-index: 9999;
             justify-content: center;
             align-items: center;
@@ -1677,11 +1396,9 @@
             color: white;
             text-align: center;
         }
-        .upload-overlay.active {
-            display: flex;
-        }
+        .upload-overlay.active { display: flex; }
         .upload-overlay .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
+            border: 4px solid rgba(255,255,255,0.3);
             border-top: 4px solid #fff;
             border-radius: 50%;
             width: 50px;
@@ -1689,28 +1406,14 @@
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        .upload-overlay .progress-text {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .upload-overlay .sub-text {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 8px;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .upload-overlay .progress-text { font-size: 18px; font-weight: 600; }
+        .upload-overlay .sub-text { font-size: 14px; opacity: 0.8; margin-top: 8px; }
         .upload-overlay .progress-bar-bg {
             width: 80%;
             max-width: 300px;
             height: 6px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.3);
             border-radius: 4px;
             margin-top: 15px;
             overflow: hidden;
@@ -1737,33 +1440,15 @@
             left: 50%;
             margin-left: -9px;
             margin-top: -9px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255,255,255,0.3);
             border-top-color: #fff;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        .btn-loading .btn-text {
-            visibility: hidden;
-        }
+        .btn-loading .btn-text { visibility: hidden; }
 
-        .task-submitted-badge {
-            background: #28a745;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        .task-pending-badge {
-            background: #ffc107;
-            color: #333;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
+        .task-submitted-badge { background: #28a745; color: white; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 8px; }
+        .task-pending-badge { background: #ffc107; color: #333; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 8px; }
 
         .my-task-card {
             background: #fff;
@@ -1771,18 +1456,11 @@
             padding: 16px;
             margin-bottom: 12px;
             border: 1px solid #eef0f4;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             transition: 0.3s;
         }
-        .my-task-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
-        .my-task-card .task-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e3c72;
-            margin-bottom: 4px;
-        }
+        .my-task-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .my-task-card .task-title { font-size: 16px; font-weight: 700; color: #1e3c72; margin-bottom: 4px; }
         .my-task-card .task-meta {
             display: flex;
             flex-wrap: wrap;
@@ -1791,15 +1469,8 @@
             color: #555;
             margin: 6px 0;
         }
-        .my-task-card .task-meta .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .my-task-card .task-meta .meta-item i {
-            color: #1e3c72;
-            font-size: 14px;
-        }
+        .my-task-card .task-meta .meta-item { display: flex; align-items: center; gap: 4px; }
+        .my-task-card .task-meta .meta-item i { color: #1e3c72; font-size: 14px; }
         .my-task-card .task-progress {
             background: #eef0f4;
             border-radius: 8px;
@@ -1826,18 +1497,9 @@
             font-size: 12px;
             font-weight: 600;
         }
-        .my-task-card .task-status-badge.completed {
-            background: #d4edda;
-            color: #155724;
-        }
-        .my-task-card .task-status-badge.pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .my-task-card .task-status-badge.active {
-            background: #cce5ff;
-            color: #004085;
-        }
+        .my-task-card .task-status-badge.completed { background: #d4edda; color: #155724; }
+        .my-task-card .task-status-badge.pending { background: #fff3cd; color: #856404; }
+        .my-task-card .task-status-badge.active { background: #cce5ff; color: #004085; }
 
         .withdraw-card {
             background: #f8faff;
@@ -1846,19 +1508,9 @@
             border: 1px solid #e8edf5;
             margin-bottom: 12px;
         }
-        .withdraw-card .balance-display {
-            text-align: center;
-            padding: 12px 0;
-        }
-        .withdraw-card .balance-display .amount {
-            font-size: 32px;
-            font-weight: 800;
-            color: #1e3c72;
-        }
-        .withdraw-card .balance-display .label {
-            font-size: 14px;
-            color: #888;
-        }
+        .withdraw-card .balance-display { text-align: center; padding: 12px 0; }
+        .withdraw-card .balance-display .amount { font-size: 32px; font-weight: 800; color: #1e3c72; }
+        .withdraw-card .balance-display .label { font-size: 14px; color: #888; }
         .withdraw-card .fee-info {
             background: #eef4ff;
             border-radius: 10px;
@@ -1883,17 +1535,9 @@
             border-bottom: 1px solid #eef0f4;
             font-size: 14px;
         }
-        .deposit-card .bank-detail:last-child {
-            border-bottom: none;
-        }
-        .deposit-card .bank-detail .bank-label {
-            font-weight: 600;
-            color: #555;
-        }
-        .deposit-card .bank-detail .bank-value {
-            color: #1e3c72;
-            font-weight: 500;
-        }
+        .deposit-card .bank-detail:last-child { border-bottom: none; }
+        .deposit-card .bank-detail .bank-label { font-weight: 600; color: #555; }
+        .deposit-card .bank-detail .bank-value { color: #1e3c72; font-weight: 500; }
 
         .view-all-submissions-btn {
             background: #17a2b8;
@@ -1906,13 +1550,9 @@
             margin-top: 8px;
             transition: 0.3s;
         }
-        .view-all-submissions-btn:hover {
-            transform: scale(1.02);
-        }
+        .view-all-submissions-btn:hover { transform: scale(1.02); }
 
-        .suspended-screen,
-        .maintenance-screen,
-        .update-screen {
+        .suspended-screen, .maintenance-screen, .update-screen {
             text-align: center;
             padding: 50px 20px;
         }
@@ -1931,7 +1571,7 @@
         .suspended-screen .icon-box {
             font-size: 80px;
             margin-bottom: 20px;
-            background: rgba(255, 71, 87, 0.2);
+            background: rgba(255,71,87,0.2);
             width: 140px;
             height: 140px;
             border-radius: 50%;
@@ -1940,27 +1580,10 @@
             justify-content: center;
             border: 3px solid #ff4757;
         }
-        .suspended-screen h2 {
-            font-size: 28px;
-            color: #ff4757;
-            margin-bottom: 10px;
-        }
-        .suspended-screen .sub-text {
-            font-size: 16px;
-            opacity: 0.8;
-            max-width: 300px;
-            margin-bottom: 20px;
-        }
-        .suspended-screen .contact-email {
-            color: #4facfe;
-            font-weight: bold;
-            font-size: 20px;
-            margin: 20px 0;
-            display: block;
-        }
-        .suspended-screen .btn {
-            margin-top: 20px;
-        }
+        .suspended-screen h2 { font-size: 28px; color: #ff4757; margin-bottom: 10px; }
+        .suspended-screen .sub-text { font-size: 16px; opacity: 0.8; max-width: 300px; margin-bottom: 20px; }
+        .suspended-screen .contact-email { color: #4facfe; font-weight: bold; font-size: 20px; margin: 20px 0; display: block; }
+        .suspended-screen .btn { margin-top: 20px; }
 
         .maintenance-screen {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
@@ -1976,7 +1599,7 @@
         .maintenance-screen .icon-box {
             font-size: 80px;
             margin-bottom: 20px;
-            background: rgba(255, 193, 7, 0.2);
+            background: rgba(255,193,7,0.2);
             width: 140px;
             height: 140px;
             border-radius: 50%;
@@ -1985,17 +1608,8 @@
             justify-content: center;
             border: 3px solid #ffc107;
         }
-        .maintenance-screen h2 {
-            font-size: 28px;
-            color: #ffc107;
-            margin-bottom: 10px;
-        }
-        .maintenance-screen .sub-text {
-            font-size: 16px;
-            opacity: 0.8;
-            max-width: 300px;
-            margin-bottom: 20px;
-        }
+        .maintenance-screen h2 { font-size: 28px; color: #ffc107; margin-bottom: 10px; }
+        .maintenance-screen .sub-text { font-size: 16px; opacity: 0.8; max-width: 300px; margin-bottom: 20px; }
 
         .update-screen {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -2011,27 +1625,18 @@
         .update-screen .icon-box {
             font-size: 80px;
             margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             width: 140px;
             height: 140px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             animation: pulseIcon 2s ease-in-out infinite;
         }
-        .update-screen h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .update-screen .sub-text {
-            font-size: 16px;
-            opacity: 0.85;
-            margin-bottom: 30px;
-            max-width: 300px;
-        }
+        .update-screen h2 { font-size: 28px; margin-bottom: 10px; letter-spacing: 1px; }
+        .update-screen .sub-text { font-size: 16px; opacity: 0.85; margin-bottom: 30px; max-width: 300px; }
         .update-screen .update-link-btn {
             background: white;
             color: #1e3c72;
@@ -2041,53 +1646,23 @@
             font-weight: 700;
             text-decoration: none;
             transition: 0.3s;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
             display: inline-block;
         }
-        .update-screen .update-link-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-        }
-        .update-screen .note {
-            margin-top: 30px;
-            font-size: 13px;
-            opacity: 0.5;
-        }
+        .update-screen .update-link-btn:hover { transform: scale(1.05); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .update-screen .note { margin-top: 30px; font-size: 13px; opacity: 0.5; }
 
-        #adminSettingsCard {
-            border: 2px solid #ffc107;
-        }
+        #adminSettingsCard { border: 2px solid #ffc107; }
 
         @media (max-width: 400px) {
-            .platform-filter-btn {
-                padding: 4px 10px;
-                font-size: 10px;
-            }
-            .platform-card {
-                width: 64px;
-                padding: 8px 4px;
-            }
-            .platform-card i {
-                font-size: 24px;
-            }
-            .mail-item {
-                padding: 12px;
-            }
-            .mail-item .mail-title {
-                font-size: 13px;
-            }
-            .referral-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .referral-row .claim-btn-wrap {
-                margin-left: 0;
-                width: 100%;
-            }
-            .referral-row .claim-btn-wrap .btn {
-                width: 100%;
-                text-align: center;
-            }
+            .platform-filter-btn { padding: 4px 10px; font-size: 10px; }
+            .platform-card { width: 64px; padding: 8px 4px; }
+            .platform-card i { font-size: 24px; }
+            .mail-item { padding: 12px; }
+            .mail-item .mail-title { font-size: 13px; }
+            .referral-row { flex-direction: column; align-items: flex-start; }
+            .referral-row .claim-btn-wrap { margin-left: 0; width: 100%; }
+            .referral-row .claim-btn-wrap .btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -2594,7 +2169,7 @@
             currentUserData = null,
             currentTask = null,
             selectedPlatform = "youtube";
-        let userSubmissionsMap = {};
+        let userSubmissionsMap = {}; // taskId -> true if any submission exists (used for quick check)
         let cachedUserTasks = [];
         let cachedOfficialTasks = [];
         let tasksLoaded = false;
@@ -2618,6 +2193,7 @@
         let fullscreenTasksFilter = 'all';
         let minDeposit = 100;
         let minWithdraw = 1000;
+        let _openedFromFullscreen = false; // track if task detail opened from fullscreen
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -2645,27 +2221,20 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
-                '<' ? '&lt;' : '&gt;')); }
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;')); }
 
         function escapeJs(str) {
             if (!str) return '';
-            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(
-                /\r/g, '\\r');
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
 
         function generateReferralCode() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
         function logout() { auth.signOut(); }
 
-        function openImageModal(imgUrl) { if (!imgUrl) return; const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImage');
-            img.src = imgUrl;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; }
+        function openImageModal(imgUrl) { if (!imgUrl) return; const modal = document.getElementById('imageModal'); const img = document.getElementById('modalImage'); img.src = imgUrl; modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
 
-        function closeImageModal() { document.getElementById('imageModal').classList.remove('active');
-            document.body.style.overflow = 'auto'; }
+        function closeImageModal() { document.getElementById('imageModal').classList.remove('active'); document.body.style.overflow = 'auto'; }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 
         // ============================================================
@@ -2706,8 +2275,7 @@
         }
 
         function finishLoading() {
-            if (loadingTimeout) { clearTimeout(loadingTimeout);
-                loadingTimeout = null; }
+            if (loadingTimeout) { clearTimeout(loadingTimeout); loadingTimeout = null; }
             document.getElementById('loadingScreen').style.display = 'none';
             if (currentUser && currentUserData && !currentUserData.suspended) {
                 showScreen('mainScreen');
@@ -2730,11 +2298,9 @@
                 const elapsed = (Date.now() - startTime) / 1000;
                 let pct = Math.min(90, (elapsed / 6) * 90);
                 updateLoader(pct, statusMessages[Math.min(Math.floor(elapsed / 1.5), statusMessages.length - 1)]);
-                if (elapsed > 7) { clearInterval(interval);
-                    finishLoading(); }
+                if (elapsed > 7) { clearInterval(interval); finishLoading(); }
             }, 200);
-            loadingTimeout = setTimeout(() => { clearInterval(interval);
-                finishLoading(); }, 7500);
+            loadingTimeout = setTimeout(() => { clearInterval(interval); finishLoading(); }, 7500);
         }
 
         // ============================================================
@@ -2745,8 +2311,7 @@
                 const maintSnap = await db.ref('settings/maintenance').once('value');
                 const maint = maintSnap.val() || {};
                 if (maint.enabled) {
-                    document.getElementById('maintenanceMsg').innerText = maint.message ||
-                        'We are currently performing scheduled maintenance. Please check back later.';
+                    document.getElementById('maintenanceMsg').innerText = maint.message || 'We are currently performing scheduled maintenance. Please check back later.';
                     showScreen('maintenanceScreen');
                     return;
                 }
@@ -2798,8 +2363,7 @@
                 }
                 if (currentUserData.nonWithdrawableCoins === undefined) {
                     currentUserData.nonWithdrawableCoins = currentUserData.depositCoins || 0;
-                    await db.ref(`users/${currentUser.uid}/nonWithdrawableCoins`).set(currentUserData
-                    .nonWithdrawableCoins);
+                    await db.ref(`users/${currentUser.uid}/nonWithdrawableCoins`).set(currentUserData.nonWithdrawableCoins);
                 }
                 if (currentUserData.depositCoins === undefined) {
                     currentUserData.depositCoins = currentUserData.nonWithdrawableCoins || 0;
@@ -2894,11 +2458,9 @@
             document.getElementById('shareLinkDisplay').innerText = link;
         }
 
-        async function getReferralBonusAmount() { try { const snap = await db.ref('settings/referralBonus').once(
-                'value'); return snap.exists() ? snap.val() : 100; } catch (e) { return 100; } }
+        async function getReferralBonusAmount() { try { const snap = await db.ref('settings/referralBonus').once('value'); return snap.exists() ? snap.val() : 100; } catch (e) { return 100; } }
 
-        async function getSignupBonusAmount() { try { const snap = await db.ref('settings/signupBonus').once(
-                'value'); return snap.exists() ? snap.val() : 50; } catch (e) { return 50; } }
+        async function getSignupBonusAmount() { try { const snap = await db.ref('settings/signupBonus').once('value'); return snap.exists() ? snap.val() : 50; } catch (e) { return 50; } }
 
         // ============================================================
         // BANK DETAILS
@@ -2921,8 +2483,7 @@
         // EARNINGS DISPLAY
         // ============================================================
         function updateEarningsDisplay() {
-            let pending = 0,
-                approved = 0;
+            let pending = 0, approved = 0;
             for (let s of allSubmissions) {
                 if (s.status === 'pending' || s.status === 'pending_reject') pending += s.reward || 0;
                 else if (s.status === 'approved') approved += s.reward || 0;
@@ -2936,8 +2497,7 @@
         // ============================================================
         async function loadMySubmissions() {
             try {
-                let snap = await db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid).once(
-                'value');
+                let snap = await db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid).once('value');
                 allSubmissions = [];
                 let subs = snap.val() || {};
                 for (let id in subs) { let s = subs[id]; if (!s.adminDeleted) allSubmissions.push({ id, ...s }); }
@@ -2963,8 +2523,7 @@
             }
             const latest = allSubmissions.slice(0, 3);
             for (let s of latest) {
-                let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
-                    s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
+                let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' : s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 let proofTypeBadge = s.proofType === 'text' ?
                     '<span class="proof-type-badge text">📝 Text</span>' :
@@ -2982,8 +2541,7 @@
             const list = document.getElementById('allSubmissionsList');
             let html = '';
             for (let s of allSubmissions) {
-                let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
-                    s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
+                let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' : s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 let proofTypeBadge = s.proofType === 'text' ?
                     '<span class="proof-type-badge text">📝 Text</span>' :
@@ -3021,15 +2579,14 @@
                 }
                 let proofHtml = '';
                 if (s.proofType === 'text' && s.proofText && (s.status === 'pending' || s.status === 'pending_reject')) {
-                    proofHtml =
-                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
+                    proofHtml = `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
                 } else if (s.images && s.images.length > 0 && (s.status === 'pending' || s.status === 'pending_reject')) {
                     proofHtml = s.images.map(img => safeImageHtml(img, 'preview-img')).join('');
                 } else if (s.status === 'approved' || s.status === 'rejected') {
                     proofHtml = `<div style="color:#999;font-size:13px;">📎 Proof hidden (${s.status})</div>`;
                 }
-                
-                // 🔥 REJECT REASON SHOW
+
+                // REJECT REASON SHOW
                 let rejectReasonHtml = '';
                 if (s.status === 'rejected' && s.rejectReason) {
                     rejectReasonHtml = `<div class="reject-reason-box"><strong>❌ Rejection Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
@@ -3037,7 +2594,7 @@
                 if (s.status === 'pending_reject' && s.rejectReason) {
                     rejectReasonHtml = `<div style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
                 }
-                
+
                 let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 document.getElementById('submissionDetailContent').innerHTML = `
                             <p><strong>Task:</strong> ${escapeHtml(s.taskTitle)}</p>
@@ -3116,14 +2673,11 @@
 
                 let actionHtml = '';
                 if (isComplete && !isClaimed) {
-                    actionHtml =
-                        `<button class="btn btn-claim btn-sm" onclick="claimReferralBonus('${item.id}')"><i class="fas fa-gift"></i> Claim Bonus</button>`;
+                    actionHtml = `<button class="btn btn-claim btn-sm" onclick="claimReferralBonus('${item.id}')"><i class="fas fa-gift"></i> Claim Bonus</button>`;
                 } else if (isClaimed) {
-                    actionHtml =
-                        `<span style="color:#28a745;font-weight:600;font-size:13px;">✅ Claimed</span>`;
+                    actionHtml = `<span style="color:#28a745;font-weight:600;font-size:13px;">✅ Claimed</span>`;
                 } else {
-                    actionHtml =
-                        `<span style="color:#999;font-size:12px;">⏳ ${totalNeeded - tasksDone} more</span>`;
+                    actionHtml = `<span style="color:#999;font-size:12px;">⏳ ${totalNeeded - tasksDone} more</span>`;
                 }
 
                 html += `
@@ -3251,7 +2805,7 @@
         }
 
         // ============================================================
-        // IMAGE UPLOAD SERVICE
+        // IMAGE UPLOAD SERVICE - WITH RETRY (FIXED)
         // ============================================================
         const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
         const CLOUDINARY_API_KEY = '614258583454693';
@@ -3295,22 +2849,32 @@
             return data.data.url;
         }
 
-        async function uploadImage(base64Data) {
-            const UPLOAD_TIMEOUT = 10000;
-            try {
-                const cloudinaryPromise = uploadToCloudinary(base64Data);
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
-                );
-                const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
-                return result;
-            } catch (cloudErr) {
-                console.warn('Cloudinary failed:', cloudErr.message);
+        async function uploadImage(base64Data, retries = 3) {
+            const UPLOAD_TIMEOUT = 15000;
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
-                    return await uploadToImgBB(base64Data);
-                } catch (imgbbErr) {
-                    throw new Error(`All upload services failed. Last error: ${imgbbErr.message}`);
+                    const cloudinaryPromise = uploadToCloudinary(base64Data);
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
+                    );
+                    const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
+                    return result;
+                } catch (cloudErr) {
+                    console.warn(`Cloudinary attempt ${attempt} failed:`, cloudErr.message);
+                    lastError = cloudErr;
+                    if (attempt < retries) {
+                        await new Promise(r => setTimeout(r, 1000 * attempt));
+                    }
                 }
+            }
+
+            try {
+                console.log('Trying ImgBB fallback...');
+                return await uploadToImgBB(base64Data);
+            } catch (imgbbErr) {
+                throw new Error(`All upload services failed. Last error: ${lastError?.message || imgbbErr.message}`);
             }
         }
 
@@ -3324,12 +2888,10 @@
                 document.getElementById('officialTasksList').innerHTML =
                     '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading official tasks...</div>';
 
-                const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid)
-                    .once('value');
+                const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(currentUser.uid).once('value');
                 userSubmissionsMap = {};
                 const subs = subSnap.val() || {};
-                for (let id in subs) if (subs[id].userId === currentUser.uid) userSubmissionsMap[subs[id].taskId] =
-                true;
+                for (let id in subs) if (subs[id].userId === currentUser.uid) userSubmissionsMap[subs[id].taskId] = true;
 
                 const allSubSnap = await db.ref('task_submissions').once('value');
                 const allSubs = allSubSnap.val() || {};
@@ -3404,8 +2966,7 @@
                                 pending: counts.pending,
                                 pendingReject: counts.pendingReject,
                                 proofType: t.proofType || 'image',
-                                status: remaining > 0 ? 'active' : (counts.approved >= required ? 'completed' :
-                                    'hidden')
+                                status: remaining > 0 ? 'active' : (counts.approved >= required ? 'completed' : 'hidden')
                             });
                         }
                     }
@@ -3520,8 +3081,7 @@
                 if (task.left <= 0) {
                     statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full</span>';
                 } else {
-                    statusDiv.innerHTML =
-                        `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
+                    statusDiv.innerHTML = `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
                 }
                 const submitBtn = document.getElementById('submitProofBtn');
                 submitBtn.disabled = false;
@@ -3570,12 +3130,15 @@
         }
 
         // ============================================================
-        // ⭐ TASK CLICK HANDLER (FIXED - FIRST CLICK WORKS)
+        // TASK CLICK HANDLER - TRACK SOURCE
         // ============================================================
         window.handleTaskClick = function(element) {
-            // Prevent double click
             if (element._clicking) return;
             element._clicking = true;
+
+            // Check if task is opened from fullscreen
+            const fullscreen = document.getElementById('fullscreenTasks');
+            _openedFromFullscreen = fullscreen.style.display === 'block';
 
             const id = element.dataset.taskId;
             const type = element.dataset.taskType;
@@ -3587,10 +3150,9 @@
             const creator = element.dataset.taskCreator;
             const proofType = element.dataset.taskProoftype || 'image';
 
-            // ✅ Open detail immediately - NO DELAY
+            // ✅ Open detail immediately
             showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
 
-            // Allow next click after short cooldown
             setTimeout(() => { element._clicking = false; }, 300);
         };
 
@@ -3615,7 +3177,6 @@
                 return;
             }
 
-            // 🔥 View All button at TOP (like Submissions)
             let viewAllHtml = '';
             if (!showAll && totalAvailable > 5) {
                 viewAllHtml = `
@@ -3678,32 +3239,60 @@
             container.innerHTML = html;
         }
 
+        // ============================================================
+        // OFFICIAL TASKS: hide pending, show completed only when approved
+        // ============================================================
         function displayOfficialTasks() {
             const container = document.getElementById('officialTasksList');
+
+            // Get user's submission status for each task
+            function getUserSubmissionStatus(taskId) {
+                const sub = allSubmissions.find(s => s.taskId === taskId && s.userId === currentUser.uid);
+                return sub ? sub.status : null;
+            }
+
+            // Available tasks: not submitted (or rejected) AND slots > 0
             let available = cachedOfficialTasks.filter(t => {
                 if (t.status !== 'active') return false;
-                if (userSubmissionsMap[t.id]) return false;
                 if (t.left <= 0) return false;
-                return true;
+                const status = getUserSubmissionStatus(t.id);
+                // Show if not submitted or rejected (allow retry)
+                return !status || status === 'rejected';
             });
 
-            const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
+            // Completed tasks: user has approved submission
+            let completedTasks = cachedOfficialTasks.filter(t => {
+                const status = getUserSubmissionStatus(t.id);
+                return status === 'approved';
+            });
 
-            let officialHtml = '';
-            for (let t of submitted) {
-                officialHtml += `
-                    <div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
-                        <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
-                        <div>+${t.reward}</div>
-                    </div>
-                `;
-            }
+            // Pending tasks (submitted but not approved) are hidden (filtered out)
 
             const sortedAvailable = [...available].sort((a, b) => b.timestamp - a.timestamp);
             const latestAvailable = sortedAvailable.slice(0, 5);
             const totalAvailable = sortedAvailable.length;
 
-            // 🔥 View All button at TOP for official tasks
+            let officialHtml = '';
+
+            // Show completed tasks count
+            if (completedTasks.length > 0) {
+                officialHtml += `
+                    <div style="font-size:12px;color:#28a745;margin-bottom:10px;background:#e8f5e9;padding:6px 12px;border-radius:8px;">
+                        ✅ You have completed ${completedTasks.length} official task${completedTasks.length>1?'s':''}.
+                    </div>
+                `;
+                // Optionally show the completed task names
+                for (let t of completedTasks) {
+                    officialHtml += `
+                        <div class="task-item" style="opacity:0.6;border-left-color:#28a745;cursor:default;background:#f0f8f0;">
+                            <div><strong><i class="fas fa-check-circle" style="color:#28a745;"></i> ${escapeHtml(t.title)}</strong><br><small><span style="color:#28a745;font-weight:600;">✅ Completed</span></small></div>
+                            <div>+${t.reward}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // View All button for available tasks
             let viewAllHtml = '';
             if (totalAvailable > 5) {
                 viewAllHtml = `
@@ -3717,56 +3306,62 @@
 
             officialHtml += viewAllHtml;
 
-            for (let t of latestAvailable) {
-                let slotsLeft = t.left;
-                let slotClass = 'task-slots';
-                if (slotsLeft <= 0) slotClass += ' none';
-                else if (slotsLeft <= 3) slotClass += ' few';
-                const totalSlots = t.maxLimit || 100;
-                const progressPct = Math.round(((totalSlots - slotsLeft) / totalSlots) * 100);
+            // Show available tasks (if any)
+            if (latestAvailable.length === 0 && completedTasks.length === 0) {
+                officialHtml += '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
+            } else if (latestAvailable.length === 0 && completedTasks.length > 0) {
+                officialHtml += '<p style="color:#666;text-align:center;padding:10px;">🎉 You have completed all available official tasks!</p>';
+            } else {
+                for (let t of latestAvailable) {
+                    let slotsLeft = t.left;
+                    let slotClass = 'task-slots';
+                    if (slotsLeft <= 0) slotClass += ' none';
+                    else if (slotsLeft <= 3) slotClass += ' few';
+                    const totalSlots = t.maxLimit || 100;
+                    const progressPct = Math.round(((totalSlots - slotsLeft) / totalSlots) * 100);
 
-                officialHtml += `
-                    <div class="task-item-enhanced" 
-                         data-task-id="${t.id}" 
-                         data-task-type="${t.type}"
-                         data-task-title="${escapeHtml(t.title)}"
-                         data-task-desc="${escapeHtml(t.desc)}"
-                         data-task-steps="${escapeHtml(t.steps)}"
-                         data-task-link="${escapeHtml(t.link)}"
-                         data-task-reward="${t.reward}"
-                         data-task-creator="${t.creatorId}"
-                         data-task-prooftype="${t.proofType || 'image'}"
-                         onclick="handleTaskClick(this)">
-                        <div class="task-item-left">
-                            <div class="task-platform-icon"><i class="fas fa-tasks"></i></div>
-                            <div class="task-info">
-                                <div class="task-title-row">
-                                    <span class="task-title">${escapeHtml(t.title)}</span>
-                                    <span style="font-size:10px;color:#888;">📢 Official</span>
-                                </div>
-                                <div class="task-meta-row">
-                                    <span class="task-reward">💰 +${t.reward}</span>
-                                    <span class="${slotClass}">🎯 ${slotsLeft} left</span>
-                                </div>
-                                <div class="task-progress-bar">
-                                    <div class="task-progress-fill" style="width:${progressPct}%;"></div>
+                    officialHtml += `
+                        <div class="task-item-enhanced" 
+                             data-task-id="${t.id}" 
+                             data-task-type="${t.type}"
+                             data-task-title="${escapeHtml(t.title)}"
+                             data-task-desc="${escapeHtml(t.desc)}"
+                             data-task-steps="${escapeHtml(t.steps)}"
+                             data-task-link="${escapeHtml(t.link)}"
+                             data-task-reward="${t.reward}"
+                             data-task-creator="${t.creatorId}"
+                             data-task-prooftype="${t.proofType || 'image'}"
+                             onclick="handleTaskClick(this)">
+                            <div class="task-item-left">
+                                <div class="task-platform-icon"><i class="fas fa-tasks"></i></div>
+                                <div class="task-info">
+                                    <div class="task-title-row">
+                                        <span class="task-title">${escapeHtml(t.title)}</span>
+                                        <span style="font-size:10px;color:#888;">📢 Official</span>
+                                    </div>
+                                    <div class="task-meta-row">
+                                        <span class="task-reward">💰 +${t.reward}</span>
+                                        <span class="${slotClass}">🎯 ${slotsLeft} left</span>
+                                    </div>
+                                    <div class="task-progress-bar">
+                                        <div class="task-progress-fill" style="width:${progressPct}%;"></div>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="task-item-right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
                         </div>
-                        <div class="task-item-right">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
             }
 
-            if (!officialHtml) {
-                officialHtml =
-                    '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
-            }
             container.innerHTML = officialHtml;
         }
 
+        // ============================================================
+        // Get platform icon
+        // ============================================================
         function getPlatformIcon(platform) {
             const icons = {
                 youtube: '<i class="fab fa-youtube" style="color:#ff0000;"></i>',
@@ -3936,8 +3531,7 @@
                     stepsHtml = '<div>No steps</div>';
                 } else {
                     stepLines.forEach((s, i) => {
-                        stepsHtml +=
-                            `<div class="step-box"><strong>Step ${i+1}:</strong> ${escapeHtml(s)}</div>`;
+                        stepsHtml += `<div class="step-box"><strong>Step ${i+1}:</strong> ${escapeHtml(s)}</div>`;
                     });
                 }
             } else {
@@ -3964,8 +3558,7 @@
                 if (task.left <= 0) {
                     statusDiv.innerHTML = '<span style="color:#dc3545;font-weight:700;">⚠️ Task slots are full</span>';
                 } else {
-                    statusDiv.innerHTML =
-                        `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
+                    statusDiv.innerHTML = `<span style="color:#1e3c72;">🎯 ${task.left} slot${task.left > 1 ? 's' : ''} remaining</span>`;
                 }
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-submit-disabled');
@@ -3983,7 +3576,7 @@
         };
 
         // ============================================================
-        // CLOSE TASK DETAIL (GO BACK TO TASKS)
+        // CLOSE TASK DETAIL - SMART NAVIGATION (stay in fullscreen if opened from there)
         // ============================================================
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
@@ -3997,9 +3590,20 @@
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-submit-disabled');
             submitBtn.innerText = 'Submit Task';
-            
-            // 🔥 After closing, navigate back to Tasks tab
-            navigateTo('tasks');
+
+            // If opened from fullscreen, stay in fullscreen
+            if (_openedFromFullscreen) {
+                const fs = document.getElementById('fullscreenTasks');
+                if (fs.style.display !== 'block') {
+                    fs.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    renderFullscreenTasks(fullscreenTasksFilter || 'all');
+                }
+                _openedFromFullscreen = false;
+            } else {
+                // Otherwise go to tasks tab
+                navigateTo('tasks');
+            }
         }
 
         // ============================================================
@@ -4045,7 +3649,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF (UPDATED)
+        // SUBMIT PROOF (with retry)
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -4059,14 +3663,8 @@
             try {
                 if (currentTask.proofType === 'text') {
                     const proofText = document.getElementById('proofTextInput').value.trim();
-                    if (!proofText) { showToast("Please enter your proof text.");
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('btn-loading');
-                        submitBtn.innerText = 'Submit Task'; return; }
-                    if (proofText.length < 3) { showToast("Please provide at least 3 characters.");
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('btn-loading');
-                        submitBtn.innerText = 'Submit Task'; return; }
+                    if (!proofText) { showToast("Please enter your proof text."); submitBtn.disabled = false; submitBtn.classList.remove('btn-loading'); submitBtn.innerText = 'Submit Task'; return; }
+                    if (proofText.length < 3) { showToast("Please provide at least 3 characters."); submitBtn.disabled = false; submitBtn.classList.remove('btn-loading'); submitBtn.innerText = 'Submit Task'; return; }
 
                     const taskRef = currentTask.type === 'official' ?
                         db.ref(`tasks/official/${currentTask.id}`) :
@@ -4101,10 +3699,19 @@
 
                     userSubmissionsMap[currentTask.id] = true;
                     showToast("✅ Task Submitted Successfully");
-                    closeTaskDetail(); // This will navigate back to Tasks
+                    // Close with smart navigation
+                    const wasFullscreen = _openedFromFullscreen;
+                    closeTaskDetail();
                     tasksLoaded = false;
                     await loadAllTasks();
                     await loadMySubmissions();
+                    if (wasFullscreen) {
+                        _openedFromFullscreen = true;
+                        setTimeout(() => {
+                            openFullscreenTasks();
+                            _openedFromFullscreen = false;
+                        }, 300);
+                    }
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Submit Task';
@@ -4122,7 +3729,7 @@
                 const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                 let uploadedUrl;
                 try {
-                    uploadedUrl = await uploadImage(selectedImage);
+                    uploadedUrl = await uploadImage(selectedImage, 3); // 3 retries
                 } catch (uploadErr) {
                     hideLoadingOverlay(interval);
                     showToast('Upload failed: ' + uploadErr.message);
@@ -4175,10 +3782,20 @@
 
                 userSubmissionsMap[currentTask.id] = true;
                 showToast("✅ Task Submitted Successfully");
-                closeTaskDetail(); // This will navigate back to Tasks
+
+                const wasFullscreen = _openedFromFullscreen;
+                closeTaskDetail();
                 tasksLoaded = false;
                 await loadAllTasks();
                 await loadMySubmissions();
+                if (wasFullscreen) {
+                    _openedFromFullscreen = true;
+                    setTimeout(() => {
+                        openFullscreenTasks();
+                        _openedFromFullscreen = false;
+                    }, 300);
+                }
+
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.innerText = 'Submit Task';
@@ -4362,24 +3979,20 @@
         // ============================================================
         async function openMyPostedTasks() {
             try {
-                let snap = await db.ref('task_requests').orderByChild('creatorId').equalTo(currentUser.uid).once(
-                'value');
+                let snap = await db.ref('task_requests').orderByChild('creatorId').equalTo(currentUser.uid).once('value');
                 let list = snap.val() || {};
                 let tasksArray = [];
                 for (let id in list) tasksArray.push({ id, ...list[id] });
                 tasksArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 let html = '';
                 for (let t of tasksArray) {
-                    let statusClass = t.status === 'approved' ? 'badge-approved' : (t.status === 'rejected' ?
-                        'badge-rejected' : 'badge-pending');
+                    let statusClass = t.status === 'approved' ? 'badge-approved' : (t.status === 'rejected' ? 'badge-rejected' : 'badge-pending');
                     let clickAttr = '';
                     if (t.status === 'approved') {
-                        clickAttr =
-                            ` onclick="openMyTaskDetailsFromPosted('${escapeJs(t.title)}')" style="cursor:pointer; transition:0.3s;"`;
+                        clickAttr = ` onclick="openMyTaskDetailsFromPosted('${escapeJs(t.title)}')" style="cursor:pointer; transition:0.3s;"`;
                     }
                     let proofLabel = t.proofType === 'text' ? '📝 Text' : '🖼️ Image';
-                    html +=
-                        `<div class="submission-item"${clickAttr}><div><strong>${escapeHtml(t.title)}</strong> <span style="font-size:11px;color:#999;">${proofLabel}</span><br>${t.coinsPerMember} coins | ${t.membersRequired} users</div><div><span class="${statusClass}">${t.status}</span></div></div>`;
+                    html += `<div class="submission-item"${clickAttr}><div><strong>${escapeHtml(t.title)}</strong> <span style="font-size:11px;color:#999;">${proofLabel}</span><br>${t.coinsPerMember} coins | ${t.membersRequired} users</div><div><span class="${statusClass}">${t.status}</span></div></div>`;
                 }
                 document.getElementById('myPostedTasksList').innerHTML = html || '<p>No posted tasks</p>';
                 document.getElementById('myPostedTasksModal').style.display = 'flex';
@@ -4394,13 +4007,12 @@
         }
 
         // ============================================================
-        // MY TASK DETAILS
+        // MY TASK DETAILS - UNCHANGED (no Gemini)
         // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
             try {
                 await cleanupCompletedTasks();
-                let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid)
-                    .once('value');
+                let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid).once('value');
                 let tasks = userTasksSnap.val() || {};
                 let allSubsSnap = await db.ref('task_submissions').once('value');
                 let allSubs = allSubsSnap.val() || {};
@@ -4419,10 +4031,7 @@
                     let t = tasks[taskId];
                     if (t.status !== 'approved') continue;
                     hasTasks = true;
-                    let pendingCount = 0,
-                        approvedCount = 0,
-                        rejectedCount = 0,
-                        pendingRejectCount = 0;
+                    let pendingCount = 0, approvedCount = 0, rejectedCount = 0, pendingRejectCount = 0;
                     let subsForTask = [];
                     for (let sid in allSubs) {
                         let s = allSubs[sid];
@@ -4468,14 +4077,12 @@
                         }
                         html += `</div>`;
                         if (subsForTask.length > 3) {
-                            html +=
-                                `<button class="view-all-submissions-btn" onclick="viewTaskDetails('${taskId}')">📋 View All (${subsForTask.length} submissions)</button>`;
+                            html += `<button class="view-all-submissions-btn" onclick="viewTaskDetails('${taskId}')">📋 View All (${subsForTask.length} submissions)</button>`;
                         }
                     } else {
                         html += `<div style="color:#999;font-size:12px;margin-top:6px;">No submissions yet.</div>`;
                     }
-                    html +=
-                        `<div class="task-actions"><button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
+                    html += `<div class="task-actions"><button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
                     html += `</div>`;
                 }
 
@@ -4504,16 +4111,14 @@
         }
 
         // ============================================================
-        // BUILD SUBMISSION HTML
+        // BUILD SUBMISSION HTML (unchanged - no Gemini)
         // ============================================================
         function buildSubmissionHtml(s, taskId, rewardPerUser) {
-            let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
-                'pending_reject' ? 'orange' : 'orange'));
+            let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status === 'pending_reject' ? 'orange' : 'orange'));
             let proofHtml = '';
             if (s.status === 'pending' || s.status === 'pending_reject') {
                 if (s.proofType === 'text' && s.proofText) {
-                    proofHtml =
-                        `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
+                    proofHtml = `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
                 } else if (s.images && s.images.length > 0) {
                     proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
                 }
@@ -4530,12 +4135,10 @@
             }
             let rejectReasonHtml = '';
             if (s.status === 'rejected' && s.rejectReason) {
-                rejectReasonHtml =
-                    `<div class="reject-reason-box"><strong>❌ Rejected:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                rejectReasonHtml = `<div class="reject-reason-box"><strong>❌ Rejected:</strong> ${escapeHtml(s.rejectReason)}</div>`;
             }
             if (s.status === 'pending_reject' && s.rejectReason) {
-                rejectReasonHtml =
-                    `<div class="pending-reject-box" style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                rejectReasonHtml = `<div class="pending-reject-box" style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
             }
             let label = s.status === 'pending_reject' ? 'pending (admin)' : s.status;
             let proofTypeLabel = s.proofType === 'text' ? '📝 Text' : '🖼️ Image';
@@ -4577,13 +4180,12 @@
             } catch (e) { showToast('Error loading task details'); }
         };
 
-        function closeViewDetails() { document.getElementById('viewDetailsScreen').style.display = 'none';
-            currentViewTaskId = null; }
+        function closeViewDetails() { document.getElementById('viewDetailsScreen').style.display = 'none'; currentViewTaskId = null; }
 
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
 
         // ============================================================
-        // REJECT LOGIC (UPDATED)
+        // REJECT LOGIC (unchanged - admin review)
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
             pendingRejectSubmissionId = submissionId;
@@ -4599,11 +4201,7 @@
             document.getElementById('rejectReasonModal').style.display = 'flex';
         }
 
-        function closeRejectModal() { document.getElementById('rejectReasonModal').style.display = 'none';
-            pendingRejectSubmissionId = null;
-            pendingRejectTaskId = null;
-            pendingRejectWorkerId = null;
-            pendingRejectReward = 0; }
+        function closeRejectModal() { document.getElementById('rejectReasonModal').style.display = 'none'; pendingRejectSubmissionId = null; pendingRejectTaskId = null; pendingRejectWorkerId = null; pendingRejectReward = 0; }
 
         document.addEventListener('DOMContentLoaded', function() {
             const input = document.getElementById('rejectReasonInput');
@@ -4615,8 +4213,7 @@
                     const counter = document.getElementById('charCounter');
                     const preview = document.getElementById('reasonPreview');
                     const previewText = document.getElementById('reasonPreviewText');
-                    if (count > 0) { preview.style.display = 'block';
-                        previewText.innerText = text; } else { preview.style.display = 'none'; }
+                    if (count > 0) { preview.style.display = 'block'; previewText.innerText = text; } else { preview.style.display = 'none'; }
                     if (count >= 3) {
                         counter.innerText = `${count} words (valid)`;
                         counter.className = 'char-counter valid';
@@ -4634,8 +4231,7 @@
                 const amt = parseInt(this.value) || 0;
                 const fee = Math.round(amt * 0.1);
                 const total = amt + fee;
-                document.getElementById('withdrawTotalInfo').innerText =
-                    `Total needed including 10% fee: ${total} coins (fee: ${fee} coins)`;
+                document.getElementById('withdrawTotalInfo').innerText = `Total needed including 10% fee: ${total} coins (fee: ${fee} coins)`;
             });
         });
 
@@ -4644,12 +4240,8 @@
             const words = reason.split(/\s+/).filter(w => w.length > 0);
             if (words.length < 3) { showToast('Please enter at least 3 words.'); return; }
             if (!pendingRejectSubmissionId) return;
-            const subId = pendingRejectSubmissionId,
-                taskId = pendingRejectTaskId,
-                workerId = pendingRejectWorkerId,
-                reward = pendingRejectReward;
-            const creatorId = currentUser.uid,
-                creatorName = currentUserData.username;
+            const subId = pendingRejectSubmissionId, taskId = pendingRejectTaskId, workerId = pendingRejectWorkerId, reward = pendingRejectReward;
+            const creatorId = currentUser.uid, creatorName = currentUserData.username;
             try {
                 let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
                 let isOfficial = taskSnap.exists();
@@ -4674,24 +4266,20 @@
                     creatorId: creatorId,
                     creatorName: creatorName,
                     workerId: workerId,
-                    workerName: (await db.ref(`users/${workerId}/username`).once('value')).val() || workerId
-                        .substring(0, 8),
-                    taskTitle: (await db.ref(`tasks/user/${taskId}/title`).once('value')).val() ||
-                        'Unknown Task',
+                    workerName: (await db.ref(`users/${workerId}/username`).once('value')).val() || workerId.substring(0, 8),
+                    taskTitle: (await db.ref(`tasks/user/${taskId}/title`).once('value')).val() || 'Unknown Task',
                     reason: reason,
                     timestamp: Date.now(),
                     images: (await db.ref(`task_submissions/${subId}/images`).once('value')).val() || [],
                     proofText: (await db.ref(`task_submissions/${subId}/proofText`).once('value')).val() || '',
-                    proofType: (await db.ref(`task_submissions/${subId}/proofType`).once('value')).val() ||
-                        'image',
+                    proofType: (await db.ref(`task_submissions/${subId}/proofType`).once('value')).val() || 'image',
                     reward: reward,
                     status: 'pending'
                 });
                 showToast('✅ Rejection request sent to admin for review.');
                 closeRejectModal();
                 refreshAfterAction(taskId);
-            } catch (err) { console.error(err);
-                showToast('Error: ' + err.message); }
+            } catch (err) { console.error(err); showToast('Error: ' + err.message); }
         }
 
         async function approveSubmissionByCreator(submissionId, taskId, workerId, reward) {
@@ -4725,8 +4313,7 @@
                 await updateReferralProgress(workerId);
                 showToast('Approved! Worker earned +' + reward + ' coins.');
                 refreshAfterAction(taskId);
-            } catch (err) { console.error(err);
-                showToast('Error: ' + err.message); }
+            } catch (err) { console.error(err); showToast('Error: ' + err.message); }
         }
 
         function refreshAfterAction(taskId) {
@@ -4747,8 +4334,7 @@
                 const now = Date.now();
                 const sevenHours = 7 * 60 * 60 * 1000;
                 let tasksToRemove = [];
-                let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid)
-                    .once('value');
+                let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid).once('value');
                 let tasks = userTasksSnap.val() || {};
                 let allSubsSnap = await db.ref('task_submissions').once('value');
                 let allSubs = allSubsSnap.val() || {};
@@ -4801,8 +4387,7 @@
                         const img = new Image();
                         img.onload = function() {
                             const canvas = document.createElement('canvas');
-                            let width = img.width,
-                                height = img.height;
+                            let width = img.width, height = img.height;
                             const maxSize = 800;
                             if (width > maxSize || height > maxSize) {
                                 const ratio = Math.min(maxSize / width, maxSize / height);
@@ -4888,8 +4473,7 @@
 
         async function renderFullscreenDepositHistory() {
             try {
-                let snap = await db.ref('deposit_requests').orderByChild('userId').equalTo(currentUser.uid).once(
-                'value');
+                let snap = await db.ref('deposit_requests').orderByChild('userId').equalTo(currentUser.uid).once('value');
                 let items = snap.val() || {};
                 let arr = [];
                 for (let id in items) arr.push({ id, ...items[id] });
@@ -4919,8 +4503,7 @@
                 }
                 document.getElementById('fullscreenDepositHistoryBody').innerHTML = html;
             } catch (e) {
-                document.getElementById('fullscreenDepositHistoryBody').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">Error loading history</p>';
+                document.getElementById('fullscreenDepositHistoryBody').innerHTML = '<p style="color:#666;text-align:center;padding:20px;">Error loading history</p>';
             }
         }
 
@@ -4972,8 +4555,7 @@
                 }
                 document.getElementById('fullscreenWithdrawHistoryBody').innerHTML = html;
             } catch (e) {
-                document.getElementById('fullscreenWithdrawHistoryBody').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">Error loading history</p>';
+                document.getElementById('fullscreenWithdrawHistoryBody').innerHTML = '<p style="color:#666;text-align:center;padding:20px;">Error loading history</p>';
             }
         }
 
@@ -5047,10 +4629,8 @@
                 const plat = platformSnap.val() || {};
                 depositBonusPercent = plat.depositBonusPercent || 0;
                 withdrawCommissionPercent = plat.withdrawCommission || 10;
-                document.getElementById('depositBonusInfo').innerText =
-                    `🎁 Deposit Bonus: ${depositBonusPercent}% (extra on approval)`;
-                document.getElementById('withdrawCommissionInfo').innerText =
-                    `💸 Fee: ${withdrawCommissionPercent}% (deducted from request)`;
+                document.getElementById('depositBonusInfo').innerText = `🎁 Deposit Bonus: ${depositBonusPercent}% (extra on approval)`;
+                document.getElementById('withdrawCommissionInfo').innerText = `💸 Fee: ${withdrawCommissionPercent}% (deducted from request)`;
             } catch (e) {
                 depositBonusPercent = 0;
                 withdrawCommissionPercent = 10;
@@ -5087,8 +4667,7 @@
                     let claimed = (currentDay > dayNum);
                     let isToday = (currentDay === dayNum);
                     let clickable = !claimed && isToday;
-                    html +=
-                        `<div class="daily-day ${claimed?'claimed':''} ${isToday?'today':''}" onclick="${clickable ? `claimDailyReward(${dayNum},${rewards[i]})` : ''}">Day ${dayNum}<br>${rewards[i]}</div>`;
+                    html += `<div class="daily-day ${claimed?'claimed':''} ${isToday?'today':''}" onclick="${clickable ? `claimDailyReward(${dayNum},${rewards[i]})` : ''}">Day ${dayNum}<br>${rewards[i]}</div>`;
                 }
                 html += '</div>';
                 document.getElementById('dailyRewardGrid').innerHTML = html;
@@ -5179,8 +4758,7 @@
 
         function updateMailBadge() {
             const badge = document.getElementById('unreadBadge');
-            if (unreadCount > 0) { badge.innerText = unreadCount;
-                badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+            if (unreadCount > 0) { badge.innerText = unreadCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
         }
 
         function checkNewMail() {
@@ -5201,8 +4779,7 @@
             const banner = document.getElementById('newMailBanner');
             banner.classList.remove('show');
             banner.classList.add('hide-banner');
-            setTimeout(() => { banner.classList.remove('hide-banner');
-                banner.style.display = 'none'; }, 500);
+            setTimeout(() => { banner.classList.remove('hide-banner'); banner.style.display = 'none'; }, 500);
         }
 
         async function openMailBox() {
@@ -5243,8 +4820,7 @@
                 let snap = await db.ref(`mailbox/${currentUser.uid}/${mailId}`).once('value');
                 let mail = snap.val();
                 if (!mail || mail.deleted) { showToast('Mail not found'); return; }
-                if (!mail.read) { await db.ref(`mailbox/${currentUser.uid}/${mailId}/read`).set(true);
-                    await loadMailBox(); }
+                if (!mail.read) { await db.ref(`mailbox/${currentUser.uid}/${mailId}/read`).set(true); await loadMailBox(); }
                 document.getElementById('mailDetailTitle').innerText = mail.title || 'Mail';
                 document.getElementById('mailDetailContent').innerHTML = `
                             <div class="mail-meta">📅 ${mail.timestamp ? new Date(mail.timestamp).toLocaleString() : 'Unknown'}</div>
@@ -5280,8 +4856,7 @@
         function copyFullShareText() {
             const code = currentUserData?.referralCode || '910372';
             const link = `https://taskexpertapp.pages.dev/?ref=${code}`;
-            const fullText =
-                `🔥\nEarn Daily Money From Home!\nComplete simple tasks & start earning 💰\n👇👇\n${link}`;
+            const fullText = `🔥\nEarn Daily Money From Home!\nComplete simple tasks & start earning 💰\n👇👇\n${link}`;
             navigator.clipboard.writeText(fullText).then(() => showToast('✅ Full share text copied!')).catch(() => {
                 const input = document.createElement('input');
                 input.value = fullText;
@@ -5297,8 +4872,7 @@
         // NAVIGATION
         // ============================================================
         function navigateTo(section, e) {
-            document.querySelectorAll('#homeContent, #tasksContent, #earnContent, #inviteContent, #profileContent')
-                .forEach(s => s.style.display = 'none');
+            document.querySelectorAll('#homeContent, #tasksContent, #earnContent, #inviteContent, #profileContent').forEach(s => s.style.display = 'none');
             document.getElementById(`${section}Content`).style.display = 'block';
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if (e && e.target) e.target.closest('.nav-item')?.classList.add('active');
@@ -5308,10 +4882,7 @@
             if (section === 'profile') { loadDailyRewardGrid(); }
         }
 
-        async function loadTasks() { if (!tasksLoaded) await loadAllTasks();
-            else { updateTaskCounts();
-                displayFilteredTasks();
-                displayOfficialTasks(); } }
+        async function loadTasks() { if (!tasksLoaded) await loadAllTasks(); else { updateTaskCounts(); displayFilteredTasks(); displayOfficialTasks(); } }
 
         // ============================================================
         // PLATFORM SELECTOR
