@@ -2775,7 +2775,7 @@
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.error(e));
 
         // ============================================================
-        // GEMINI API CONFIG (from ai.html - latest version)
+        // GEMINI API CONFIG
         // ============================================================
         const GEMINI_API_KEY = "AQ.Ab8RN6K3hKPPXxHrds7La8GQcQs3hFuDL8Irgpenf0C2fKpn0w";
         const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
@@ -2812,6 +2812,7 @@
         let minDeposit = 100;
         let minWithdraw = 1000;
         let isGeminiProcessing = false;
+        let _openedFromFullscreen = false; // <-- TRACK SOURCE
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -3493,7 +3494,7 @@
         }
 
         // ============================================================
-        // IMAGE UPLOAD SERVICE
+        // IMAGE UPLOAD SERVICE - WITH RETRY (FIXED)
         // ============================================================
         const CLOUDINARY_CLOUD_NAME = 'dbe4jp6io';
         const CLOUDINARY_API_KEY = '614258583454693';
@@ -3537,22 +3538,35 @@
             return data.data.url;
         }
 
-        async function uploadImage(base64Data) {
-            const UPLOAD_TIMEOUT = 10000;
-            try {
-                const cloudinaryPromise = uploadToCloudinary(base64Data);
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
-                );
-                const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
-                return result;
-            } catch (cloudErr) {
-                console.warn('Cloudinary failed:', cloudErr.message);
+        async function uploadImage(base64Data, retries = 3) {
+            const UPLOAD_TIMEOUT = 15000;
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
-                    return await uploadToImgBB(base64Data);
-                } catch (imgbbErr) {
-                    throw new Error(`All upload services failed. Last error: ${imgbbErr.message}`);
+                    // Try Cloudinary first with timeout
+                    const cloudinaryPromise = uploadToCloudinary(base64Data);
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Cloudinary timeout')), UPLOAD_TIMEOUT)
+                    );
+                    const result = await Promise.race([cloudinaryPromise, timeoutPromise]);
+                    return result;
+                } catch (cloudErr) {
+                    console.warn(`Cloudinary attempt ${attempt} failed:`, cloudErr.message);
+                    lastError = cloudErr;
+                    // Wait before retry
+                    if (attempt < retries) {
+                        await new Promise(r => setTimeout(r, 1000 * attempt));
+                    }
                 }
+            }
+
+            // If all Cloudinary attempts fail, try ImgBB
+            try {
+                console.log('Trying ImgBB fallback...');
+                return await uploadToImgBB(base64Data);
+            } catch (imgbbErr) {
+                throw new Error(`All upload services failed. Last error: ${lastError?.message || imgbbErr.message}`);
             }
         }
 
@@ -3801,11 +3815,15 @@
         }
 
         // ============================================================
-        // TASK CLICK HANDLER
+        // TASK CLICK HANDLER - TRACK SOURCE
         // ============================================================
         window.handleTaskClick = function(element) {
             if (element._clicking) return;
             element._clicking = true;
+
+            // Check if task is opened from fullscreen
+            const fullscreen = document.getElementById('fullscreenTasks');
+            _openedFromFullscreen = fullscreen.style.display === 'block';
 
             const id = element.dataset.taskId;
             const type = element.dataset.taskType;
@@ -3816,13 +3834,6 @@
             const reward = parseInt(element.dataset.taskReward);
             const creator = element.dataset.taskCreator;
             const proofType = element.dataset.taskProoftype || 'image';
-
-            // Close fullscreen if open
-            const fullscreen = document.getElementById('fullscreenTasks');
-            if (fullscreen.style.display === 'block') {
-                fullscreen.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
 
             showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
 
@@ -3918,7 +3929,6 @@
         function displayOfficialTasks() {
             const container = document.getElementById('officialTasksList');
 
-            // Only show available (not submitted) official tasks
             let available = cachedOfficialTasks.filter(t => {
                 if (t.status !== 'active') return false;
                 if (userSubmissionsMap[t.id]) return false;
@@ -3926,14 +3936,12 @@
                 return true;
             });
 
-            // Sort by timestamp
             const sortedAvailable = [...available].sort((a, b) => b.timestamp - a.timestamp);
             const latestAvailable = sortedAvailable.slice(0, 5);
             const totalAvailable = sortedAvailable.length;
 
             let officialHtml = '';
 
-            // If user has submitted some official tasks, show a small note
             const submittedCount = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]).length;
             if (submittedCount > 0) {
                 officialHtml +=
@@ -4219,7 +4227,7 @@
         };
 
         // ============================================================
-        // CLOSE TASK DETAIL
+        // CLOSE TASK DETAIL - SMART NAVIGATION
         // ============================================================
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
@@ -4233,7 +4241,21 @@
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-submit-disabled');
             submitBtn.innerText = 'Submit Task';
-            navigateTo('tasks');
+
+            // If opened from fullscreen, stay in fullscreen
+            if (_openedFromFullscreen) {
+                // Fullscreen is already open, just make sure it's visible
+                const fs = document.getElementById('fullscreenTasks');
+                if (fs.style.display !== 'block') {
+                    fs.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    renderFullscreenTasks(fullscreenTasksFilter || 'all');
+                }
+                _openedFromFullscreen = false;
+            } else {
+                // Navigate to tasks tab
+                navigateTo('tasks');
+            }
         }
 
         // ============================================================
@@ -4277,7 +4299,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF
+        // SUBMIT PROOF - WITH RETRY
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -4333,10 +4355,23 @@
 
                     userSubmissionsMap[currentTask.id] = true;
                     showToast("✅ Task Submitted Successfully");
+
+                    // Close with smart navigation
+                    const wasFullscreen = _openedFromFullscreen;
                     closeTaskDetail();
                     tasksLoaded = false;
                     await loadAllTasks();
                     await loadMySubmissions();
+
+                    // If it was from fullscreen, re-open fullscreen
+                    if (wasFullscreen) {
+                        _openedFromFullscreen = true;
+                        setTimeout(() => {
+                            openFullscreenTasks();
+                            _openedFromFullscreen = false;
+                        }, 300);
+                    }
+
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Submit Task';
@@ -4354,7 +4389,7 @@
                 const interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                 let uploadedUrl;
                 try {
-                    uploadedUrl = await uploadImage(selectedImage);
+                    uploadedUrl = await uploadImage(selectedImage, 3); // 3 retries
                 } catch (uploadErr) {
                     hideLoadingOverlay(interval);
                     showToast('Upload failed: ' + uploadErr.message);
@@ -4407,10 +4442,21 @@
 
                 userSubmissionsMap[currentTask.id] = true;
                 showToast("✅ Task Submitted Successfully");
+
+                const wasFullscreen = _openedFromFullscreen;
                 closeTaskDetail();
                 tasksLoaded = false;
                 await loadAllTasks();
                 await loadMySubmissions();
+
+                if (wasFullscreen) {
+                    _openedFromFullscreen = true;
+                    setTimeout(() => {
+                        openFullscreenTasks();
+                        _openedFromFullscreen = false;
+                    }, 300);
+                }
+
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.innerText = 'Submit Task';
@@ -4626,7 +4672,7 @@
         }
 
         // ============================================================
-        // MY TASK DETAILS - with Gemini integration
+        // MY TASK DETAILS - Approve = Simple, Reject = Gemini
         // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
             try {
@@ -4737,6 +4783,7 @@
 
         // ============================================================
         // BUILD SUBMISSION HTML WITH GEMINI (for creator)
+        // Approve = Simple, Reject = Gemini
         // ============================================================
         function buildSubmissionHtmlWithGemini(s, taskId, rewardPerUser) {
             let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
@@ -4754,15 +4801,14 @@
             }
 
             let actionButtons = '';
-            // Only show approve/reject for pending submissions (not pending_reject)
+            // Approve = Simple (direct) | Reject = Gemini
             if (s.status === 'pending' && currentUser && currentUserData) {
                 actionButtons = `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">
-                                            <button class="btn btn-success btn-sm" onclick="approveSubmissionWithGemini('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="openGeminiRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject (AI Verify)</button>
+                                            <button class="btn btn-success btn-sm" onclick="simpleApproveSubmission('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="openGeminiRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject (AI)</button>
                                         </div>`;
             }
 
-            // If pending_reject, show AI processing status
             let aiStatusHtml = '';
             if (s.status === 'pending_reject') {
                 aiStatusHtml = `
@@ -4773,7 +4819,6 @@
                         `;
             }
 
-            // If already rejected, show Gemini verdict if available
             let geminiVerdictHtml = '';
             if (s.status === 'rejected' && s.geminiVerdict) {
                 const verdict = s.geminiVerdict.toLowerCase();
@@ -4789,7 +4834,6 @@
                         `;
             }
 
-            // If approved, show Gemini verdict if available
             if (s.status === 'approved' && s.geminiVerdict) {
                 const verdict = s.geminiVerdict.toLowerCase();
                 const isApproved = verdict === 'approved' || verdict === 'approve';
@@ -4834,32 +4878,72 @@
         }
 
         // ============================================================
-        // GEMINI REJECT MODAL (for creator) - AI Verify
+        // SIMPLE APPROVE (Direct, no Gemini)
+        // ============================================================
+        async function simpleApproveSubmission(submissionId, taskId, workerId, reward) {
+            if (!confirm('Approve this submission? Worker will receive coins.')) return;
+
+            try {
+                let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
+                let isOfficial = taskSnap.exists();
+                const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
+
+                await taskRef.transaction((currentData) => {
+                    if (!currentData) return currentData;
+                    currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
+                    currentData.completed = (currentData.completed || 0) + 1;
+                    if (currentData.completed >= currentData.maxLimit) {
+                        currentData.status = "completed";
+                    }
+                    return currentData;
+                });
+
+                await db.ref(`task_submissions/${submissionId}/status`).set('approved');
+                const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
+                await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
+                await updateReferralProgress(workerId);
+                showToast('✅ Approved! Worker earned +' + reward + ' coins.');
+                refreshAfterAction(taskId);
+            } catch (err) {
+                console.error(err);
+                showToast('Error: ' + err.message);
+            }
+        }
+
+        // ============================================================
+        // GEMINI REJECT MODAL (for creator)
         // ============================================================
         let geminiRejectData = {};
 
         function openGeminiRejectModal(submissionId, taskId, workerId, reward) {
             geminiRejectData = { submissionId, taskId, workerId, reward };
-            // Show a custom modal for AI rejection reason
             document.getElementById('rejectReasonInput').value = '';
             document.getElementById('reasonPreviewText').innerText = '';
             document.getElementById('reasonPreview').style.display = 'none';
             document.getElementById('charCounter').innerText = '0 words (min 3)';
             document.getElementById('charCounter').className = 'char-counter invalid';
             document.getElementById('submitRejectBtn').disabled = true;
-            // Change button text to show AI verification
             document.getElementById('submitRejectBtn').innerHTML = '🤖 Submit to AI Verify';
             document.getElementById('rejectReasonModal').style.display = 'flex';
-            // Store that this is a Gemini reject
             pendingRejectSubmissionId = submissionId;
             pendingRejectTaskId = taskId;
             pendingRejectWorkerId = workerId;
             pendingRejectReward = reward;
-            // Flag for Gemini processing
             window._isGeminiReject = true;
         }
 
-        // Override submitRejectReason to handle Gemini
+        function closeRejectModal() {
+            document.getElementById('rejectReasonModal').style.display = 'none';
+            pendingRejectSubmissionId = null;
+            pendingRejectTaskId = null;
+            pendingRejectWorkerId = null;
+            pendingRejectReward = 0;
+            window._isGeminiReject = false;
+        }
+
+        // ============================================================
+        // SUBMIT REJECT REASON - Gemini verification
+        // ============================================================
         async function submitRejectReason() {
             const reason = document.getElementById('rejectReasonInput').value.trim();
             const words = reason.split(/\s+/).filter(w => w.length > 0);
@@ -4871,19 +4955,14 @@
                 workerId = pendingRejectWorkerId,
                 reward = pendingRejectReward;
 
-            // Close modal
             closeRejectModal();
-
-            // Show inline loading on the submission item
             showToast('🤖 Sending to Gemini AI for verification...');
 
             try {
-                // Get submission data
                 const subSnap = await db.ref(`task_submissions/${subId}`).once('value');
                 const subData = subSnap.val();
                 if (!subData) { showToast('Submission not found'); return; }
 
-                // Get task data
                 let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
                 let isOfficial = taskSnap.exists();
                 let taskData = isOfficial ? taskSnap.val() : null;
@@ -4892,7 +4971,6 @@
                     taskData = userTaskSnap.val();
                 }
 
-                // Build prompt for Gemini
                 const taskDetails = `
                             Task Title: ${taskData?.title || 'Unknown'}
                             Description: ${taskData?.description || 'N/A'}
@@ -4933,7 +5011,6 @@
                             REASON: <your explanation>
                         `;
 
-                // Call Gemini API
                 const response = await fetch(GEMINI_URL, {
                     method: 'POST',
                     headers: {
@@ -4955,7 +5032,6 @@
                 const data = await response.json();
                 const geminiText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
 
-                // Parse verdict
                 let verdict = 'unknown';
                 let geminiReason = geminiText;
                 const verdictMatch = geminiText.match(/VERDICT:\s*(APPROVE|REJECT)/i);
@@ -4964,20 +5040,15 @@
                     geminiReason = geminiText.replace(/VERDICT:\s*(APPROVE|REJECT)\s*/i, '').trim();
                 }
 
-                // Store Gemini result
                 await db.ref(`task_submissions/${subId}/geminiVerdict`).set(verdict);
                 await db.ref(`task_submissions/${subId}/geminiReason`).set(geminiReason);
                 await db.ref(`task_submissions/${subId}/geminiProcessedAt`).set(Date.now());
                 await db.ref(`task_submissions/${subId}/creatorRejectionReason`).set(reason);
 
-                // Auto process based on Gemini verdict
                 if (verdict === 'approve') {
-                    // AI says approval - override creator's rejection
                     await db.ref(`task_submissions/${subId}/status`).set('approved');
-                    // Add coins to worker
                     const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
                     await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
-                    // Update task
                     const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
                     await taskRef.transaction((currentData) => {
                         if (!currentData) return currentData;
@@ -4990,9 +5061,7 @@
                     });
                     showToast('✅ AI approved this submission! Worker earned coins.');
                 } else if (verdict === 'reject') {
-                    // AI confirms rejection
                     await db.ref(`task_submissions/${subId}/status`).set('rejected');
-                    // Return slot to task
                     const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
                     await taskRef.transaction((currentData) => {
                         if (!currentData) return currentData;
@@ -5008,167 +5077,12 @@
                     showToast('⚠️ AI could not determine. Please review manually.');
                 }
 
-                // Refresh
                 await loadAllTasks();
                 await loadMySubmissions();
                 await openMyTaskDetails();
 
             } catch (err) {
                 console.error('Gemini error:', err);
-                showToast('❌ AI verification failed: ' + err.message);
-            }
-        }
-
-        // ============================================================
-        // APPROVE WITH GEMINI (for creator)
-        // ============================================================
-        async function approveSubmissionWithGemini(submissionId, taskId, workerId, reward) {
-            if (!confirm('Approve this submission? Gemini will verify automatically.')) return;
-
-            showToast('🤖 Sending to Gemini for approval verification...');
-
-            try {
-                // Get submission data
-                const subSnap = await db.ref(`task_submissions/${subId}`).once('value');
-                const subData = subSnap.val();
-                if (!subData) { showToast('Submission not found'); return; }
-
-                // Get task data
-                let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
-                let isOfficial = taskSnap.exists();
-                let taskData = isOfficial ? taskSnap.val() : null;
-                if (!taskData) {
-                    const userTaskSnap = await db.ref(`tasks/user/${taskId}`).once('value');
-                    taskData = userTaskSnap.val();
-                }
-
-                // Build prompt for Gemini
-                const taskDetails = `
-                            Task Title: ${taskData?.title || 'Unknown'}
-                            Description: ${taskData?.description || 'N/A'}
-                            Steps: ${taskData?.steps || 'N/A'}
-                            Reward: ${reward} coins
-                            Required Users: ${taskData?.requiredUsers || 0}
-                        `;
-
-                const proofDetails = `
-                            Proof Type: ${subData.proofType || 'image'}
-                            ${subData.proofType === 'text' ? `Proof Text: ${subData.proofText || 'N/A'}` : `Proof Images: ${subData.images ? subData.images.join(', ') : 'None'}`}
-                        `;
-
-                const prompt = `
-                            You are an AI moderator for a micro-task platform. The creator wants to approve a submission.
-
-                            Task Details:
-                            ${taskDetails}
-
-                            Submission Details:
-                            ${proofDetails}
-
-                            Analyze if this submission correctly completes the task.
-                            Give a verdict: "APPROVE" if the proof is correct and meets all task requirements, or "REJECT" if it does not.
-
-                            Also provide a brief explanation (2-3 sentences) of your reasoning.
-
-                            Format your response as:
-                            VERDICT: APPROVE or REJECT
-                            REASON: <your explanation>
-                        `;
-
-                const response = await fetch(GEMINI_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-goog-api-key': GEMINI_API_KEY
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: prompt }]
-                        }]
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
-                }
-
-                const data = await response.json();
-                const geminiText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
-
-                let verdict = 'unknown';
-                let geminiReason = geminiText;
-                const verdictMatch = geminiText.match(/VERDICT:\s*(APPROVE|REJECT)/i);
-                if (verdictMatch) {
-                    verdict = verdictMatch[1].toLowerCase();
-                    geminiReason = geminiText.replace(/VERDICT:\s*(APPROVE|REJECT)\s*/i, '').trim();
-                }
-
-                // Store Gemini result
-                await db.ref(`task_submissions/${submissionId}/geminiVerdict`).set(verdict);
-                await db.ref(`task_submissions/${submissionId}/geminiReason`).set(geminiReason);
-                await db.ref(`task_submissions/${submissionId}/geminiProcessedAt`).set(Date.now());
-
-                if (verdict === 'approve') {
-                    // Proceed with approval
-                    const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
-                    await taskRef.transaction((currentData) => {
-                        if (!currentData) return currentData;
-                        currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
-                        currentData.completed = (currentData.completed || 0) + 1;
-                        if (currentData.completed >= currentData.maxLimit) {
-                            currentData.status = "completed";
-                        }
-                        return currentData;
-                    });
-
-                    await db.ref(`task_submissions/${submissionId}/status`).set('approved');
-                    const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
-                    await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
-                    await updateReferralProgress(workerId);
-                    showToast('✅ AI approved! Worker earned +' + reward + ' coins.');
-                } else if (verdict === 'reject') {
-                    // AI suggests reject - ask creator
-                    if (confirm('🤖 AI suggests REJECTING this submission. Reason: ' + geminiReason + '\n\nDo you want to proceed with rejection?')) {
-                        const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
-                        await taskRef.transaction((currentData) => {
-                            if (!currentData) return currentData;
-                            currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
-                            currentData.left = (currentData.left || 0) + 1;
-                            if (currentData.left > 0 && currentData.status === "hidden") {
-                                currentData.status = "active";
-                            }
-                            return currentData;
-                        });
-                        await db.ref(`task_submissions/${submissionId}/status`).set('rejected');
-                        await db.ref(`task_submissions/${submissionId}/rejectReason`).set('AI: ' + geminiReason);
-                        showToast('❌ Submission rejected based on AI analysis.');
-                    } else {
-                        // Creator overrides - approve anyway
-                        const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
-                        await taskRef.transaction((currentData) => {
-                            if (!currentData) return currentData;
-                            currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
-                            currentData.completed = (currentData.completed || 0) + 1;
-                            if (currentData.completed >= currentData.maxLimit) {
-                                currentData.status = "completed";
-                            }
-                            return currentData;
-                        });
-                        await db.ref(`task_submissions/${submissionId}/status`).set('approved');
-                        const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
-                        await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
-                        await updateReferralProgress(workerId);
-                        showToast('✅ Approved (creator override). Worker earned +' + reward + ' coins.');
-                    }
-                } else {
-                    showToast('⚠️ AI could not determine. Please review manually.');
-                }
-
-                refreshAfterAction(taskId);
-
-            } catch (err) {
-                console.error('Gemini approval error:', err);
                 showToast('❌ AI verification failed: ' + err.message);
             }
         }
@@ -5203,57 +5117,6 @@
             currentViewTaskId = null; }
 
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
-
-        // ============================================================
-        // LEGACY REJECT (kept for compatibility)
-        // ============================================================
-        function openRejectModal(submissionId, taskId, workerId, reward) {
-            // Redirect to Gemini reject
-            openGeminiRejectModal(submissionId, taskId, workerId, reward);
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectReasonModal').style.display = 'none';
-            pendingRejectSubmissionId = null;
-            pendingRejectTaskId = null;
-            pendingRejectWorkerId = null;
-            pendingRejectReward = 0;
-            window._isGeminiReject = false;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const input = document.getElementById('rejectReasonInput');
-            if (input) {
-                input.addEventListener('input', function() {
-                    const text = this.value.trim();
-                    const words = text.split(/\s+/).filter(w => w.length > 0);
-                    const count = words.length;
-                    const counter = document.getElementById('charCounter');
-                    const preview = document.getElementById('reasonPreview');
-                    const previewText = document.getElementById('reasonPreviewText');
-                    if (count > 0) { preview.style.display = 'block';
-                        previewText.innerText = text; } else { preview.style.display = 'none'; }
-                    if (count >= 3) {
-                        counter.innerText = `${count} words (valid)`;
-                        counter.className = 'char-counter valid';
-                        document.getElementById('submitRejectBtn').disabled = false;
-                    } else {
-                        counter.innerText = `${count} words (min 3)`;
-                        counter.className = 'char-counter invalid';
-                        document.getElementById('submitRejectBtn').disabled = true;
-                    }
-                });
-            }
-            toggleProofTypeFields();
-
-            document.getElementById('withdrawAmount').addEventListener('input', function() {
-                const amt = parseInt(this.value) || 0;
-                const fee = Math.round(amt * 0.1);
-                const total = amt + fee;
-                document.getElementById('withdrawTotalInfo').innerText =
-                    `Total needed including 10% fee: ${total} coins (fee: ${fee} coins)`;
-            });
-        });
 
         function refreshAfterAction(taskId) {
             openMyTaskDetails();
@@ -5949,7 +5812,7 @@
         window.claimDailyReward = claimDailyReward;
         window.viewTaskDetails = viewTaskDetails;
         window.closeViewDetails = closeViewDetails;
-        window.approveSubmissionWithGemini = approveSubmissionWithGemini;
+        window.simpleApproveSubmission = simpleApproveSubmission;
         window.openGeminiRejectModal = openGeminiRejectModal;
         window.toggleProofTypeFields = toggleProofTypeFields;
         window.openMailBox = openMailBox;
