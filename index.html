@@ -67,7 +67,7 @@
             }
         }
 
-        /* ===== LOADING SCREEN ===== */
+        /* ===== LOADING SCREEN - FIXED ===== */
         #loadingScreen {
             display: flex;
             flex-direction: column;
@@ -76,8 +76,16 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
             padding: 20px;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
             overflow: hidden;
+            margin: 0 auto;
+            max-width: 500px;
+            width: 100%;
         }
         #loadingScreen .logo-icon {
             font-size: 72px;
@@ -586,7 +594,7 @@
             color: #1b5e20;
         }
 
-        /* ===== VIEW ALL BUTTON (اوپر کی طرف) ===== */
+        /* ===== VIEW ALL BUTTON ===== */
         .view-all-wrapper-top {
             display: flex;
             justify-content: flex-end;
@@ -641,18 +649,121 @@
             font-size: 18px;
             margin-right: 8px;
         }
+
+        /* ===== SUBMISSION ITEM - REDESIGNED ===== */
         .submission-item {
             background: #f8f9fa;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 10px;
             border-left: 4px solid #1e3c72;
             cursor: pointer;
             transition: 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .submission-item:hover {
             transform: translateX(3px);
             background: #e9ecef;
+        }
+        .submission-item .sub-left {
+            flex: 1;
+            min-width: 0;
+        }
+        .submission-item .sub-left .task-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e3c72;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .submission-item .sub-left .sub-meta {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .submission-item .sub-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .submission-item .sub-right .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .submission-item .sub-right .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        .submission-item .sub-right .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .submission-item .sub-right .status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .submission-item .sub-right .status-badge.pending_reject {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .submission-item .sub-proof {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+        .submission-item .sub-proof .proof-thumb {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .submission-item .sub-proof .proof-thumb:hover {
+            transform: scale(1.08);
+            border-color: #1e3c72;
+        }
+        .submission-item .sub-proof .proof-text-preview {
+            font-size: 12px;
+            color: #555;
+            background: #eef0f4;
+            padding: 2px 10px;
+            border-radius: 6px;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .submission-item .gemini-msg {
+            width: 100%;
+            margin-top: 6px;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #e8f0fe;
+            color: #1e3c72;
+            border-left: 3px solid #6f42c1;
+        }
+        .submission-item .gemini-msg .ai-label {
+            font-weight: 600;
+            color: #6f42c1;
+        }
+        .submission-item .gemini-msg .ai-label i {
+            margin-right: 4px;
         }
 
         .platform-filters {
@@ -2058,6 +2169,74 @@
             border: 2px solid #ffc107;
         }
 
+        /* ===== AI REJECT LOADING (INLINE) ===== */
+        .ai-reject-loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6f42c1;
+            font-weight: 600;
+            padding: 4px 12px;
+            background: #f0e8ff;
+            border-radius: 20px;
+            animation: pulseAi 1.2s ease-in-out infinite;
+        }
+        .ai-reject-loading .spinner-sm {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ddd;
+            border-top-color: #6f42c1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes pulseAi {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        /* ===== GEMINI MSG IN SUBMISSION ===== */
+        .gemini-verdict {
+            margin-top: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .gemini-verdict.approved {
+            background: #d4edda;
+            color: #155724;
+            border-left: 3px solid #28a745;
+        }
+        .gemini-verdict.rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 3px solid #dc3545;
+        }
+        .gemini-verdict .ai-icon {
+            font-size: 14px;
+            color: #6f42c1;
+        }
+
+        .reject-reason-box {
+            background: #fff3cd;
+            padding: 8px 12px;
+            border-left: 4px solid #ffc107;
+            border-radius: 6px;
+            margin: 4px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+
         @media (max-width: 400px) {
             .platform-filter-btn {
                 padding: 4px 10px;
@@ -2087,6 +2266,14 @@
             .referral-row .claim-btn-wrap .btn {
                 width: 100%;
                 text-align: center;
+            }
+            .submission-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .submission-item .sub-right {
+                text-align: left;
+                margin-top: 4px;
             }
         }
     </style>
@@ -2147,7 +2334,7 @@
             <div class="mail-detail-content" id="mailDetailContent"></div>
         </div>
 
-        <!-- ===== REJECT REASON MODAL ===== -->
+        <!-- ===== REJECT REASON MODAL (for creator) ===== -->
         <div id="rejectReasonModal" class="modal">
             <div class="modal-content">
                 <h3>❌ Reject Submission</h3>
@@ -2559,7 +2746,7 @@
         </div>
     </div>
 
-    <!-- ===== SUBMISSION DETAIL MODAL (REJECT REASON SHOW) ===== -->
+    <!-- ===== SUBMISSION DETAIL MODAL ===== -->
     <div id="submissionDetailModal" class="modal">
         <div class="modal-content"><h3>📄 Submission Details</h3><div id="submissionDetailContent"></div><button class="btn btn-danger" onclick="closeModal('submissionDetailModal')" style="width:100%;">Close</button></div>
     </div>
@@ -2586,6 +2773,12 @@
         const db = firebase.database();
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => console.error(e));
+
+        // ============================================================
+        // GEMINI API CONFIG (from ai.html - latest version)
+        // ============================================================
+        const GEMINI_API_KEY = "AQ.Ab8RN6K3hKPPXxHrds7La8GQcQs3hFuDL8Irgpenf0C2fKpn0w";
+        const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
         // ============================================================
         // GLOBALS
@@ -2618,6 +2811,7 @@
         let fullscreenTasksFilter = 'all';
         let minDeposit = 100;
         let minWithdraw = 1000;
+        let isGeminiProcessing = false;
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -2645,7 +2839,7 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
+        function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, m => (m === '&' ? '&amp;' : m ===
                 '<' ? '&lt;' : '&gt;')); }
 
         function escapeJs(str) {
@@ -2785,13 +2979,12 @@
         }
 
         // ============================================================
-        // USER DATA (with non-withdrawable safety)
+        // USER DATA
         // ============================================================
         async function loadUserData() {
             let snap = await db.ref(`users/${currentUser.uid}`).once('value');
             if (snap.exists()) {
                 currentUserData = snap.val();
-                // Ensure nonWithdrawableCoins never exceeds coins
                 if ((currentUserData.nonWithdrawableCoins || 0) > (currentUserData.coins || 0)) {
                     currentUserData.coins = currentUserData.nonWithdrawableCoins;
                     await db.ref(`users/${currentUser.uid}/coins`).set(currentUserData.coins);
@@ -2932,7 +3125,7 @@
         }
 
         // ============================================================
-        // SUBMISSIONS
+        // SUBMISSIONS - REDESIGNED
         // ============================================================
         async function loadMySubmissions() {
             try {
@@ -2952,7 +3145,7 @@
         function displaySubmissionsList() {
             const container = document.getElementById('submissionsContainer');
             if (!allSubmissions.length) {
-                container.innerHTML = '<p style="color:#666;padding:10px;">No submissions yet.</p>';
+                container.innerHTML = '<p style="color:#666;padding:10px;text-align:center;">No submissions yet.</p>';
                 return;
             }
             let html = '';
@@ -2963,16 +3156,52 @@
             }
             const latest = allSubmissions.slice(0, 3);
             for (let s of latest) {
-                let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
-                    s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
-                let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
-                let proofTypeBadge = s.proofType === 'text' ?
-                    '<span class="proof-type-badge text">📝 Text</span>' :
-                    '<span class="proof-type-badge image">🖼️ Image</span>';
-                html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
-                            <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
-                            <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
-                        </div>`;
+                let statusClass = s.status === 'approved' ? 'approved' : (s.status === 'rejected' ? 'rejected' :
+                    s.status === 'pending_reject' ? 'pending_reject' : 'pending');
+                let statusLabel = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
+                let proofHtml = '';
+                if (s.proofType === 'text' && s.proofText) {
+                    proofHtml =
+                        `<span class="proof-text-preview">📝 ${escapeHtml(s.proofText.substring(0,30))}${s.proofText.length>30?'...':''}</span>`;
+                } else if (s.images && s.images.length > 0) {
+                    proofHtml = s.images.map(img =>
+                        `<img src="${img}" class="proof-thumb" onclick="event.stopPropagation(); openImageModal('${img}')" onerror="this.style.display='none'">`
+                        ).join('');
+                }
+                // Gemini message if available
+                let geminiHtml = '';
+                if (s.geminiVerdict) {
+                    const verdict = s.geminiVerdict.toLowerCase();
+                    const isApproved = verdict === 'approved' || verdict === 'approve';
+                    const cls = isApproved ? 'approved' : 'rejected';
+                    const label = isApproved ? '✅ Approved' : '❌ Rejected';
+                    const reason = s.geminiReason || '';
+                    geminiHtml = `
+                                <div class="gemini-verdict ${cls}">
+                                    <span class="ai-icon"><i class="fas fa-robot"></i></span>
+                                    <strong>${label}</strong>
+                                    ${reason ? `— ${escapeHtml(reason)}` : ''}
+                                    ${s.geminiProcessedAt ? `<span style="font-size:10px;color:#999;margin-left:6px;">${new Date(s.geminiProcessedAt).toLocaleString()}</span>` : ''}
+                                </div>
+                            `;
+                }
+                html += `
+                            <div class="submission-item" onclick="viewSubmission('${s.id}')">
+                                <div class="sub-left">
+                                    <span class="task-title">${escapeHtml(s.taskTitle)}</span>
+                                    <div class="sub-meta">
+                                        <span>💰 ${s.reward} coins</span>
+                                        <span>📅 ${new Date(s.timestamp).toLocaleDateString()}</span>
+                                        <span>${s.proofType === 'text' ? '📝 Text' : '🖼️ Image'}</span>
+                                    </div>
+                                    ${proofHtml ? `<div class="sub-proof">${proofHtml}</div>` : ''}
+                                    ${geminiHtml}
+                                </div>
+                                <div class="sub-right">
+                                    <span class="status-badge ${statusClass}">${statusLabel}</span>
+                                </div>
+                            </div>
+                        `;
             }
             container.innerHTML = html;
         }
@@ -2982,31 +3211,56 @@
             const list = document.getElementById('allSubmissionsList');
             let html = '';
             for (let s of allSubmissions) {
-                let statusColor = s.status === 'approved' ? '#28a745' : (s.status === 'rejected' ? '#dc3545' :
-                    s.status === 'pending_reject' ? '#ffc107' : '#ffc107');
-                let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
-                let proofTypeBadge = s.proofType === 'text' ?
-                    '<span class="proof-type-badge text">📝 Text</span>' :
-                    '<span class="proof-type-badge image">🖼️ Image</span>';
+                let statusClass = s.status === 'approved' ? 'approved' : (s.status === 'rejected' ? 'rejected' :
+                    s.status === 'pending_reject' ? 'pending_reject' : 'pending');
+                let statusLabel = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
+                let proofHtml = '';
+                if (s.proofType === 'text' && s.proofText) {
+                    proofHtml = `<span class="proof-text-preview">📝 ${escapeHtml(s.proofText.substring(0,40))}</span>`;
+                } else if (s.images && s.images.length > 0) {
+                    proofHtml = s.images.map(img =>
+                        `<img src="${img}" class="proof-thumb" onclick="event.stopPropagation(); openImageModal('${img}')" onerror="this.style.display='none'">`
+                        ).join('');
+                }
                 let rejectReasonHtml = '';
                 if (s.status === 'rejected' && s.rejectReason) {
-                    rejectReasonHtml = `<div class="reject-reason-box"><strong>❌ Rejection Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    rejectReasonHtml =
+                        `<div class="reject-reason-box"><strong>❌ Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
                 }
                 if (s.status === 'pending_reject' && s.rejectReason) {
-                    rejectReasonHtml = `<div style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    rejectReasonHtml =
+                        `<div class="reject-reason-box" style="background:#fff3cd;border-left-color:#ffc107;color:#856404;"><strong>⏳ Pending admin review:</strong> ${escapeHtml(s.rejectReason)}</div>`;
                 }
-                html += `<div class="submission-item" onclick="viewSubmission('${s.id}')">
-                            <div><strong>${escapeHtml(s.taskTitle)}</strong> ${proofTypeBadge}<br>💰 ${s.reward} coins<br>📅 ${new Date(s.timestamp).toLocaleString()}</div>
-                            <div><span style="background:${statusColor};color:white;padding:4px 12px;border-radius:20px;font-size:12px;">${label}</span></div>
-                        </div>
-                        ${rejectReasonHtml}`;
+                let geminiHtml = '';
+                if (s.geminiVerdict) {
+                    const verdict = s.geminiVerdict.toLowerCase();
+                    const isApproved = verdict === 'approved' || verdict === 'approve';
+                    const cls = isApproved ? 'approved' : 'rejected';
+                    const label = isApproved ? '✅ Approved' : '❌ Rejected';
+                    geminiHtml =
+                        `<div class="gemini-verdict ${cls}"><span class="ai-icon"><i class="fas fa-robot"></i></span><strong>${label}</strong> ${s.geminiReason ? '— '+escapeHtml(s.geminiReason) : ''}</div>`;
+                }
+                html += `
+                            <div class="submission-item" onclick="viewSubmission('${s.id}')">
+                                <div class="sub-left">
+                                    <span class="task-title">${escapeHtml(s.taskTitle)}</span>
+                                    <div class="sub-meta">💰 ${s.reward} coins • 📅 ${new Date(s.timestamp).toLocaleDateString()}</div>
+                                    ${proofHtml ? `<div class="sub-proof">${proofHtml}</div>` : ''}
+                                    ${rejectReasonHtml}
+                                    ${geminiHtml}
+                                </div>
+                                <div class="sub-right">
+                                    <span class="status-badge ${statusClass}">${statusLabel}</span>
+                                </div>
+                            </div>
+                        `;
             }
-            list.innerHTML = html || '<p>No submissions</p>';
+            list.innerHTML = html || '<p style="color:#666;padding:20px;text-align:center;">No submissions</p>';
             modal.style.display = 'flex';
         }
 
         // ============================================================
-        // VIEW SUBMISSION (WITH REJECT REASON)
+        // VIEW SUBMISSION
         // ============================================================
         window.viewSubmission = async function(id) {
             try {
@@ -3020,33 +3274,40 @@
                     return;
                 }
                 let proofHtml = '';
-                if (s.proofType === 'text' && s.proofText && (s.status === 'pending' || s.status === 'pending_reject')) {
+                if (s.proofType === 'text' && s.proofText) {
                     proofHtml =
                         `<div class="proof-text-box"><span class="label">📝 Proof Text:</span>${escapeHtml(s.proofText)}</div>`;
-                } else if (s.images && s.images.length > 0 && (s.status === 'pending' || s.status === 'pending_reject')) {
+                } else if (s.images && s.images.length > 0) {
                     proofHtml = s.images.map(img => safeImageHtml(img, 'preview-img')).join('');
-                } else if (s.status === 'approved' || s.status === 'rejected') {
-                    proofHtml = `<div style="color:#999;font-size:13px;">📎 Proof hidden (${s.status})</div>`;
                 }
-                
-                // 🔥 REJECT REASON SHOW
                 let rejectReasonHtml = '';
                 if (s.status === 'rejected' && s.rejectReason) {
-                    rejectReasonHtml = `<div class="reject-reason-box"><strong>❌ Rejection Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    rejectReasonHtml =
+                        `<div class="reject-reason-box"><strong>❌ Rejection Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
                 }
                 if (s.status === 'pending_reject' && s.rejectReason) {
-                    rejectReasonHtml = `<div style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    rejectReasonHtml =
+                        `<div class="reject-reason-box" style="background:#fff3cd;border-left-color:#ffc107;color:#856404;"><strong>⏳ Pending admin review:</strong> ${escapeHtml(s.rejectReason)}</div>`;
                 }
-                
-                let label = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
+                let geminiHtml = '';
+                if (s.geminiVerdict) {
+                    const verdict = s.geminiVerdict.toLowerCase();
+                    const isApproved = verdict === 'approved' || verdict === 'approve';
+                    const cls = isApproved ? 'approved' : 'rejected';
+                    const label = isApproved ? '✅ Approved' : '❌ Rejected';
+                    geminiHtml =
+                        `<div class="gemini-verdict ${cls}" style="margin-top:8px;"><span class="ai-icon"><i class="fas fa-robot"></i></span><strong>${label}</strong> ${s.geminiReason ? '— '+escapeHtml(s.geminiReason) : ''}</div>`;
+                }
+                let statusLabel = s.status === 'pending_reject' ? 'pending (admin review)' : s.status;
                 document.getElementById('submissionDetailContent').innerHTML = `
                             <p><strong>Task:</strong> ${escapeHtml(s.taskTitle)}</p>
-                            <p><strong>Status:</strong> <span style="color:${s.status==='approved'?'green':(s.status==='rejected'?'red':(s.status==='pending_reject'?'orange':'orange'))}">${label}</span></p>
+                            <p><strong>Status:</strong> <span style="color:${s.status==='approved'?'green':(s.status==='rejected'?'red':(s.status==='pending_reject'?'orange':'orange'))}">${statusLabel}</span></p>
                             <p><strong>Reward:</strong> ${s.reward||0} coins</p>
                             <p><strong>Proof Type:</strong> ${s.proofType === 'text' ? '📝 Text' : '🖼️ Image'}</p>
                             <p><strong>Submitted:</strong> ${new Date(s.timestamp).toLocaleString()}</p>
                             ${proofHtml ? `<p><strong>Proof:</strong></p><div style="display:flex;flex-wrap:wrap;">${proofHtml}</div>` : ''}
                             ${rejectReasonHtml}
+                            ${geminiHtml}
                             <button class="btn" onclick="closeModal('submissionDetailModal')">Close</button>
                         `;
                 document.getElementById('submissionDetailModal').style.display = 'flex';
@@ -3096,14 +3357,12 @@
                 container.innerHTML = '<p style="color:#666;padding:10px;">No referrals yet.</p>';
                 return;
             }
-
             let html = '';
             if (allReferrals.length > 3) {
                 html += `<div class="view-all-wrapper-top">
                             <button class="view-all-btn-top" onclick="openAllReferralsModal()">👥 View All (${allReferrals.length}) <i class="fas fa-chevron-right"></i></button>
                         </div>`;
             }
-
             const displayItems = allReferrals.slice(0, 10);
             for (let item of displayItems) {
                 const username = item.referredUsername || 'Unknown';
@@ -3125,7 +3384,6 @@
                     actionHtml =
                         `<span style="color:#999;font-size:12px;">⏳ ${totalNeeded - tasksDone} more</span>`;
                 }
-
                 html += `
                             <div class="referral-row">
                                 <div class="user-info">
@@ -3155,12 +3413,10 @@
                 const isComplete = tasksDone >= totalNeeded;
                 const isClaimed = item.bonusClaimed === true;
                 const progressText = `${tasksDone}/${totalNeeded}`;
-
                 let statusText = '';
                 if (isClaimed) statusText = '✅ Claimed';
                 else if (isComplete) statusText = '🎁 Ready to claim!';
                 else statusText = `⏳ ${totalNeeded - tasksDone} left`;
-
                 html += `
                             <div class="referral-row">
                                 <div class="user-info">${escapeHtml(username)}</div>
@@ -3175,7 +3431,6 @@
 
         async function claimReferralBonus(referralId) {
             if (!confirm('Claim bonus for this referral?')) return;
-
             try {
                 const snap = await db.ref(`referrals/${referralId}`).once('value');
                 const refData = snap.val();
@@ -3183,27 +3438,18 @@
                 if (refData.bonusClaimed) { showToast('Bonus already claimed'); return; }
                 const tasksDone = refData.tasksCompleted || 0;
                 if (tasksDone < 7) { showToast('User has not completed 7 tasks yet'); return; }
-
                 const bonusAmount = refData.bonusLocked || 100;
                 const referrerId = refData.referredBy;
-
-                if (referrerId !== currentUser.uid) {
-                    showToast('You are not the referrer for this user');
-                    return;
-                }
-
+                if (referrerId !== currentUser.uid) { showToast('You are not the referrer for this user'); return; }
                 const currentCoins = (await db.ref(`users/${referrerId}/coins`).once('value')).val() || 0;
                 await db.ref(`users/${referrerId}/coins`).set(currentCoins + bonusAmount);
-
                 await db.ref(`referrals/${referralId}/bonusClaimed`).set(true);
                 await db.ref(`referrals/${referralId}/bonusClaimedAt`).set(Date.now());
-
                 if (currentUserData) {
                     currentUserData.coins = (currentUserData.coins || 0) + bonusAmount;
                     currentUserData.referralEarnings = (currentUserData.referralEarnings || 0) + bonusAmount;
                     updateUI();
                 }
-
                 showToast(`🎉 Claimed ${bonusAmount} coins bonus!`);
                 await loadReferralData();
             } catch (err) {
@@ -3218,7 +3464,6 @@
                 const snap = await db.ref('referrals').orderByChild('referredUserId').equalTo(userId).once('value');
                 const refs = snap.val();
                 if (!refs) return;
-
                 const subSnap = await db.ref('task_submissions').orderByChild('userId').equalTo(userId).once('value');
                 const subs = subSnap.val() || {};
                 let approvedCount = 0;
@@ -3227,7 +3472,6 @@
                         approvedCount++;
                     }
                 }
-
                 for (let refId in refs) {
                     const ref = refs[refId];
                     if (ref.bonusClaimed) continue;
@@ -3235,9 +3479,7 @@
                         await db.ref(`referrals/${refId}/tasksCompleted`).set(approvedCount);
                     }
                 }
-            } catch (e) {
-                console.warn('Error updating referral progress:', e);
-            }
+            } catch (e) { console.warn('Error updating referral progress:', e); }
         }
 
         // ============================================================
@@ -3367,7 +3609,8 @@
                             creatorId: 'admin',
                             timestamp: t.createdAt || 0,
                             proofType: 'image',
-                            status: t.status || 'active',
+                            status: remaining > 0 ? 'active' : (counts.approved >= maxLimit ? 'completed' :
+                            'hidden'),
                             completed: counts.approved,
                             pending: counts.pending
                         });
@@ -3459,13 +3702,8 @@
                         task.left = Math.max(0, (task.maxLimit || 0) - filled);
                         task.completed = counts.approved;
                         task.pending = counts.pending;
-                        if (task.left === 0 && task.completed >= task.maxLimit) {
-                            task.status = 'completed';
-                        } else if (task.left === 0) {
-                            task.status = 'hidden';
-                        } else {
-                            task.status = 'active';
-                        }
+                        task.status = task.left > 0 ? 'active' : (counts.approved >= task.maxLimit ? 'completed' :
+                            'hidden');
                     }
                     displayOfficialTasks();
                 }
@@ -3477,13 +3715,8 @@
                         task.left = Math.max(0, (task.requiredUsers || 0) - filled);
                         task.completed = counts.approved;
                         task.pending = counts.pending;
-                        if (task.left === 0 && counts.approved >= task.requiredUsers) {
-                            task.status = 'completed';
-                        } else if (task.left === 0) {
-                            task.status = 'hidden';
-                        } else {
-                            task.status = 'active';
-                        }
+                        task.status = task.left > 0 ? 'active' : (counts.approved >= task.requiredUsers ?
+                            'completed' : 'hidden');
                     }
                     displayFilteredTasks();
                     updateTaskCounts();
@@ -3510,11 +3743,9 @@
         function updateTaskDetailSlots(taskId) {
             const modal = document.getElementById('taskDetailModal');
             if (modal.style.display !== 'block') return;
-
             let task = null;
             task = cachedUserTasks.find(t => t.id === taskId);
             if (!task) task = cachedOfficialTasks.find(t => t.id === taskId);
-
             if (task) {
                 const statusDiv = document.getElementById('taskSubmitStatus');
                 if (task.left <= 0) {
@@ -3570,10 +3801,9 @@
         }
 
         // ============================================================
-        // ⭐ TASK CLICK HANDLER (FIXED - FIRST CLICK WORKS)
+        // TASK CLICK HANDLER
         // ============================================================
         window.handleTaskClick = function(element) {
-            // Prevent double click
             if (element._clicking) return;
             element._clicking = true;
 
@@ -3587,15 +3817,20 @@
             const creator = element.dataset.taskCreator;
             const proofType = element.dataset.taskProoftype || 'image';
 
-            // ✅ Open detail immediately - NO DELAY
+            // Close fullscreen if open
+            const fullscreen = document.getElementById('fullscreenTasks');
+            if (fullscreen.style.display === 'block') {
+                fullscreen.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
             showTaskDetail(id, type, title, desc, steps, link, reward, creator, proofType);
 
-            // Allow next click after short cooldown
             setTimeout(() => { element._clicking = false; }, 300);
         };
 
         // ============================================================
-        // DISPLAY TASKS (View All at TOP)
+        // DISPLAY TASKS
         // ============================================================
         function displayFilteredTasks() {
             const container = document.getElementById('allTasksList');
@@ -3615,7 +3850,6 @@
                 return;
             }
 
-            // 🔥 View All button at TOP (like Submissions)
             let viewAllHtml = '';
             if (!showAll && totalAvailable > 5) {
                 viewAllHtml = `
@@ -3678,8 +3912,13 @@
             container.innerHTML = html;
         }
 
+        // ============================================================
+        // DISPLAY OFFICIAL TASKS - HIDE SUBMITTED
+        // ============================================================
         function displayOfficialTasks() {
             const container = document.getElementById('officialTasksList');
+
+            // Only show available (not submitted) official tasks
             let available = cachedOfficialTasks.filter(t => {
                 if (t.status !== 'active') return false;
                 if (userSubmissionsMap[t.id]) return false;
@@ -3687,23 +3926,20 @@
                 return true;
             });
 
-            const submitted = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]);
-
-            let officialHtml = '';
-            for (let t of submitted) {
-                officialHtml += `
-                    <div class="task-item" style="opacity:0.7;border-left-color:#28a745;cursor:default;">
-                        <div><strong><i class="fas fa-tasks"></i> ${escapeHtml(t.title)}</strong><br><small><span class="task-submitted-badge">✅ Submitted</span> <span class="task-pending-badge">⏳ Pending</span></small></div>
-                        <div>+${t.reward}</div>
-                    </div>
-                `;
-            }
-
+            // Sort by timestamp
             const sortedAvailable = [...available].sort((a, b) => b.timestamp - a.timestamp);
             const latestAvailable = sortedAvailable.slice(0, 5);
             const totalAvailable = sortedAvailable.length;
 
-            // 🔥 View All button at TOP for official tasks
+            let officialHtml = '';
+
+            // If user has submitted some official tasks, show a small note
+            const submittedCount = cachedOfficialTasks.filter(t => userSubmissionsMap[t.id]).length;
+            if (submittedCount > 0) {
+                officialHtml +=
+                    `<div style="font-size:12px;color:#28a745;margin-bottom:10px;background:#e8f5e9;padding:6px 12px;border-radius:8px;">✅ You have completed ${submittedCount} official task${submittedCount>1?'s':''}.</div>`;
+            }
+
             let viewAllHtml = '';
             if (totalAvailable > 5) {
                 viewAllHtml = `
@@ -3717,52 +3953,52 @@
 
             officialHtml += viewAllHtml;
 
-            for (let t of latestAvailable) {
-                let slotsLeft = t.left;
-                let slotClass = 'task-slots';
-                if (slotsLeft <= 0) slotClass += ' none';
-                else if (slotsLeft <= 3) slotClass += ' few';
-                const totalSlots = t.maxLimit || 100;
-                const progressPct = Math.round(((totalSlots - slotsLeft) / totalSlots) * 100);
+            if (latestAvailable.length === 0) {
+                officialHtml +=
+                    '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
+            } else {
+                for (let t of latestAvailable) {
+                    let slotsLeft = t.left;
+                    let slotClass = 'task-slots';
+                    if (slotsLeft <= 0) slotClass += ' none';
+                    else if (slotsLeft <= 3) slotClass += ' few';
+                    const totalSlots = t.maxLimit || 100;
+                    const progressPct = Math.round(((totalSlots - slotsLeft) / totalSlots) * 100);
 
-                officialHtml += `
-                    <div class="task-item-enhanced" 
-                         data-task-id="${t.id}" 
-                         data-task-type="${t.type}"
-                         data-task-title="${escapeHtml(t.title)}"
-                         data-task-desc="${escapeHtml(t.desc)}"
-                         data-task-steps="${escapeHtml(t.steps)}"
-                         data-task-link="${escapeHtml(t.link)}"
-                         data-task-reward="${t.reward}"
-                         data-task-creator="${t.creatorId}"
-                         data-task-prooftype="${t.proofType || 'image'}"
-                         onclick="handleTaskClick(this)">
-                        <div class="task-item-left">
-                            <div class="task-platform-icon"><i class="fas fa-tasks"></i></div>
-                            <div class="task-info">
-                                <div class="task-title-row">
-                                    <span class="task-title">${escapeHtml(t.title)}</span>
-                                    <span style="font-size:10px;color:#888;">📢 Official</span>
-                                </div>
-                                <div class="task-meta-row">
-                                    <span class="task-reward">💰 +${t.reward}</span>
-                                    <span class="${slotClass}">🎯 ${slotsLeft} left</span>
-                                </div>
-                                <div class="task-progress-bar">
-                                    <div class="task-progress-fill" style="width:${progressPct}%;"></div>
+                    officialHtml += `
+                        <div class="task-item-enhanced" 
+                             data-task-id="${t.id}" 
+                             data-task-type="${t.type}"
+                             data-task-title="${escapeHtml(t.title)}"
+                             data-task-desc="${escapeHtml(t.desc)}"
+                             data-task-steps="${escapeHtml(t.steps)}"
+                             data-task-link="${escapeHtml(t.link)}"
+                             data-task-reward="${t.reward}"
+                             data-task-creator="${t.creatorId}"
+                             data-task-prooftype="${t.proofType || 'image'}"
+                             onclick="handleTaskClick(this)">
+                            <div class="task-item-left">
+                                <div class="task-platform-icon"><i class="fas fa-tasks"></i></div>
+                                <div class="task-info">
+                                    <div class="task-title-row">
+                                        <span class="task-title">${escapeHtml(t.title)}</span>
+                                        <span style="font-size:10px;color:#888;">📢 Official</span>
+                                    </div>
+                                    <div class="task-meta-row">
+                                        <span class="task-reward">💰 +${t.reward}</span>
+                                        <span class="${slotClass}">🎯 ${slotsLeft} left</span>
+                                    </div>
+                                    <div class="task-progress-bar">
+                                        <div class="task-progress-fill" style="width:${progressPct}%;"></div>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="task-item-right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
                         </div>
-                        <div class="task-item-right">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (!officialHtml) {
-                officialHtml =
-                    '<p style="color:#666;text-align:center;padding:20px;">✅ All official tasks completed or full!</p>';
+                    `;
+                }
             }
             container.innerHTML = officialHtml;
         }
@@ -3983,7 +4219,7 @@
         };
 
         // ============================================================
-        // CLOSE TASK DETAIL (GO BACK TO TASKS)
+        // CLOSE TASK DETAIL
         // ============================================================
         function closeTaskDetail() {
             document.getElementById('taskDetailModal').style.display = 'none';
@@ -3997,8 +4233,6 @@
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-submit-disabled');
             submitBtn.innerText = 'Submit Task';
-            
-            // 🔥 After closing, navigate back to Tasks tab
             navigateTo('tasks');
         }
 
@@ -4008,14 +4242,12 @@
         document.getElementById('proofInput').addEventListener('change', function(e) {
             const files = e.target.files;
             if (!files || files.length === 0) return;
-
             const f = files[0];
             if (!f.type.startsWith('image/')) {
                 showToast("Please select an image file");
                 this.value = '';
                 return;
             }
-
             const reader = new FileReader();
             reader.onload = ev => {
                 const img = new Image();
@@ -4045,7 +4277,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF (UPDATED)
+        // SUBMIT PROOF
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -4101,7 +4333,7 @@
 
                     userSubmissionsMap[currentTask.id] = true;
                     showToast("✅ Task Submitted Successfully");
-                    closeTaskDetail(); // This will navigate back to Tasks
+                    closeTaskDetail();
                     tasksLoaded = false;
                     await loadAllTasks();
                     await loadMySubmissions();
@@ -4175,7 +4407,7 @@
 
                 userSubmissionsMap[currentTask.id] = true;
                 showToast("✅ Task Submitted Successfully");
-                closeTaskDetail(); // This will navigate back to Tasks
+                closeTaskDetail();
                 tasksLoaded = false;
                 await loadAllTasks();
                 await loadMySubmissions();
@@ -4394,7 +4626,7 @@
         }
 
         // ============================================================
-        // MY TASK DETAILS
+        // MY TASK DETAILS - with Gemini integration
         // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
             try {
@@ -4464,7 +4696,7 @@
                         html += `<div style="margin-top:8px;"><strong>Submissions:</strong>`;
                         let displaySubs = subsForTask.slice(0, 3);
                         for (let s of displaySubs) {
-                            html += buildSubmissionHtml(s, taskId, t.rewardPerUser);
+                            html += buildSubmissionHtmlWithGemini(s, taskId, t.rewardPerUser);
                         }
                         html += `</div>`;
                         if (subsForTask.length > 3) {
@@ -4504,9 +4736,9 @@
         }
 
         // ============================================================
-        // BUILD SUBMISSION HTML
+        // BUILD SUBMISSION HTML WITH GEMINI (for creator)
         // ============================================================
-        function buildSubmissionHtml(s, taskId, rewardPerUser) {
+        function buildSubmissionHtmlWithGemini(s, taskId, rewardPerUser) {
             let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
                 'pending_reject' ? 'orange' : 'orange'));
             let proofHtml = '';
@@ -4522,22 +4754,67 @@
             }
 
             let actionButtons = '';
+            // Only show approve/reject for pending submissions (not pending_reject)
             if (s.status === 'pending' && currentUser && currentUserData) {
                 actionButtons = `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">
-                                            <button class="btn btn-success btn-sm" onclick="approveSubmissionByCreator('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="openRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject</button>
+                                            <button class="btn btn-success btn-sm" onclick="approveSubmissionWithGemini('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">✅ Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="openGeminiRejectModal('${s.id}','${taskId}','${s.userId}',${rewardPerUser||0})">❌ Reject (AI Verify)</button>
                                         </div>`;
             }
+
+            // If pending_reject, show AI processing status
+            let aiStatusHtml = '';
+            if (s.status === 'pending_reject') {
+                aiStatusHtml = `
+                            <div class="ai-reject-loading" style="margin-top:6px;">
+                                <span class="spinner-sm"></span>
+                                <span>🤖 AI Verifying your rejection... (${s.rejectReason ? 'reason: '+escapeHtml(s.rejectReason) : 'processing'})</span>
+                            </div>
+                        `;
+            }
+
+            // If already rejected, show Gemini verdict if available
+            let geminiVerdictHtml = '';
+            if (s.status === 'rejected' && s.geminiVerdict) {
+                const verdict = s.geminiVerdict.toLowerCase();
+                const isApproved = verdict === 'approved' || verdict === 'approve';
+                const cls = isApproved ? 'approved' : 'rejected';
+                const label = isApproved ? '✅ AI Approved' : '❌ AI Rejected';
+                geminiVerdictHtml = `
+                            <div class="gemini-verdict ${cls}" style="margin-top:4px;">
+                                <span class="ai-icon"><i class="fas fa-robot"></i></span>
+                                <strong>${label}</strong>
+                                ${s.geminiReason ? '— '+escapeHtml(s.geminiReason) : ''}
+                            </div>
+                        `;
+            }
+
+            // If approved, show Gemini verdict if available
+            if (s.status === 'approved' && s.geminiVerdict) {
+                const verdict = s.geminiVerdict.toLowerCase();
+                const isApproved = verdict === 'approved' || verdict === 'approve';
+                const cls = isApproved ? 'approved' : 'rejected';
+                const label = isApproved ? '✅ AI Approved' : '❌ AI Rejected';
+                geminiVerdictHtml = `
+                            <div class="gemini-verdict ${cls}" style="margin-top:4px;">
+                                <span class="ai-icon"><i class="fas fa-robot"></i></span>
+                                <strong>${label}</strong>
+                                ${s.geminiReason ? '— '+escapeHtml(s.geminiReason) : ''}
+                            </div>
+                        `;
+            }
+
             let rejectReasonHtml = '';
-            if (s.status === 'rejected' && s.rejectReason) {
+            if (s.status === 'rejected' && s.rejectReason && !s.geminiVerdict) {
                 rejectReasonHtml =
                     `<div class="reject-reason-box"><strong>❌ Rejected:</strong> ${escapeHtml(s.rejectReason)}</div>`;
             }
             if (s.status === 'pending_reject' && s.rejectReason) {
                 rejectReasonHtml =
-                    `<div class="pending-reject-box" style="background:#fff3cd;border-left:4px solid #ffc107;padding:10px 12px;border-radius:8px;margin:6px 0;font-size:13px;color:#856404;"><strong>⏳ Rejection pending admin approval:</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    `<div class="reject-reason-box" style="background:#fff3cd;border-left-color:#ffc107;color:#856404;"><strong>⏳ Rejection pending AI:</strong> ${escapeHtml(s.rejectReason)}</div>`;
             }
-            let label = s.status === 'pending_reject' ? 'pending (admin)' : s.status;
+
+            let label = s.status === 'pending_reject' ? 'pending (AI)' : s.status;
             let proofTypeLabel = s.proofType === 'text' ? '📝 Text' : '🖼️ Image';
             return `<div class="submission-item" style="margin:5px 0;padding:8px;display:flex;flex-direction:column;align-items:flex-start;width:100%;">
                                         <div style="display:flex;align-items:center;flex-wrap:wrap;width:100%;">
@@ -4549,11 +4826,356 @@
                                         </div>
                                         ${proofHtml}
                                         ${rejectReasonHtml}
+                                        ${geminiVerdictHtml}
+                                        ${aiStatusHtml}
                                         ${actionButtons}
                                         <div class="submission-status-msg"></div>
                                     </div>`;
         }
 
+        // ============================================================
+        // GEMINI REJECT MODAL (for creator) - AI Verify
+        // ============================================================
+        let geminiRejectData = {};
+
+        function openGeminiRejectModal(submissionId, taskId, workerId, reward) {
+            geminiRejectData = { submissionId, taskId, workerId, reward };
+            // Show a custom modal for AI rejection reason
+            document.getElementById('rejectReasonInput').value = '';
+            document.getElementById('reasonPreviewText').innerText = '';
+            document.getElementById('reasonPreview').style.display = 'none';
+            document.getElementById('charCounter').innerText = '0 words (min 3)';
+            document.getElementById('charCounter').className = 'char-counter invalid';
+            document.getElementById('submitRejectBtn').disabled = true;
+            // Change button text to show AI verification
+            document.getElementById('submitRejectBtn').innerHTML = '🤖 Submit to AI Verify';
+            document.getElementById('rejectReasonModal').style.display = 'flex';
+            // Store that this is a Gemini reject
+            pendingRejectSubmissionId = submissionId;
+            pendingRejectTaskId = taskId;
+            pendingRejectWorkerId = workerId;
+            pendingRejectReward = reward;
+            // Flag for Gemini processing
+            window._isGeminiReject = true;
+        }
+
+        // Override submitRejectReason to handle Gemini
+        async function submitRejectReason() {
+            const reason = document.getElementById('rejectReasonInput').value.trim();
+            const words = reason.split(/\s+/).filter(w => w.length > 0);
+            if (words.length < 3) { showToast('Please enter at least 3 words.'); return; }
+            if (!pendingRejectSubmissionId) return;
+
+            const subId = pendingRejectSubmissionId,
+                taskId = pendingRejectTaskId,
+                workerId = pendingRejectWorkerId,
+                reward = pendingRejectReward;
+
+            // Close modal
+            closeRejectModal();
+
+            // Show inline loading on the submission item
+            showToast('🤖 Sending to Gemini AI for verification...');
+
+            try {
+                // Get submission data
+                const subSnap = await db.ref(`task_submissions/${subId}`).once('value');
+                const subData = subSnap.val();
+                if (!subData) { showToast('Submission not found'); return; }
+
+                // Get task data
+                let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
+                let isOfficial = taskSnap.exists();
+                let taskData = isOfficial ? taskSnap.val() : null;
+                if (!taskData) {
+                    const userTaskSnap = await db.ref(`tasks/user/${taskId}`).once('value');
+                    taskData = userTaskSnap.val();
+                }
+
+                // Build prompt for Gemini
+                const taskDetails = `
+                            Task Title: ${taskData?.title || 'Unknown'}
+                            Description: ${taskData?.description || 'N/A'}
+                            Steps: ${taskData?.steps || 'N/A'}
+                            Reward: ${reward} coins
+                            Required Users: ${taskData?.requiredUsers || 0}
+                        `;
+
+                const proofDetails = `
+                            Proof Type: ${subData.proofType || 'image'}
+                            ${subData.proofType === 'text' ? `Proof Text: ${subData.proofText || 'N/A'}` : `Proof Images: ${subData.images ? subData.images.join(', ') : 'None'}`}
+                        `;
+
+                const creatorReason = reason;
+
+                const prompt = `
+                            You are an AI moderator for a micro-task platform. A task creator has rejected a submission with the following reason:
+
+                            Creator's Rejection Reason: "${creatorReason}"
+
+                            Task Details:
+                            ${taskDetails}
+
+                            Submission Details:
+                            ${proofDetails}
+
+                            Analyze if the creator's rejection is valid. Consider:
+                            1. Does the proof correctly complete the task?
+                            2. Is the creator's reason reasonable based on the proof?
+                            3. Should this submission be approved or rejected?
+
+                            Give a verdict: "APPROVE" if the submission should be approved (creator's rejection is invalid), or "REJECT" if the creator is correct (submission should be rejected).
+
+                            Also provide a brief explanation (2-3 sentences) of your reasoning.
+
+                            Format your response as:
+                            VERDICT: APPROVE or REJECT
+                            REASON: <your explanation>
+                        `;
+
+                // Call Gemini API
+                const response = await fetch(GEMINI_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-goog-api-key': GEMINI_API_KEY
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: prompt }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                const geminiText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+
+                // Parse verdict
+                let verdict = 'unknown';
+                let geminiReason = geminiText;
+                const verdictMatch = geminiText.match(/VERDICT:\s*(APPROVE|REJECT)/i);
+                if (verdictMatch) {
+                    verdict = verdictMatch[1].toLowerCase();
+                    geminiReason = geminiText.replace(/VERDICT:\s*(APPROVE|REJECT)\s*/i, '').trim();
+                }
+
+                // Store Gemini result
+                await db.ref(`task_submissions/${subId}/geminiVerdict`).set(verdict);
+                await db.ref(`task_submissions/${subId}/geminiReason`).set(geminiReason);
+                await db.ref(`task_submissions/${subId}/geminiProcessedAt`).set(Date.now());
+                await db.ref(`task_submissions/${subId}/creatorRejectionReason`).set(reason);
+
+                // Auto process based on Gemini verdict
+                if (verdict === 'approve') {
+                    // AI says approval - override creator's rejection
+                    await db.ref(`task_submissions/${subId}/status`).set('approved');
+                    // Add coins to worker
+                    const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
+                    await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
+                    // Update task
+                    const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
+                    await taskRef.transaction((currentData) => {
+                        if (!currentData) return currentData;
+                        currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
+                        currentData.completed = (currentData.completed || 0) + 1;
+                        if (currentData.completed >= currentData.maxLimit) {
+                            currentData.status = "completed";
+                        }
+                        return currentData;
+                    });
+                    showToast('✅ AI approved this submission! Worker earned coins.');
+                } else if (verdict === 'reject') {
+                    // AI confirms rejection
+                    await db.ref(`task_submissions/${subId}/status`).set('rejected');
+                    // Return slot to task
+                    const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
+                    await taskRef.transaction((currentData) => {
+                        if (!currentData) return currentData;
+                        currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
+                        currentData.left = (currentData.left || 0) + 1;
+                        if (currentData.left > 0 && currentData.status === "hidden") {
+                            currentData.status = "active";
+                        }
+                        return currentData;
+                    });
+                    showToast('❌ AI confirmed rejection. Reason saved.');
+                } else {
+                    showToast('⚠️ AI could not determine. Please review manually.');
+                }
+
+                // Refresh
+                await loadAllTasks();
+                await loadMySubmissions();
+                await openMyTaskDetails();
+
+            } catch (err) {
+                console.error('Gemini error:', err);
+                showToast('❌ AI verification failed: ' + err.message);
+            }
+        }
+
+        // ============================================================
+        // APPROVE WITH GEMINI (for creator)
+        // ============================================================
+        async function approveSubmissionWithGemini(submissionId, taskId, workerId, reward) {
+            if (!confirm('Approve this submission? Gemini will verify automatically.')) return;
+
+            showToast('🤖 Sending to Gemini for approval verification...');
+
+            try {
+                // Get submission data
+                const subSnap = await db.ref(`task_submissions/${subId}`).once('value');
+                const subData = subSnap.val();
+                if (!subData) { showToast('Submission not found'); return; }
+
+                // Get task data
+                let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
+                let isOfficial = taskSnap.exists();
+                let taskData = isOfficial ? taskSnap.val() : null;
+                if (!taskData) {
+                    const userTaskSnap = await db.ref(`tasks/user/${taskId}`).once('value');
+                    taskData = userTaskSnap.val();
+                }
+
+                // Build prompt for Gemini
+                const taskDetails = `
+                            Task Title: ${taskData?.title || 'Unknown'}
+                            Description: ${taskData?.description || 'N/A'}
+                            Steps: ${taskData?.steps || 'N/A'}
+                            Reward: ${reward} coins
+                            Required Users: ${taskData?.requiredUsers || 0}
+                        `;
+
+                const proofDetails = `
+                            Proof Type: ${subData.proofType || 'image'}
+                            ${subData.proofType === 'text' ? `Proof Text: ${subData.proofText || 'N/A'}` : `Proof Images: ${subData.images ? subData.images.join(', ') : 'None'}`}
+                        `;
+
+                const prompt = `
+                            You are an AI moderator for a micro-task platform. The creator wants to approve a submission.
+
+                            Task Details:
+                            ${taskDetails}
+
+                            Submission Details:
+                            ${proofDetails}
+
+                            Analyze if this submission correctly completes the task.
+                            Give a verdict: "APPROVE" if the proof is correct and meets all task requirements, or "REJECT" if it does not.
+
+                            Also provide a brief explanation (2-3 sentences) of your reasoning.
+
+                            Format your response as:
+                            VERDICT: APPROVE or REJECT
+                            REASON: <your explanation>
+                        `;
+
+                const response = await fetch(GEMINI_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-goog-api-key': GEMINI_API_KEY
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: prompt }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                const geminiText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+
+                let verdict = 'unknown';
+                let geminiReason = geminiText;
+                const verdictMatch = geminiText.match(/VERDICT:\s*(APPROVE|REJECT)/i);
+                if (verdictMatch) {
+                    verdict = verdictMatch[1].toLowerCase();
+                    geminiReason = geminiText.replace(/VERDICT:\s*(APPROVE|REJECT)\s*/i, '').trim();
+                }
+
+                // Store Gemini result
+                await db.ref(`task_submissions/${submissionId}/geminiVerdict`).set(verdict);
+                await db.ref(`task_submissions/${submissionId}/geminiReason`).set(geminiReason);
+                await db.ref(`task_submissions/${submissionId}/geminiProcessedAt`).set(Date.now());
+
+                if (verdict === 'approve') {
+                    // Proceed with approval
+                    const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
+                    await taskRef.transaction((currentData) => {
+                        if (!currentData) return currentData;
+                        currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
+                        currentData.completed = (currentData.completed || 0) + 1;
+                        if (currentData.completed >= currentData.maxLimit) {
+                            currentData.status = "completed";
+                        }
+                        return currentData;
+                    });
+
+                    await db.ref(`task_submissions/${submissionId}/status`).set('approved');
+                    const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
+                    await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
+                    await updateReferralProgress(workerId);
+                    showToast('✅ AI approved! Worker earned +' + reward + ' coins.');
+                } else if (verdict === 'reject') {
+                    // AI suggests reject - ask creator
+                    if (confirm('🤖 AI suggests REJECTING this submission. Reason: ' + geminiReason + '\n\nDo you want to proceed with rejection?')) {
+                        const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
+                        await taskRef.transaction((currentData) => {
+                            if (!currentData) return currentData;
+                            currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
+                            currentData.left = (currentData.left || 0) + 1;
+                            if (currentData.left > 0 && currentData.status === "hidden") {
+                                currentData.status = "active";
+                            }
+                            return currentData;
+                        });
+                        await db.ref(`task_submissions/${submissionId}/status`).set('rejected');
+                        await db.ref(`task_submissions/${submissionId}/rejectReason`).set('AI: ' + geminiReason);
+                        showToast('❌ Submission rejected based on AI analysis.');
+                    } else {
+                        // Creator overrides - approve anyway
+                        const taskRef = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
+                        await taskRef.transaction((currentData) => {
+                            if (!currentData) return currentData;
+                            currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
+                            currentData.completed = (currentData.completed || 0) + 1;
+                            if (currentData.completed >= currentData.maxLimit) {
+                                currentData.status = "completed";
+                            }
+                            return currentData;
+                        });
+                        await db.ref(`task_submissions/${submissionId}/status`).set('approved');
+                        const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
+                        await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
+                        await updateReferralProgress(workerId);
+                        showToast('✅ Approved (creator override). Worker earned +' + reward + ' coins.');
+                    }
+                } else {
+                    showToast('⚠️ AI could not determine. Please review manually.');
+                }
+
+                refreshAfterAction(taskId);
+
+            } catch (err) {
+                console.error('Gemini approval error:', err);
+                showToast('❌ AI verification failed: ' + err.message);
+            }
+        }
+
+        // ============================================================
+        // VIEW TASK DETAILS (for creator)
+        // ============================================================
         window.viewTaskDetails = async function(taskId) {
             try {
                 let snap = await db.ref(`tasks/user/${taskId}`).once('value');
@@ -4566,7 +5188,7 @@
                 for (let sid in subs) { let s = subs[sid]; if (!s.adminDeleted) subArray.push({ id: sid, ...s }); }
                 subArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 for (let s of subArray) {
-                    html += buildSubmissionHtml(s, taskId, task.rewardPerUser);
+                    html += buildSubmissionHtmlWithGemini(s, taskId, task.rewardPerUser);
                 }
                 html += `<button class="btn" onclick="closeViewDetails()">Back to My Tasks</button>`;
                 document.getElementById('viewDetailsBody').innerHTML = html;
@@ -4583,27 +5205,21 @@
         function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
 
         // ============================================================
-        // REJECT LOGIC (UPDATED)
+        // LEGACY REJECT (kept for compatibility)
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
-            pendingRejectSubmissionId = submissionId;
-            pendingRejectTaskId = taskId;
-            pendingRejectWorkerId = workerId;
-            pendingRejectReward = reward;
-            document.getElementById('rejectReasonInput').value = '';
-            document.getElementById('reasonPreviewText').innerText = '';
-            document.getElementById('reasonPreview').style.display = 'none';
-            document.getElementById('charCounter').innerText = '0 words (min 3)';
-            document.getElementById('charCounter').className = 'char-counter invalid';
-            document.getElementById('submitRejectBtn').disabled = true;
-            document.getElementById('rejectReasonModal').style.display = 'flex';
+            // Redirect to Gemini reject
+            openGeminiRejectModal(submissionId, taskId, workerId, reward);
         }
 
-        function closeRejectModal() { document.getElementById('rejectReasonModal').style.display = 'none';
+        function closeRejectModal() {
+            document.getElementById('rejectReasonModal').style.display = 'none';
             pendingRejectSubmissionId = null;
             pendingRejectTaskId = null;
             pendingRejectWorkerId = null;
-            pendingRejectReward = 0; }
+            pendingRejectReward = 0;
+            window._isGeminiReject = false;
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const input = document.getElementById('rejectReasonInput');
@@ -4638,96 +5254,6 @@
                     `Total needed including 10% fee: ${total} coins (fee: ${fee} coins)`;
             });
         });
-
-        async function submitRejectReason() {
-            const reason = document.getElementById('rejectReasonInput').value.trim();
-            const words = reason.split(/\s+/).filter(w => w.length > 0);
-            if (words.length < 3) { showToast('Please enter at least 3 words.'); return; }
-            if (!pendingRejectSubmissionId) return;
-            const subId = pendingRejectSubmissionId,
-                taskId = pendingRejectTaskId,
-                workerId = pendingRejectWorkerId,
-                reward = pendingRejectReward;
-            const creatorId = currentUser.uid,
-                creatorName = currentUserData.username;
-            try {
-                let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
-                let isOfficial = taskSnap.exists();
-                const ref = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
-                await ref.transaction((currentData) => {
-                    if (!currentData) return currentData;
-                    currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
-                    currentData.left = (currentData.left || 0) + 1;
-                    if (currentData.left > 0 && currentData.status === "hidden") {
-                        currentData.status = "active";
-                    }
-                    return currentData;
-                });
-
-                await db.ref(`task_submissions/${subId}/status`).set('pending_reject');
-                await db.ref(`task_submissions/${subId}/rejectReason`).set(reason);
-                await db.ref(`task_submissions/${subId}/rejectedBy`).set(creatorId);
-                await db.ref(`task_submissions/${subId}/rejectedAt`).set(Date.now());
-                await db.ref('admin_rejected_submissions').push({
-                    submissionId: subId,
-                    taskId: taskId,
-                    creatorId: creatorId,
-                    creatorName: creatorName,
-                    workerId: workerId,
-                    workerName: (await db.ref(`users/${workerId}/username`).once('value')).val() || workerId
-                        .substring(0, 8),
-                    taskTitle: (await db.ref(`tasks/user/${taskId}/title`).once('value')).val() ||
-                        'Unknown Task',
-                    reason: reason,
-                    timestamp: Date.now(),
-                    images: (await db.ref(`task_submissions/${subId}/images`).once('value')).val() || [],
-                    proofText: (await db.ref(`task_submissions/${subId}/proofText`).once('value')).val() || '',
-                    proofType: (await db.ref(`task_submissions/${subId}/proofType`).once('value')).val() ||
-                        'image',
-                    reward: reward,
-                    status: 'pending'
-                });
-                showToast('✅ Rejection request sent to admin for review.');
-                closeRejectModal();
-                refreshAfterAction(taskId);
-            } catch (err) { console.error(err);
-                showToast('Error: ' + err.message); }
-        }
-
-        async function approveSubmissionByCreator(submissionId, taskId, workerId, reward) {
-            if (!confirm('Approve this submission?')) return;
-            try {
-                let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
-                let isOfficial = taskSnap.exists();
-                const ref = isOfficial ? db.ref(`tasks/official/${taskId}`) : db.ref(`tasks/user/${taskId}`);
-                await ref.transaction((currentData) => {
-                    if (!currentData) return currentData;
-                    currentData.pending = Math.max(0, (currentData.pending || 0) - 1);
-                    currentData.completed = (currentData.completed || 0) + 1;
-                    if (currentData.completed >= currentData.maxLimit) {
-                        currentData.status = "completed";
-                    }
-                    return currentData;
-                });
-
-                await db.ref(`task_submissions/${submissionId}/status`).set('approved');
-                const workerCoins = (await db.ref(`users/${workerId}/coins`).once('value')).val() || 0;
-                await db.ref(`users/${workerId}/coins`).set(workerCoins + reward);
-                const taskSnap2 = await db.ref(`tasks/user/${taskId}`).once('value');
-                const task = taskSnap2.val();
-                if (task) {
-                    const newCompleted = (task.completed || 0) + 1;
-                    await db.ref(`tasks/user/${taskId}/completed`).set(newCompleted);
-                    if (newCompleted >= (task.requiredUsers || 0) && !task.completedAt) {
-                        await db.ref(`tasks/user/${taskId}/completedAt`).set(Date.now());
-                    }
-                }
-                await updateReferralProgress(workerId);
-                showToast('Approved! Worker earned +' + reward + ' coins.');
-                refreshAfterAction(taskId);
-            } catch (err) { console.error(err);
-                showToast('Error: ' + err.message); }
-        }
 
         function refreshAfterAction(taskId) {
             openMyTaskDetails();
@@ -4978,7 +5504,7 @@
         }
 
         // ============================================================
-        // WITHDRAW (with non-withdrawable safety)
+        // WITHDRAW
         // ============================================================
         function showWithdrawModal() {
             let nonWithdrawable = currentUserData.nonWithdrawableCoins || 0;
@@ -5423,8 +5949,8 @@
         window.claimDailyReward = claimDailyReward;
         window.viewTaskDetails = viewTaskDetails;
         window.closeViewDetails = closeViewDetails;
-        window.approveSubmissionByCreator = approveSubmissionByCreator;
-        window.openRejectModal = openRejectModal;
+        window.approveSubmissionWithGemini = approveSubmissionWithGemini;
+        window.openGeminiRejectModal = openGeminiRejectModal;
         window.toggleProofTypeFields = toggleProofTypeFields;
         window.openMailBox = openMailBox;
         window.openMailDetail = openMailDetail;
