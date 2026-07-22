@@ -331,6 +331,8 @@
             transition: all 0.3s;
         }
         .btn-claim:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(247,151,30,0.5); }
+        .btn-purple { background: #6f42c1; color: white; }
+        .btn-purple:hover { background: #5a32a3; }
         .google-btn {
             background: white;
             color: #444;
@@ -636,6 +638,16 @@
             margin-top: 4px;
             font-size: 12px;
             color: #0c5460;
+            width: 100%;
+        }
+        .ai-reason-creator {
+            background: #e8f0fe;
+            padding: 6px 12px;
+            border-left: 4px solid #6f42c1;
+            border-radius: 6px;
+            margin-top: 4px;
+            font-size: 12px;
+            color: #1e3c72;
             width: 100%;
         }
 
@@ -1228,6 +1240,199 @@
         .fullscreen-submissions .submissions-header h2 { font-size: 20px; flex: 1; }
         .fullscreen-submissions .submissions-body { padding: 10px 0; }
 
+        /* ===== ADMIN REJECTED PANEL (fullscreen) ===== */
+        .admin-rejected-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f7fb;
+            z-index: 5000;
+            overflow-y: auto;
+            display: none;
+            padding: 20px;
+        }
+        .admin-rejected-panel .panel-header {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .admin-rejected-panel .panel-header h1 {
+            font-size: 22px;
+            color: #dc3545;
+        }
+        .admin-rejected-panel .panel-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        .admin-rejected-panel .panel-header .close-btn:hover { color: #333; transform: rotate(90deg); }
+        .admin-rejected-panel .toolbar {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .admin-rejected-panel .toolbar .search-box {
+            flex: 1;
+            min-width: 160px;
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .admin-rejected-panel .toolbar select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+        }
+        .admin-rejected-panel .toolbar label {
+            font-size: 13px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .admin-rejected-panel .toolbar label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #1e3c72;
+        }
+        .admin-rejected-panel .table-wrap {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 0 4px;
+        }
+        .admin-rejected-panel table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 700px;
+        }
+        .admin-rejected-panel th {
+            background: #f0f4f8;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        .admin-rejected-panel td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        .admin-rejected-panel .clickable-row {
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .admin-rejected-panel .clickable-row:hover { background: #e8f0fe !important; }
+        .admin-rejected-panel .proof-thumb {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid #ddd;
+        }
+        .admin-rejected-panel .reason-box {
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 2px 0;
+            font-size: 12px;
+            border-left: 3px solid #ffc107;
+            background: #fff3cd;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            word-break: break-word;
+        }
+        .admin-rejected-panel .reason-box.creator-reason { border-left-color: #17a2b8; background: #d1ecf1; }
+        .admin-rejected-panel .reason-box.user-reason { border-left-color: #dc3545; background: #f8d7da; }
+        .admin-rejected-panel .badge-pending { background: #ffc107; color: #333; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+        .admin-rejected-panel .badge-approved { background: #28a745; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+        .admin-rejected-panel .badge-rejected { background: #dc3545; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+        .admin-rejected-panel .badge-processing { background: #6f42c1; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+        .admin-rejected-panel .badge-error { background: #dc3545; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+
+        /* modal inside admin panel */
+        .admin-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 6000;
+            justify-content: center;
+            align-items: center;
+        }
+        .admin-modal-overlay.active { display: flex; }
+        .admin-modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            max-width: 700px;
+            width: 92%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .admin-modal-box .close-btn {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        .admin-modal-box .close-btn:hover { color: #333; }
+        .admin-modal-box h3 { color: #1e3c72; margin-bottom: 15px; border-left: 4px solid #dc3545; padding-left: 12px; }
+        .admin-modal-box .detail-row { display: flex; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .admin-modal-box .detail-row .label { font-weight: 600; width: 140px; flex-shrink: 0; color: #495057; }
+        .admin-modal-box .detail-row .value { color: #333; word-break: break-word; }
+        .admin-modal-box .step-item { background: #f8f9fa; padding: 4px 10px; border-radius: 5px; margin: 2px 0; display: inline-block; border-left: 3px solid #dc3545; }
+        .admin-modal-box .proof-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+        .admin-modal-box .proof-grid img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 2px solid #ddd; cursor: pointer; }
+        .admin-modal-box .proof-grid img:hover { transform: scale(1.08); border-color: #1e3c72; }
+        .admin-modal-box .ai-analysis-box {
+            background: #f0f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 12px 0;
+            border-left: 4px solid #6f42c1;
+        }
+        .admin-modal-box .ai-analysis-box .ai-verdict { font-weight: bold; font-size: 16px; margin-bottom: 6px; }
+        .admin-modal-box .ai-analysis-box .ai-verdict.approve { color: #28a745; }
+        .admin-modal-box .ai-analysis-box .ai-verdict.reject { color: #dc3545; }
+        .admin-modal-box .ai-analysis-box .ai-verdict.unknown { color: #ffc107; }
+        .admin-modal-box .ai-loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #ddd; border-top-color: #6f42c1; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .admin-modal-box .reason-box-large { padding: 12px 16px; border-radius: 8px; margin: 6px 0; border-left: 4px solid #ffc107; background: #fff3cd; }
+        .admin-modal-box .reason-box-large.creator { border-left-color: #17a2b8; background: #d1ecf1; }
+        .admin-modal-box .reason-box-large.user { border-left-color: #dc3545; background: #f8d7da; }
+        .admin-modal-box .reason-box-large .label { font-weight: 700; font-size: 12px; display: block; margin-bottom: 4px; opacity: 0.8; }
+        .admin-modal-box .error-box { background: #f8d7da; padding: 12px; border-left: 4px solid #dc3545; border-radius: 6px; margin: 6px 0; }
+
         .image-modal {
             display: none;
             position: fixed;
@@ -1236,7 +1441,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.95);
-            z-index: 3000;
+            z-index: 7000;
             justify-content: center;
             align-items: center;
         }
@@ -1773,6 +1978,81 @@
 
         #adminSettingsCard { border: 2px solid #ffc107; }
 
+        /* === PROOF METHOD TOGGLE === */
+        .proof-method-toggle {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .proof-method-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+        .proof-method-toggle label:hover { background: #f0f0f0; }
+        .proof-method-toggle input[type="radio"] {
+            width: auto;
+            margin: 0;
+            accent-color: #1e3c72;
+        }
+        .proof-method-toggle label.active-method {
+            border-color: #1e3c72;
+            background: #e8f0fe;
+        }
+
+        .direct-link-area {
+            margin: 10px 0;
+        }
+        .direct-link-area .link-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .direct-link-area .link-input-group input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+        }
+        .direct-link-area .link-input-group button {
+            padding: 10px 16px;
+            font-size: 13px;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .direct-link-area .link-input-group button:hover { background: #5a32a3; }
+        .direct-link-area .link-preview {
+            margin-top: 8px;
+            text-align: center;
+        }
+        .direct-link-area .link-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 2px solid #28a745;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .direct-link-area .link-status {
+            font-size: 13px;
+            margin-top: 4px;
+            color: #28a745;
+        }
+        .direct-link-area .link-status.error { color: #dc3545; }
+
         @media (max-width: 400px) {
             .platform-filter-btn { padding: 4px 10px; font-size: 10px; }
             .platform-card { width: 64px; padding: 8px 4px; }
@@ -1784,6 +2064,7 @@
             .referral-row .claim-btn-wrap .btn { width: 100%; text-align: center; }
             .submission-item { flex-direction: column; align-items: stretch; }
             .submission-item .sub-right { text-align: left; margin-top: 4px; }
+            .direct-link-area .link-input-group input { min-width: 120px; }
         }
     </style>
 </head>
@@ -2013,6 +2294,9 @@
                     <p>Email: <span id="profileEmail"></span></p>
                     <p>Coins: <span id="profileCoins"></span></p>
                     <button class="btn btn-danger" onclick="logout()">Logout</button>
+                    <div id="adminProfileSection" style="display:none; margin-top:12px;">
+                        <button class="btn btn-purple" onclick="openAdminRejectedPanel()"><i class="fas fa-robot"></i> 📋 Manage Rejected Submissions</button>
+                    </div>
                 </div>
                 <div class="card">
                     <h3>📅 Daily Reward</h3>
@@ -2081,6 +2365,63 @@
             <h2>📜 Withdraw History</h2>
         </div>
         <div class="history-body" id="fullscreenWithdrawHistoryBody"></div>
+    </div>
+
+    <!-- ===== ADMIN REJECTED PANEL (Fullscreen, hidden by default) ===== -->
+    <div id="adminRejectedPanel" class="admin-rejected-panel">
+        <div class="panel-header">
+            <h1><i class="fas fa-times-circle" style="color:#dc3545;"></i> Rejected Submissions (AI Panel)</h1>
+            <div>
+                <button class="btn btn-primary btn-sm" onclick="adminRejectedLoad()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <button class="btn btn-danger btn-sm" onclick="adminRejectedClose()" style="margin-left:8px;"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+        <div class="toolbar">
+            <input type="text" id="adminSearchInput" class="search-box" placeholder="Search..." oninput="adminApplyFilters()">
+            <select id="adminStatusFilter" onchange="adminApplyFilters()">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="error">Error</option>
+            </select>
+            <label><input type="checkbox" id="adminShowProcessed" onchange="adminApplyFilters()"> Show processed</label>
+            <button class="btn btn-success btn-sm" onclick="adminBulkApprove()"><i class="fas fa-check"></i> Approve All</button>
+            <button class="btn btn-danger btn-sm" onclick="adminBulkReject()"><i class="fas fa-times"></i> Reject All</button>
+            <button class="btn btn-warning btn-sm" onclick="adminBulkHide()"><i class="fas fa-eye-slash"></i> Hide</button>
+            <button class="btn btn-secondary btn-sm" onclick="adminBulkDelete('user')"><i class="fas fa-user"></i> User Del</button>
+            <button class="btn btn-secondary btn-sm" onclick="adminBulkDelete('admin')"><i class="fas fa-shield-alt"></i> Admin Del</button>
+            <button class="btn btn-danger btn-sm" onclick="adminBulkDelete('both')"><i class="fas fa-fire"></i> Both</button>
+            <button class="btn btn-purple btn-sm" onclick="adminAutoProcessAll()" id="adminAutoProcessBtn"><i class="fas fa-robot"></i> Auto-Process All</button>
+        </div>
+        <div id="adminStatusMsg" style="margin-bottom:12px;"></div>
+        <div id="adminProgressContainer" style="display:none; background:#e9ecef; border-radius:10px; padding:10px 16px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:#495057;">
+                <span id="adminProgressLabel">Processing...</span>
+                <span id="adminProgressCount">0 / 0</span>
+            </div>
+            <div style="width:100%; height:8px; background:#dee2e6; border-radius:4px; overflow:hidden; margin-top:6px;">
+                <div id="adminProgressFill" style="height:100%; background:linear-gradient(90deg, #6f42c1, #28a745); border-radius:4px; transition:width 0.5s ease; width:0%;"></div>
+            </div>
+        </div>
+        <div class="table-wrap" id="adminRejectedTable">
+            <div style="text-align:center; padding:40px; color:#999;">Loading rejected submissions...</div>
+        </div>
+    </div>
+
+    <!-- ===== ADMIN DETAIL MODAL ===== -->
+    <div id="adminDetailModal" class="admin-modal-overlay">
+        <div class="admin-modal-box">
+            <button class="close-btn" onclick="adminCloseDetail()">&times;</button>
+            <h3>📋 Rejected Submission — Task Details</h3>
+            <div id="adminDetailContent"><div style="text-align:center; padding:20px; color:#999;">Loading...</div></div>
+        </div>
+    </div>
+
+    <!-- ===== ADMIN PROOF IMAGE MODAL ===== -->
+    <div id="adminProofModal" class="image-modal" onclick="adminCloseProof()">
+        <button class="close-btn" onclick="adminCloseProof()"><i class="fas fa-times"></i></button>
+        <img id="adminProofImage" src="" alt="Proof">
     </div>
 
     <!-- ===== VIEW DETAILS SCREEN ===== -->
@@ -2241,6 +2582,16 @@
             <div class="card"><h3>🔗 Link</h3><a id="taskDetailLink" href="#" target="_blank">Open Link</a></div>
             <div class="card">
                 <h3 id="proofSectionTitle">📤 Submit Proof</h3>
+                <!-- Proof Method Toggle -->
+                <div class="proof-method-toggle" id="proofMethodToggle">
+                    <label class="active-method">
+                        <input type="radio" name="proofMethod" value="upload" checked onchange="toggleProofMethod()"> 📤 Upload Image
+                    </label>
+                    <label>
+                        <input type="radio" name="proofMethod" value="link" onchange="toggleProofMethod()"> 🔗 Direct Link
+                    </label>
+                </div>
+                <!-- Upload Area -->
                 <div id="imageProofArea">
                     <div class="upload-area" onclick="document.getElementById('proofInput').click()">
                         <i class="fas fa-camera" style="font-size:28px;display:block;margin-bottom:6px;color:#1e3c72;"></i>
@@ -2250,6 +2601,16 @@
                     <div id="previewImages"></div>
                     <div class="single-img-hint"><i class="fas fa-info-circle"></i> Only 1 image per submission</div>
                 </div>
+                <!-- Direct Link Area -->
+                <div id="directLinkArea" style="display:none;" class="direct-link-area">
+                    <div class="link-input-group">
+                        <input type="url" id="directLinkInput" placeholder="https://example.com/image.jpg" />
+                        <button onclick="checkDirectLink()"><i class="fas fa-check"></i> Check</button>
+                    </div>
+                    <div id="linkPreviewContainer" class="link-preview"></div>
+                    <div id="linkStatus" class="link-status"></div>
+                </div>
+                <!-- Text Proof Area (hidden for image tasks) -->
                 <div id="textProofArea" style="display:none;">
                     <textarea id="proofTextInput" class="proof-textarea" placeholder="Enter your proof details here..."></textarea>
                     <div style="font-size:12px; color:#666; margin-top:4px;">Please provide detailed proof text.</div>
@@ -2315,11 +2676,15 @@
         let isOnline = true;
         let isAdmin = false;
         let allReferrals = [];
-        let selectedImage = null;
+        let selectedImage = null;          // base64 data URL from upload
+        let selectedLinkUrl = null;        // direct image URL from link
         let fullscreenTasksFilter = 'all';
         let minDeposit = 100;
         let minWithdraw = 1000;
         let _openedFromFullscreen = false;
+        let isMyTaskDetailsOpen = false;
+        let proofMethod = 'upload';        // 'upload' or 'link'
+        let linkChecked = false;           // whether the direct link was successfully checked
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -2329,6 +2694,12 @@
             download: { minMembers: 10, minCoins: 5 },
             other: { minMembers: 10, minCoins: 5 }
         };
+
+        // ============================================================
+        // GEMINI API CONFIG
+        // ============================================================
+        const GEMINI_API_KEY = "AQ.Ab8RN6LoGGMfkOOb3eDVn-sLJnhCIBsq3J6isFHMOjZuTCnH8w";
+        const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
         // ============================================================
         // HELPERS
@@ -2508,6 +2879,9 @@
                 }
                 const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
                 isAdmin = adminSnap.val() === true;
+                if (isAdmin) {
+                    document.getElementById('adminProfileSection').style.display = 'block';
+                }
             } else {
                 let uname = currentUser.email.split('@')[0];
                 let refCode = generateReferralCode();
@@ -2562,6 +2936,9 @@
                 }
                 const adminSnap = await db.ref(`admins/${currentUser.uid}`).once('value');
                 isAdmin = adminSnap.val() === true;
+                if (isAdmin) {
+                    document.getElementById('adminProfileSection').style.display = 'block';
+                }
             }
             updateUI();
             loadReferralData();
@@ -2569,8 +2946,10 @@
             loadBankDetails();
             if (isAdmin) {
                 document.getElementById('adminSettingsCard').style.display = 'block';
+                document.getElementById('adminProfileSection').style.display = 'block';
             } else {
                 document.getElementById('adminSettingsCard').style.display = 'none';
+                document.getElementById('adminProfileSection').style.display = 'none';
             }
             updateShareLink();
         }
@@ -2676,7 +3055,6 @@
                         `<img src="${img}" class="proof-thumb" onclick="event.stopPropagation(); openImageModal('${img}')" onerror="this.style.display='none'">`
                         ).join('');
                 }
-                // === USER REJECT REASON ===
                 let rejectUserHtml = '';
                 if (s.status === 'rejected' && s.userRejectReason) {
                     rejectUserHtml =
@@ -3227,6 +3605,11 @@
                 if (currentTask) {
                     updateTaskDetailSlots(currentTask.id);
                 }
+
+                if (isMyTaskDetailsOpen) {
+                    openMyTaskDetails();
+                }
+                loadMySubmissions();
             });
             realtimeListeners.push(() => subRef.off('value', listener));
 
@@ -3647,7 +4030,7 @@
         };
 
         // ============================================================
-        // TASK DETAIL
+        // TASK DETAIL - with proof method toggle
         // ============================================================
         window.showTaskDetail = function(id, type, title, desc, steps, link, reward, creatorId, proofType) {
             if (creatorId === currentUser.uid) {
@@ -3710,10 +4093,36 @@
             document.getElementById('taskDetailLink').href = finalLink;
             document.getElementById('taskDetailLink').innerText = finalLink;
 
+            // Reset proof inputs
             selectedImage = null;
+            selectedLinkUrl = null;
+            linkChecked = false;
+            proofMethod = 'upload';
             document.getElementById('previewImages').innerHTML = '';
             document.getElementById('proofInput').value = '';
             document.getElementById('proofTextInput').value = '';
+            document.getElementById('directLinkInput').value = '';
+            document.getElementById('linkPreviewContainer').innerHTML = '';
+            document.getElementById('linkStatus').innerHTML = '';
+            document.getElementById('linkStatus').className = 'link-status';
+
+            // Show/hide areas based on proof type
+            if (finalProofType === 'text') {
+                document.getElementById('imageProofArea').style.display = 'none';
+                document.getElementById('directLinkArea').style.display = 'none';
+                document.getElementById('textProofArea').style.display = 'block';
+                document.getElementById('proofMethodToggle').style.display = 'none';
+            } else {
+                document.getElementById('imageProofArea').style.display = 'block';
+                document.getElementById('directLinkArea').style.display = 'none';
+                document.getElementById('textProofArea').style.display = 'none';
+                document.getElementById('proofMethodToggle').style.display = 'flex';
+                // Ensure upload is selected by default
+                document.querySelector('input[name="proofMethod"][value="upload"]').checked = true;
+                document.querySelector('#proofMethodToggle label:first-child').classList.add('active-method');
+                document.querySelector('#proofMethodToggle label:last-child').classList.remove('active-method');
+                proofMethod = 'upload';
+            }
 
             const submitBtn = document.getElementById('submitProofBtn');
             submitBtn.disabled = false;
@@ -3734,15 +4143,84 @@
                 submitBtn.innerText = 'Submit Task';
             }
 
-            if (finalProofType === 'text') {
-                document.getElementById('imageProofArea').style.display = 'none';
-                document.getElementById('textProofArea').style.display = 'block';
-            } else {
+            document.getElementById('taskDetailModal').style.display = 'block';
+        };
+
+        // ============================================================
+        // PROOF METHOD TOGGLE
+        // ============================================================
+        window.toggleProofMethod = function() {
+            const method = document.querySelector('input[name="proofMethod"]:checked');
+            if (!method) return;
+            proofMethod = method.value;
+            // Update active label style
+            document.querySelectorAll('#proofMethodToggle label').forEach(l => l.classList.remove('active-method'));
+            method.closest('label').classList.add('active-method');
+
+            if (proofMethod === 'upload') {
                 document.getElementById('imageProofArea').style.display = 'block';
-                document.getElementById('textProofArea').style.display = 'none';
+                document.getElementById('directLinkArea').style.display = 'none';
+                // Clear link data
+                selectedLinkUrl = null;
+                linkChecked = false;
+                document.getElementById('linkPreviewContainer').innerHTML = '';
+                document.getElementById('linkStatus').innerHTML = '';
+                document.getElementById('linkStatus').className = 'link-status';
+            } else {
+                document.getElementById('imageProofArea').style.display = 'none';
+                document.getElementById('directLinkArea').style.display = 'block';
+                // Clear upload data
+                selectedImage = null;
+                document.getElementById('previewImages').innerHTML = '';
+                document.getElementById('proofInput').value = '';
+            }
+        };
+
+        // ============================================================
+        // CHECK DIRECT LINK
+        // ============================================================
+        window.checkDirectLink = function() {
+            const url = document.getElementById('directLinkInput').value.trim();
+            if (!url) {
+                document.getElementById('linkStatus').innerHTML = 'Please enter a valid URL.';
+                document.getElementById('linkStatus').className = 'link-status error';
+                linkChecked = false;
+                selectedLinkUrl = null;
+                document.getElementById('linkPreviewContainer').innerHTML = '';
+                return;
             }
 
-            document.getElementById('taskDetailModal').style.display = 'block';
+            // Simple URL validation
+            try {
+                new URL(url);
+            } catch (e) {
+                document.getElementById('linkStatus').innerHTML = 'Invalid URL format.';
+                document.getElementById('linkStatus').className = 'link-status error';
+                linkChecked = false;
+                selectedLinkUrl = null;
+                document.getElementById('linkPreviewContainer').innerHTML = '';
+                return;
+            }
+
+            // Check if it's an image by fetching
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                document.getElementById('linkPreviewContainer').innerHTML =
+                    `<img src="${url}" alt="Proof preview">`;
+                document.getElementById('linkStatus').innerHTML = '✅ Image loaded successfully.';
+                document.getElementById('linkStatus').className = 'link-status';
+                linkChecked = true;
+                selectedLinkUrl = url;
+            };
+            img.onerror = function() {
+                document.getElementById('linkPreviewContainer').innerHTML = '';
+                document.getElementById('linkStatus').innerHTML = '❌ Could not load image. Please check the URL.';
+                document.getElementById('linkStatus').className = 'link-status error';
+                linkChecked = false;
+                selectedLinkUrl = null;
+            };
+            img.src = url;
         };
 
         // ============================================================
@@ -3752,10 +4230,15 @@
             document.getElementById('taskDetailModal').style.display = 'none';
             currentTask = null;
             selectedImage = null;
+            selectedLinkUrl = null;
+            linkChecked = false;
             document.getElementById('previewImages').innerHTML = '';
             document.getElementById('proofInput').value = '';
             document.getElementById('proofTextInput').value = '';
             document.getElementById('taskSubmitStatus').innerHTML = '';
+            document.getElementById('directLinkInput').value = '';
+            document.getElementById('linkPreviewContainer').innerHTML = '';
+            document.getElementById('linkStatus').innerHTML = '';
             const submitBtn = document.getElementById('submitProofBtn');
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-submit-disabled');
@@ -3775,7 +4258,7 @@
         }
 
         // ============================================================
-        // PROOF INPUT
+        // PROOF INPUT (upload)
         // ============================================================
         document.getElementById('proofInput').addEventListener('change', function(e) {
             const files = e.target.files;
@@ -3815,7 +4298,7 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF - FIXED: overlay hide on error, retry
+        // SUBMIT PROOF - supports both upload and direct link
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
@@ -3829,6 +4312,7 @@
             let interval = null;
 
             try {
+                // For text proof
                 if (currentTask.proofType === 'text') {
                     const proofText = document.getElementById('proofTextInput').value.trim();
                     if (!proofText) { showToast("Please enter your proof text.");
@@ -3894,31 +4378,44 @@
                     return;
                 }
 
-                if (!selectedImage) {
-                    showToast("Please upload a proof image.");
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.innerText = 'Submit Task';
-                    return;
-                }
+                // For image proof: determine which method is used
+                let imageUrl = null;
 
-                interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
-                let uploadedUrl;
-                try {
-                    uploadedUrl = await uploadImage(selectedImage, 3);
-                } catch (uploadErr) {
+                if (proofMethod === 'upload') {
+                    if (!selectedImage) {
+                        showToast("Please upload a proof image.");
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
+                    interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
+                    try {
+                        imageUrl = await uploadImage(selectedImage, 3);
+                    } catch (uploadErr) {
+                        hideLoadingOverlay(interval);
+                        showToast('Upload failed: ' + uploadErr.message);
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
                     hideLoadingOverlay(interval);
-                    showToast('Upload failed: ' + uploadErr.message);
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.innerText = 'Submit Task';
-                    return;
+                    interval = null;
+                } else {
+                    // Direct link
+                    if (!linkChecked || !selectedLinkUrl) {
+                        showToast("Please check your image link first.");
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
+                    imageUrl = selectedLinkUrl;
                 }
-                hideLoadingOverlay(interval);
-                interval = null;
 
-                if (!uploadedUrl) {
-                    showToast('Upload failed, please try again.');
+                if (!imageUrl) {
+                    showToast('No image available, please try again.');
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.innerText = 'Submit Task';
@@ -3948,12 +4445,12 @@
                     taskTitle: currentTask.title,
                     taskType: currentTask.type,
                     proofType: 'image',
-                    images: [uploadedUrl],
+                    images: [imageUrl],
                     proofText: '',
                     status: 'pending',
                     timestamp: Date.now(),
                     reward: currentTask.reward,
-                    proofLink: uploadedUrl,
+                    proofLink: imageUrl,
                     adminDeleted: false
                 });
 
@@ -3981,7 +4478,6 @@
             } catch (err) {
                 console.error('Submit error:', err);
                 showToast('Error: ' + err.message);
-                // Ensure overlay is hidden and button is reset
                 if (interval) hideLoadingOverlay(interval);
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
@@ -4191,9 +4687,10 @@
         }
 
         // ============================================================
-        // MY TASK DETAILS - with creator reason for rejected
+        // MY TASK DETAILS - with AI reason for approval/rejection
         // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
+            isMyTaskDetailsOpen = true;
             try {
                 await cleanupCompletedTasks();
                 let userTasksSnap = await db.ref('tasks/user').orderByChild('creatorId').equalTo(currentUser.uid)
@@ -4300,13 +4797,19 @@
             }
         }
 
+        function closeMyTaskDetails() {
+            isMyTaskDetailsOpen = false;
+            document.getElementById('myTaskDetailsScreen').style.display = 'none';
+        }
+
         // ============================================================
-        // BUILD SUBMISSION HTML (creator view) - with creator reason
+        // BUILD SUBMISSION HTML (creator view) - with AI reasons
         // ============================================================
         function buildSubmissionHtmlWithCreatorReason(s, taskId, rewardPerUser) {
             let statusColor = s.status === 'approved' ? 'green' : (s.status === 'rejected' ? 'red' : (s.status ===
                 'pending_reject' ? 'orange' : 'orange'));
             let proofHtml = '';
+            // Show proof for pending or pending_reject, but for approved/rejected we can show a short preview
             if (s.status === 'pending' || s.status === 'pending_reject') {
                 if (s.proofType === 'text' && s.proofText) {
                     proofHtml =
@@ -4315,7 +4818,15 @@
                     proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
                 }
             } else {
-                proofHtml = `<div style="color:#999;font-size:12px;">📎 Proof hidden (${s.status})</div>`;
+                // For approved/rejected, show a small thumbnail or text preview
+                if (s.proofType === 'text' && s.proofText) {
+                    proofHtml =
+                        `<div class="proof-text-box"><span class="label">📝 Proof Text (${s.status}):</span>${escapeHtml(s.proofText.substring(0,100))}${s.proofText.length>100?'...':''}</div>`;
+                } else if (s.images && s.images.length > 0) {
+                    proofHtml = s.images.map(img => safeImageHtml(img, 'submission-img-thumb')).join('');
+                } else {
+                    proofHtml = `<div style="color:#999;font-size:12px;">📎 Proof hidden (${s.status})</div>`;
+                }
             }
 
             let actionButtons = '';
@@ -4326,13 +4837,21 @@
                                         </div>`;
             }
             let rejectReasonHtml = '';
-            if (s.status === 'rejected' && s.creatorRejectReason) {
+            // Show AI reason for approved or rejected
+            if (s.status === 'approved' && s.creatorRejectReason) {
                 rejectReasonHtml =
-                    `<div class="reject-reason-creator"><strong>❌ Reason (Creator):</strong> ${escapeHtml(s.creatorRejectReason)}</div>`;
+                    `<div class="ai-reason-creator"><strong>🤖 AI Reason (Approved):</strong> ${escapeHtml(s.creatorRejectReason)}</div>`;
+            } else if (s.status === 'rejected' && s.creatorRejectReason) {
+                rejectReasonHtml =
+                    `<div class="reject-reason-creator"><strong>❌ AI Reason (Rejected):</strong> ${escapeHtml(s.creatorRejectReason)}</div>`;
+                if (s.userRejectReason) {
+                    rejectReasonHtml +=
+                        `<div class="reject-reason-user"><strong>👤 User Reason:</strong> ${escapeHtml(s.userRejectReason)}</div>`;
+                }
             } else if (s.status === 'rejected' && s.rejectReason) {
-                // Fallback if creatorRejectReason not set (old data)
+                // Fallback
                 rejectReasonHtml =
-                    `<div class="reject-reason-creator"><strong>❌ Reason (Creator):</strong> ${escapeHtml(s.rejectReason)}</div>`;
+                    `<div class="reject-reason-creator"><strong>❌ Reason:</strong> ${escapeHtml(s.rejectReason)}</div>`;
             }
             if (s.status === 'pending_reject' && s.rejectReason) {
                 rejectReasonHtml =
@@ -4384,10 +4903,8 @@
         function closeViewDetails() { document.getElementById('viewDetailsScreen').style.display = 'none';
             currentViewTaskId = null; }
 
-        function closeMyTaskDetails() { document.getElementById('myTaskDetailsScreen').style.display = 'none'; }
-
         // ============================================================
-        // APPROVE / REJECT LOGIC (no Gemini)
+        // APPROVE / REJECT LOGIC (with auto Gemini processing)
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
             pendingRejectSubmissionId = submissionId;
@@ -4454,6 +4971,13 @@
                 reward = pendingRejectReward;
             const creatorId = currentUser.uid,
                 creatorName = currentUserData.username;
+
+            // Show loading on the submit button inside modal
+            const btn = document.getElementById('submitRejectBtn');
+            btn.disabled = true;
+            btn.innerText = 'Submitting...';
+            btn.classList.add('btn-loading');
+
             try {
                 let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
                 let isOfficial = taskSnap.exists();
@@ -4468,15 +4992,15 @@
                     return currentData;
                 });
 
-                // Store creator reason in submission (will be sent to Gemini later)
-                // We store it in creatorRejectReason field
+                // Store creator reason in submission
                 await db.ref(`task_submissions/${subId}/creatorRejectReason`).set(reason);
                 await db.ref(`task_submissions/${subId}/status`).set('pending_reject');
-                await db.ref(`task_submissions/${subId}/rejectReason`).set(reason); // keep for backward compat
+                await db.ref(`task_submissions/${subId}/rejectReason`).set(reason);
                 await db.ref(`task_submissions/${subId}/rejectedBy`).set(creatorId);
                 await db.ref(`task_submissions/${subId}/rejectedAt`).set(Date.now());
 
-                await db.ref('admin_rejected_submissions').push({
+                // Push to admin_rejected_submissions
+                const newRef = await db.ref('admin_rejected_submissions').push({
                     submissionId: subId,
                     taskId: taskId,
                     creatorId: creatorId,
@@ -4485,7 +5009,7 @@
                     workerName: (await db.ref(`users/${workerId}/username`).once('value')).val() || workerId
                     .substring(0, 8),
                     taskTitle: (await db.ref(`tasks/user/${taskId}/title`).once('value')).val() || 'Unknown Task',
-                    creatorReason: reason, // this will be the original reason sent to Gemini
+                    creatorReason: reason,
                     timestamp: Date.now(),
                     images: (await db.ref(`task_submissions/${subId}/images`).once('value')).val() || [],
                     proofText: (await db.ref(`task_submissions/${subId}/proofText`).once('value')).val() || '',
@@ -4493,13 +5017,263 @@
                     reward: reward,
                     status: 'pending'
                 });
-                showToast('✅ Rejection request sent to admin for AI review.');
+
+                showToast('✅ Rejection sent. AI is analyzing...');
                 closeRejectModal();
+
+                // 🔥 AUTO-PROCESS WITH GEMINI IMMEDIATELY
+                const newItemId = newRef.key;
+                await processRejectionWithAI(newItemId);
+
                 refreshAfterAction(taskId);
-            } catch (err) { console.error(err);
-                showToast('Error: ' + err.message); }
+
+            } catch (err) {
+                console.error(err);
+                showToast('Error: ' + err.message);
+                btn.disabled = false;
+                btn.innerText = 'Submit';
+                btn.classList.remove('btn-loading');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Submit';
+                btn.classList.remove('btn-loading');
+            }
         }
 
+        // ============================================================
+        // AI PROCESSING FUNCTION (used both by user rejection and admin panel)
+        // ============================================================
+        async function processRejectionWithAI(itemId, retryCount = 0) {
+            try {
+                const snap = await db.ref(`admin_rejected_submissions/${itemId}`).once('value');
+                const item = snap.val();
+                if (!item) { console.error('Item not found:', itemId); return; }
+
+                if (item.status === 'approved' || item.status === 'rejected') {
+                    console.log('Item already processed:', item.status);
+                    return;
+                }
+
+                // Fetch task details (title, description, steps, link)
+                let taskTitle = item.taskTitle || 'Unknown';
+                let taskDesc = '',
+                    taskSteps = '',
+                    taskLink = '#',
+                    taskReward = item.reward || 0;
+                if (item.taskType === 'official' || item.taskType === 'Official') {
+                    const taskSnap = await db.ref(`tasks/official/${item.taskId}`).once('value');
+                    const task = taskSnap.val();
+                    if (task) {
+                        taskTitle = task.title || taskTitle;
+                        taskDesc = task.description || '';
+                        taskSteps = task.steps || '';
+                        taskLink = task.link || '#';
+                        taskReward = task.reward || item.reward || 0;
+                    }
+                } else {
+                    const taskSnap = await db.ref(`tasks/user/${item.taskId}`).once('value');
+                    const task = taskSnap.val();
+                    if (task) {
+                        taskTitle = task.title || taskTitle;
+                        taskDesc = task.description || '';
+                        taskSteps = task.steps || '';
+                        taskLink = task.link || '#';
+                        taskReward = task.rewardPerUser || item.reward || 0;
+                    }
+                }
+
+                const taskDetails = `
+                    Task Title: ${taskTitle}
+                    Description: ${taskDesc || 'N/A'}
+                    Steps: ${taskSteps || 'N/A'}
+                    Link: ${taskLink}
+                    Reward: ${taskReward} coins
+                    Platform: ${item.taskType || 'user'}
+                `;
+
+                const proofText = item.proofType === 'text' ?
+                    `Proof Text: ${item.proofText}` :
+                    `Proof Images: ${item.images ? item.images.join(', ') : 'None'}`;
+
+                const creatorOriginalReason = item.creatorReason || 'No reason provided by creator';
+
+                const prompt = `
+                    You are an AI assistant that verifies task submissions for a micro-task platform.
+                    The user submitted a proof for a task. Analyze the proof and decide if it correctly completes the task.
+
+                    Task Details:
+                    ${taskDetails}
+
+                    Proof provided:
+                    ${proofText}
+
+                    The task creator originally rejected this with reason: "${creatorOriginalReason}"
+
+                    Based on the above, give a verdict: "APPROVE" if the proof is correct and meets all task requirements (creator was wrong), or "REJECT" if the proof is not correct (creator was right).
+
+                    Also provide a brief explanation (2-3 sentences) of your reasoning.
+
+                    If you REJECT: give a reason for the creator (validating their original reason) and a simple reason for the user.
+                    If you APPROVE: give a reason for the creator (telling them they were wrong) and user sees "Approved".
+
+                    IMPORTANT: All reasons must be in URDU language.
+
+                    Format your response as:
+                    VERDICT: APPROVE or REJECT
+                    CREATOR_REASON: <reason for creator in Urdu>
+                    USER_REASON: <reason for user in Urdu (only if REJECT, otherwise leave empty)>
+                `;
+
+                const response = await fetchWithRetry(GEMINI_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-goog-api-key': GEMINI_API_KEY
+                    },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                }, 3);
+
+                const data = await response.json();
+                const geminiText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+
+                let verdict = 'unknown';
+                let creatorReason = '';
+                let userReason = '';
+
+                const verdictMatch = geminiText.match(/VERDICT:\s*(APPROVE|REJECT)/i);
+                if (verdictMatch) {
+                    verdict = verdictMatch[1].toLowerCase();
+                }
+
+                const creatorMatch = geminiText.match(/CREATOR_REASON:\s*(.*?)(?:\n|$)/i);
+                if (creatorMatch) {
+                    creatorReason = creatorMatch[1].trim();
+                }
+
+                const userMatch = geminiText.match(/USER_REASON:\s*(.*?)(?:\n|$)/i);
+                if (userMatch) {
+                    userReason = userMatch[1].trim();
+                }
+
+                if (!creatorReason) {
+                    creatorReason = verdict === 'approve' ?
+                        'آپ غلط تھے، اس صارف نے سبسکرائب کر لیا ہے۔' :
+                        'آپ درست ہیں، اس صارف نے سبسکرائب نہیں کیا۔';
+                }
+                if (verdict === 'reject' && !userReason) {
+                    userReason = 'آپ کا سبمٹ کی گئی ثبوت درست نہیں ہے، براہ کرم دوبارہ کوشش کریں۔';
+                }
+
+                if (verdict === 'approve') {
+                    await db.ref(`task_submissions/${item.submissionId}`).update({
+                        status: 'approved',
+                        creatorRejectReason: creatorReason,
+                        userRejectReason: null
+                    });
+
+                    const workerCoins = (await db.ref(`users/${item.workerId}/coins`).once('value')).val() || 0;
+                    await db.ref(`users/${item.workerId}/coins`).set(workerCoins + taskReward);
+
+                    const taskSnap = await db.ref(`tasks/user/${item.taskId}`).once('value');
+                    const task = taskSnap.val();
+                    if (task) {
+                        const newCompleted = (task.completed || 0) + 1;
+                        await db.ref(`tasks/user/${item.taskId}/completed`).set(newCompleted);
+                        if (newCompleted >= (task.requiredUsers || 0) && !task.completedAt) {
+                            await db.ref(`tasks/user/${item.taskId}/completedAt`).set(Date.now());
+                        }
+                    }
+
+                    await db.ref(`admin_rejected_submissions/${itemId}`).update({
+                        status: 'approved',
+                        creatorReason: creatorReason,
+                        userReason: null,
+                        aiVerdict: 'approve',
+                        processedAt: Date.now(),
+                        errorMessage: null
+                    });
+
+                    showToast(`🤖 AI Approved: Worker earned ${taskReward} coins.`);
+
+                } else if (verdict === 'reject') {
+                    await db.ref(`task_submissions/${item.submissionId}`).update({
+                        status: 'rejected',
+                        creatorRejectReason: creatorReason,
+                        userRejectReason: userReason
+                    });
+
+                    await db.ref(`admin_rejected_submissions/${itemId}`).update({
+                        status: 'rejected',
+                        creatorReason: creatorReason,
+                        userReason: userReason,
+                        aiVerdict: 'reject',
+                        processedAt: Date.now(),
+                        errorMessage: null
+                    });
+
+                    showToast(`🤖 AI Rejected: ${userReason}`);
+
+                } else {
+                    await db.ref(`task_submissions/${item.submissionId}`).update({
+                        status: 'pending'
+                    });
+                    await db.ref(`admin_rejected_submissions/${itemId}`).update({
+                        status: 'pending',
+                        aiVerdict: 'unknown',
+                        errorMessage: null
+                    });
+                    showToast('🤖 AI could not determine. Status set to pending.');
+                }
+
+                loadAllTasks();
+                loadMySubmissions();
+                if (isMyTaskDetailsOpen) openMyTaskDetails();
+
+            } catch (err) {
+                console.error('AI processing error:', err);
+                await db.ref(`task_submissions/${item.submissionId}`).update({
+                    status: 'pending'
+                });
+                await db.ref(`admin_rejected_submissions/${itemId}`).update({
+                    status: 'error',
+                    errorMessage: err.message || 'AI processing failed',
+                    aiVerdict: 'error'
+                });
+                showToast('❌ AI processing failed: ' + err.message);
+            }
+        }
+
+        // ============================================================
+        // FETCH WITH RETRY (shared)
+        // ============================================================
+        async function fetchWithRetry(url, options, maxRetries = 3) {
+            let lastError = null;
+            let delay = 1000;
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 503) throw new Error(`Service unavailable (503) - attempt ${attempt}`);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`API error ${response.status}: ${errorText}`);
+                    }
+                    return response;
+                } catch (err) {
+                    lastError = err;
+                    if (attempt < maxRetries) {
+                        await new Promise(r => setTimeout(r, delay));
+                        delay *= 2;
+                    }
+                }
+            }
+            throw new Error(`Failed after ${maxRetries} retries. Last error: ${lastError?.message || 'Unknown'}`);
+        }
+
+        // ============================================================
+        // APPROVE SUBMISSION BY CREATOR (manual approval)
+        // ============================================================
         async function approveSubmissionByCreator(submissionId, taskId, workerId, reward) {
             if (!confirm('Approve this submission?')) return;
             try {
@@ -5146,7 +5920,511 @@
         };
 
         // ============================================================
-        // AUTH STATE
+        // ADMIN REJECTED SUBMISSIONS PANEL (integrated)
+        // ============================================================
+        let adminRejectedData = [];
+        let adminFilteredData = [];
+        let adminIsProcessing = false;
+
+        function openAdminRejectedPanel() {
+            document.getElementById('adminRejectedPanel').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            adminRejectedLoad();
+        }
+
+        function adminRejectedClose() {
+            document.getElementById('adminRejectedPanel').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        async function adminRejectedLoad() {
+            try {
+                const snap = await db.ref('admin_rejected_submissions').once('value');
+                const data = snap.val() || {};
+                adminRejectedData = Object.entries(data).map(([id, item]) => ({ id, ...item }));
+                adminRejectedData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                adminApplyFilters();
+            } catch (e) {
+                adminShowStatus('error', 'Error loading data: ' + e.message);
+            }
+        }
+
+        function adminApplyFilters() {
+            const search = document.getElementById('adminSearchInput').value.toLowerCase();
+            const status = document.getElementById('adminStatusFilter').value;
+            const showProcessed = document.getElementById('adminShowProcessed').checked;
+
+            adminFilteredData = adminRejectedData.filter(item => {
+                if (!showProcessed && (item.status === 'approved' || item.status === 'rejected')) {
+                    return false;
+                }
+                const matchSearch = (item.creatorName || '').toLowerCase().includes(search) ||
+                                   (item.workerName || '').toLowerCase().includes(search) ||
+                                   (item.taskTitle || '').toLowerCase().includes(search) ||
+                                   (item.creatorReason || '').toLowerCase().includes(search) ||
+                                   (item.userReason || '').toLowerCase().includes(search);
+                const matchStatus = status === 'all' || (item.status || 'pending') === status;
+                return matchSearch && matchStatus;
+            });
+
+            adminRenderTable();
+        }
+
+        function adminRenderTable() {
+            const container = document.getElementById('adminRejectedTable');
+            if (!adminFilteredData.length) {
+                container.innerHTML = '<p style="color:#666; padding:20px; text-align:center;">No rejected submissions found.</p>';
+                return;
+            }
+
+            let html = `<div class="table-wrap"><table>
+                <thead><tr>
+                    <th>Creator</th><th>Worker</th><th>Task</th><th>Reason</th><th>Proof</th><th>Date</th><th>Status</th><th>Actions</th>
+                </tr></thead><tbody>`;
+
+            adminFilteredData.forEach(item => {
+                const images = item.images || [];
+                let proofHtml = '-';
+                if (item.proofType === 'text' && item.proofText) {
+                    proofHtml = `<div style="font-size:11px; max-width:150px; word-break:break-word;">📝 ${escapeHtml(item.proofText)}</div>`;
+                } else if (images.length) {
+                    proofHtml = images.map(img => `<img src="${img}" class="proof-thumb" onclick="event.stopPropagation(); adminOpenProof('${img}')">`).join(' ');
+                }
+
+                let reasonHtml = '';
+                if (item.status === 'rejected' && item.creatorReason) {
+                    reasonHtml += `<div class="reason-box creator-reason"><span class="label">👤 Creator:</span> ${escapeHtml(item.creatorReason)}</div>`;
+                }
+                if (item.status === 'rejected' && item.userReason) {
+                    reasonHtml += `<div class="reason-box user-reason"><span class="label">👤 User:</span> ${escapeHtml(item.userReason)}</div>`;
+                }
+                if (item.status === 'approved' && item.creatorReason) {
+                    reasonHtml += `<div class="reason-box creator-reason"><span class="label">🤖 AI → Creator:</span> ${escapeHtml(item.creatorReason)}</div>`;
+                }
+                if (item.status === 'error' && item.errorMessage) {
+                    reasonHtml += `<div class="reason-box" style="border-left-color:#dc3545; background:#f8d7da;"><span class="label">❌ Error:</span> ${escapeHtml(item.errorMessage)}</div>`;
+                }
+                if (item.status === 'pending' && item.creatorReason) {
+                    reasonHtml += `<div class="reason-box"><span class="label">⏳ Creator reason (pending):</span> ${escapeHtml(item.creatorReason)}</div>`;
+                }
+                if (!reasonHtml) reasonHtml = '<span style="color:#999;">-</span>';
+
+                let statusBadge = 'badge-pending';
+                if (item.status === 'approved') statusBadge = 'badge-approved';
+                else if (item.status === 'rejected') statusBadge = 'badge-rejected';
+                else if (item.status === 'processing') statusBadge = 'badge-processing';
+                else if (item.status === 'error') statusBadge = 'badge-error';
+
+                html += `
+                    <tr class="clickable-row" onclick="adminViewDetail('${item.id}')">
+                        <td><strong>${escapeHtml(item.creatorName || 'Unknown')}</strong><br><small>${item.creatorId?.substring(0,8) || ''}</small></td>
+                        <td><strong>${escapeHtml(item.workerName || 'Unknown')}</strong><br><small>${item.workerId?.substring(0,8) || ''}</small></td>
+                        <td>${escapeHtml(item.taskTitle || 'Unknown')}</td>
+                        <td style="max-width:220px;">${reasonHtml}</td>
+                        <td>${proofHtml}</td>
+                        <td style="font-size:11px;">${item.timestamp ? new Date(item.timestamp).toLocaleString() : '-'}</td>
+                        <td><span class="${statusBadge}">${item.status || 'pending'}</span></td>
+                        <td style="white-space:nowrap;" onclick="event.stopPropagation();">
+                            ${(item.status !== 'approved' && item.status !== 'processing') ? `<button class="btn btn-success btn-sm" onclick="adminApproveItem('${item.id}')"><i class="fas fa-check"></i></button>` : ''}
+                            ${(item.status !== 'rejected' && item.status !== 'processing') ? `<button class="btn btn-danger btn-sm" onclick="adminRejectItem('${item.id}')"><i class="fas fa-times"></i></button>` : ''}
+                            ${item.status === 'error' ? `<button class="btn btn-purple btn-sm" onclick="adminRetryItem('${item.id}')"><i class="fas fa-rotate-right"></i></button>` : ''}
+                            ${item.status !== 'processing' ? `<button class="btn btn-purple btn-sm" onclick="adminViewDetail('${item.id}')"><i class="fas fa-robot"></i></button>` : ''}
+                            <button class="btn btn-secondary btn-sm" onclick="adminDeleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // ADMIN VIEW DETAIL
+        // ============================================================
+        async function adminViewDetail(itemId) {
+            const item = adminRejectedData.find(d => d.id === itemId);
+            if (!item) { adminShowStatus('error', 'Item not found'); return; }
+
+            const container = document.getElementById('adminDetailContent');
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Loading task details...</div>';
+
+            try {
+                if (!item.taskDetailsLoaded) {
+                    let taskData = null;
+                    if (item.taskType === 'official' || item.taskType === 'Official') {
+                        const snap = await db.ref(`tasks/official/${item.taskId}`).once('value');
+                        taskData = snap.val();
+                    } else {
+                        const snap = await db.ref(`tasks/user/${item.taskId}`).once('value');
+                        taskData = snap.val();
+                    }
+                    if (taskData) {
+                        item.taskDescription = taskData.description || 'No description';
+                        item.taskSteps = taskData.steps || '';
+                        item.taskLink = taskData.link || '#';
+                        item.taskReward = taskData.reward || taskData.rewardPerUser || item.reward || 0;
+                        item.taskDetailsLoaded = true;
+                    }
+                }
+
+                let stepsHtml = '';
+                if (item.taskSteps) {
+                    const steps = item.taskSteps.split('\n').filter(s => s.trim());
+                    steps.forEach((s, i) => {
+                        stepsHtml += `<span class="step-item">${i+1}. ${escapeHtml(s.trim())}</span><br>`;
+                    });
+                }
+
+                const taskTitle = item.taskTitle || 'Unknown';
+                const taskDesc = item.taskDescription || 'No description';
+                const taskLink = item.taskLink || '#';
+                const taskReward = item.taskReward || 0;
+
+                let proofHtml = '-';
+                if (item.proofType === 'text' && item.proofText) {
+                    proofHtml = `<div class="proof-text-box">📝 ${escapeHtml(item.proofText)}</div>`;
+                } else if (item.images && item.images.length) {
+                    proofHtml = `<div class="proof-grid">${item.images.map(img => `<img src="${img}" onclick="adminOpenProof('${img}')">`).join('')}</div>`;
+                }
+
+                let statusHtml = '';
+                if (item.status === 'error') {
+                    statusHtml = `<div class="error-box"><strong>❌ AI Error:</strong> ${escapeHtml(item.errorMessage || 'Unknown error')}</div>`;
+                }
+                let reasonHtml = '';
+                if (item.status === 'rejected' && item.creatorReason) {
+                    reasonHtml += `<div class="reason-box-large creator"><span class="label">👤 Reason for Creator:</span> ${escapeHtml(item.creatorReason)}</div>`;
+                    if (item.userReason) {
+                        reasonHtml += `<div class="reason-box-large user"><span class="label">👤 Reason for User:</span> ${escapeHtml(item.userReason)}</div>`;
+                    }
+                } else if (item.status === 'approved' && item.creatorReason) {
+                    reasonHtml += `<div class="reason-box-large creator"><span class="label">🤖 AI → Creator (Approved):</span> ${escapeHtml(item.creatorReason)}</div>`;
+                } else if (item.status === 'pending' && item.creatorReason) {
+                    reasonHtml += `<div class="reason-box-large"><span class="label">⏳ Original Creator Reason (pending):</span> ${escapeHtml(item.creatorReason)}</div>`;
+                } else {
+                    reasonHtml = `<div style="color:#999; padding:8px 0;">No reason stored yet.</div>`;
+                }
+
+                container.innerHTML = `
+                    ${statusHtml}
+                    ${reasonHtml}
+                    <div class="detail-row"><span class="label">📌 Task Title</span><span class="value"><strong>${escapeHtml(taskTitle)}</strong></span></div>
+                    <div class="detail-row"><span class="label">📝 Description</span><span class="value">${escapeHtml(taskDesc)}</span></div>
+                    <div class="detail-row"><span class="label">📋 Steps</span><span class="value">${stepsHtml || 'No steps provided'}</span></div>
+                    <div class="detail-row"><span class="label">🔗 Link</span><span class="value"><a href="${escapeHtml(taskLink)}" target="_blank" style="color:#1e3c72;">${escapeHtml(taskLink)}</a></span></div>
+                    <div class="detail-row"><span class="label">💰 Reward</span><span class="value">${taskReward} coins</span></div>
+                    <div class="detail-row"><span class="label">👤 Worker</span><span class="value">${escapeHtml(item.workerName || 'Unknown')} (${item.workerId?.substring(0,8) || 'N/A'})</span></div>
+                    <div class="detail-row"><span class="label">📸 Proof</span><span class="value">${proofHtml}</span></div>
+                    <div class="detail-row"><span class="label">📂 Type</span><span class="value">${item.taskType || 'user'}</span></div>
+                    <div class="detail-row"><span class="label">📅 Submitted</span><span class="value">${item.timestamp ? new Date(item.timestamp).toLocaleString() : '-'}</span></div>
+
+                    <div style="margin-top: 16px; border-top: 2px solid #6f42c1; padding-top: 12px;">
+                        <h4 style="color:#6f42c1; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-robot"></i> AI Analysis (Gemini)
+                            ${item.status === 'error' ? `<button class="btn btn-purple btn-sm" onclick="adminRetryItem('${item.id}'); adminCloseDetail();" style="margin-left:auto;"><i class="fas fa-rotate-right"></i> Retry</button>` : ''}
+                            ${item.status !== 'approved' && item.status !== 'rejected' && item.status !== 'processing' ? `<button class="btn btn-purple btn-sm" onclick="adminAnalyzeWithAI('${item.id}')" style="margin-left:auto;" id="adminAiAnalyzeBtn_${item.id}"><i class="fas fa-play"></i> Analyze & Auto-Process</button>` : ''}
+                        </h4>
+                        <div id="adminAiAnalysisResult_${item.id}" style="margin-top: 8px;">
+                            ${item.status === 'error' ? `<p style="color:#dc3545;">❌ AI failed. Click "Retry" to try again.</p>` : `<p style="color:#999; font-size:13px;">Click "Analyze & Auto-Process" to let AI decide and act.</p>`}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid #eee; padding-top: 16px;">
+                        ${item.status !== 'approved' && item.status !== 'processing' ? `<button class="btn btn-success" onclick="adminApproveItem('${item.id}'); adminCloseDetail();"><i class="fas fa-check"></i> Approve</button>` : ''}
+                        ${item.status !== 'rejected' && item.status !== 'processing' ? `<button class="btn btn-danger" onclick="adminRejectItem('${item.id}'); adminCloseDetail();"><i class="fas fa-times"></i> Reject</button>` : ''}
+                        <button class="btn btn-secondary" onclick="adminCloseDetail()"><i class="fas fa-times"></i> Close</button>
+                    </div>
+                    <div style="margin-top: 8px; font-size:12px; color:#999; text-align:center;">
+                        <i class="fas fa-info-circle"></i> AI auto-process will approve/reject automatically. Manual buttons are for override.
+                    </div>
+                `;
+
+                document.getElementById('adminDetailModal').classList.add('active');
+
+            } catch (err) {
+                container.innerHTML = `<div style="color:#dc3545;">❌ Error loading details: ${err.message}</div>`;
+            }
+        }
+
+        function adminCloseDetail() {
+            document.getElementById('adminDetailModal').classList.remove('active');
+        }
+        document.getElementById('adminDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) adminCloseDetail();
+        });
+
+        // ============================================================
+        // ADMIN GEMINI AI ANALYSIS (same as user but with UI)
+        // ============================================================
+        async function adminAnalyzeWithAI(itemId) {
+            const item = adminRejectedData.find(d => d.id === itemId);
+            if (!item) { adminShowStatus('error', 'Item not found'); return; }
+
+            if (item.status === 'processing') {
+                adminShowStatus('warning', 'This item is already being processed by AI.');
+                return;
+            }
+            if (item.status === 'approved' || item.status === 'rejected') {
+                adminShowStatus('warning', `This item is already ${item.status}.`);
+                return;
+            }
+
+            await processRejectionWithAI(itemId);
+            adminRejectedLoad();
+        }
+
+        // ============================================================
+        // ADMIN RETRY
+        // ============================================================
+        async function adminRetryItem(itemId) {
+            const item = adminRejectedData.find(d => d.id === itemId);
+            if (!item) { adminShowStatus('error', 'Item not found'); return; }
+            if (item.status !== 'error') { adminShowStatus('warning', 'Item is not in error state.'); return; }
+            await db.ref(`admin_rejected_submissions/${item.id}`).update({
+                status: 'pending',
+                errorMessage: null
+            });
+            adminRejectedLoad();
+            setTimeout(() => adminAnalyzeWithAI(itemId), 300);
+        }
+
+        // ============================================================
+        // ADMIN AUTO-PROCESS ALL
+        // ============================================================
+        async function adminAutoProcessAll() {
+            if (adminIsProcessing) {
+                adminShowStatus('warning', 'Already processing. Please wait.');
+                return;
+            }
+
+            const pending = adminRejectedData.filter(item =>
+                (item.status === 'pending' || item.status === 'error') &&
+                item.status !== 'approved' && item.status !== 'rejected' && item.status !== 'processing'
+            );
+
+            if (!pending.length) {
+                adminShowStatus('warning', 'No pending or error submissions to process.');
+                return;
+            }
+
+            const sorted = pending.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+            if (!confirm(`🤖 Auto-process ${sorted.length} pending/error submissions with AI? This may take a while.`)) return;
+
+            adminIsProcessing = true;
+            document.getElementById('adminAutoProcessBtn').disabled = true;
+
+            const progressContainer = document.getElementById('adminProgressContainer');
+            progressContainer.style.display = 'block';
+            const progressFill = document.getElementById('adminProgressFill');
+            const progressCount = document.getElementById('adminProgressCount');
+            const progressLabel = document.getElementById('adminProgressLabel');
+
+            let processed = 0;
+            let approved = 0, rejected = 0, errors = 0;
+
+            for (let item of sorted) {
+                progressLabel.innerText = `Processing: ${item.taskTitle || 'Unknown'}`;
+                progressCount.innerText = `${processed + 1} / ${sorted.length}`;
+                progressFill.style.width = `${((processed) / sorted.length) * 100}%`;
+
+                try {
+                    await processRejectionWithAI(item.id);
+                    const updated = adminRejectedData.find(d => d.id === item.id);
+                    if (updated) {
+                        if (updated.status === 'approved') approved++;
+                        else if (updated.status === 'rejected') rejected++;
+                        else if (updated.status === 'error') errors++;
+                    }
+                } catch (err) {
+                    errors++;
+                    await db.ref(`admin_rejected_submissions/${item.id}`).update({
+                        status: 'error',
+                        errorMessage: err.message || 'Processing failed'
+                    });
+                    await db.ref(`task_submissions/${item.submissionId}`).update({
+                        status: 'pending'
+                    });
+                }
+
+                processed++;
+                progressFill.style.width = `${(processed / sorted.length) * 100}%`;
+                progressCount.innerText = `${processed} / ${sorted.length}`;
+                adminRejectedLoad();
+                await new Promise(r => setTimeout(r, 500));
+            }
+
+            progressFill.style.width = '100%';
+            progressCount.innerText = `${sorted.length} / ${sorted.length}`;
+            progressLabel.innerText = `✅ Completed: ${approved} approved, ${rejected} rejected, ${errors} errors`;
+
+            adminShowStatus('success', `🤖 Auto-process complete: ${approved} approved, ${rejected} rejected, ${errors} errors.`);
+
+            adminIsProcessing = false;
+            document.getElementById('adminAutoProcessBtn').disabled = false;
+            setTimeout(() => {
+                progressContainer.style.display = 'none';
+            }, 5000);
+            adminRejectedLoad();
+        }
+
+        // ============================================================
+        // ADMIN SINGLE ACTIONS
+        // ============================================================
+        async function adminApproveItem(itemId) {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            if (!confirm('Approve this submission? Worker will receive coins.')) return;
+            const item = adminRejectedData.find(d => d.id === itemId);
+            if (!item) return;
+            try {
+                await db.ref(`task_submissions/${item.submissionId}`).update({
+                    status: 'approved',
+                    creatorRejectReason: null,
+                    userRejectReason: null
+                });
+                const workerCoins = (await db.ref(`users/${item.workerId}/coins`).once('value')).val() || 0;
+                await db.ref(`users/${item.workerId}/coins`).set(workerCoins + (item.reward || 0));
+                const taskSnap = await db.ref(`tasks/user/${item.taskId}`).once('value');
+                const task = taskSnap.val();
+                if (task) {
+                    const newCompleted = (task.completed || 0) + 1;
+                    await db.ref(`tasks/user/${item.taskId}/completed`).set(newCompleted);
+                    if (newCompleted >= (task.requiredUsers || 0) && !task.completedAt) {
+                        await db.ref(`tasks/user/${item.taskId}/completedAt`).set(Date.now());
+                    }
+                }
+                await db.ref(`admin_rejected_submissions/${itemId}`).update({
+                    status: 'approved',
+                    processedAt: Date.now()
+                });
+                adminShowStatus('success', '✅ Approved! Worker earned coins.');
+                adminRejectedLoad();
+                adminCloseDetail();
+            } catch (e) { adminShowStatus('error', 'Error: ' + e.message); }
+        }
+
+        async function adminRejectItem(itemId) {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            if (!confirm('Reject this submission?')) return;
+            const item = adminRejectedData.find(d => d.id === itemId);
+            if (!item) return;
+            try {
+                await db.ref(`task_submissions/${item.submissionId}`).update({
+                    status: 'rejected'
+                });
+                await db.ref(`admin_rejected_submissions/${itemId}`).update({
+                    status: 'rejected',
+                    processedAt: Date.now()
+                });
+                adminShowStatus('success', '❌ Submission rejected.');
+                adminRejectedLoad();
+                adminCloseDetail();
+            } catch (e) { adminShowStatus('error', 'Error: ' + e.message); }
+        }
+
+        async function adminDeleteItem(itemId) {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            if (!confirm('Delete this rejected entry?')) return;
+            await db.ref(`admin_rejected_submissions/${itemId}`).remove();
+            adminShowStatus('success', '🗑️ Deleted.');
+            adminRejectedLoad();
+        }
+
+        // ============================================================
+        // ADMIN BULK ACTIONS
+        // ============================================================
+        async function adminBulkApprove() {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            const pending = adminRejectedData.filter(item => item.status !== 'approved');
+            if (!pending.length) { adminShowStatus('warning', 'No pending entries to approve.'); return; }
+            if (!confirm(`Approve ${pending.length} entries?`)) return;
+            let count = 0;
+            for (let item of pending) {
+                await db.ref(`task_submissions/${item.submissionId}`).update({ status: 'approved' });
+                const workerCoins = (await db.ref(`users/${item.workerId}/coins`).once('value')).val() || 0;
+                await db.ref(`users/${item.workerId}/coins`).set(workerCoins + (item.reward || 0));
+                await db.ref(`admin_rejected_submissions/${item.id}`).update({ status: 'approved' });
+                count++;
+            }
+            adminShowStatus('success', `✅ Approved ${count} entries.`);
+            adminRejectedLoad();
+        }
+
+        async function adminBulkReject() {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            const pending = adminRejectedData.filter(item => item.status !== 'rejected');
+            if (!pending.length) { adminShowStatus('warning', 'No pending entries to reject.'); return; }
+            if (!confirm(`Reject ${pending.length} entries?`)) return;
+            let count = 0;
+            for (let item of pending) {
+                await db.ref(`task_submissions/${item.submissionId}`).update({ status: 'rejected' });
+                await db.ref(`admin_rejected_submissions/${item.id}`).update({ status: 'rejected' });
+                count++;
+            }
+            adminShowStatus('success', `❌ Rejected ${count} entries.`);
+            adminRejectedLoad();
+        }
+
+        async function adminBulkHide() {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            if (!adminRejectedData.length) { adminShowStatus('warning', 'No entries to hide.'); return; }
+            if (!confirm(`Hide ${adminRejectedData.length} entries?`)) return;
+            let count = 0;
+            for (let item of adminRejectedData) {
+                await db.ref(`admin_rejected_submissions/${item.id}/hidden`).set(true);
+                count++;
+            }
+            adminShowStatus('success', `🙈 Hidden ${count} entries.`);
+            adminRejectedLoad();
+        }
+
+        async function adminBulkDelete(type) {
+            if (adminIsProcessing) { adminShowStatus('warning', 'Processing in progress. Please wait.'); return; }
+            if (!adminRejectedData.length) { adminShowStatus('warning', 'No entries to delete.'); return; }
+            if (!confirm(`Bulk delete ${adminRejectedData.length} entries (${type})?`)) return;
+            let count = 0;
+            for (let item of adminRejectedData) {
+                if (type === 'user') {
+                    await db.ref(`admin_rejected_submissions/${item.id}/deletedByUser`).set(true);
+                } else if (type === 'admin') {
+                    await db.ref(`admin_rejected_submissions/${item.id}/deletedByAdmin`).set(true);
+                } else {
+                    await db.ref(`admin_rejected_submissions/${item.id}`).remove();
+                }
+                count++;
+            }
+            adminShowStatus('success', `✅ ${count} entries processed.`);
+            adminRejectedLoad();
+        }
+
+        // ============================================================
+        // ADMIN PROOF IMAGE
+        // ============================================================
+        function adminOpenProof(url) {
+            document.getElementById('adminProofImage').src = url;
+            document.getElementById('adminProofModal').classList.add('active');
+        }
+
+        function adminCloseProof() {
+            document.getElementById('adminProofModal').classList.remove('active');
+        }
+        document.getElementById('adminProofModal').addEventListener('click', function(e) {
+            if (e.target === this) adminCloseProof();
+        });
+
+        // ============================================================
+        // ADMIN HELPERS
+        // ============================================================
+        function adminShowStatus(type, msg) {
+            const el = document.getElementById('adminStatusMsg');
+            const cls = type === 'success' ? 'success' : type === 'error' ? 'error' : 'warning';
+            el.innerHTML = `<div class="status-msg ${cls}">${msg}</div>`;
+            setTimeout(() => { el.innerHTML = ''; }, 6000);
+        }
+
+        // ============================================================
+        // AUTH STATE (main)
         // ============================================================
         auth.onAuthStateChanged(async user => {
             if (user) {
@@ -5274,6 +6552,27 @@
         window.handleTaskClick = handleTaskClick;
         window.openFullscreenSubmissions = openFullscreenSubmissions;
         window.closeFullscreenSubmissions = closeFullscreenSubmissions;
+        window.openAdminRejectedPanel = openAdminRejectedPanel;
+        window.adminRejectedClose = adminRejectedClose;
+        window.adminRejectedLoad = adminRejectedLoad;
+        window.adminApplyFilters = adminApplyFilters;
+        window.adminViewDetail = adminViewDetail;
+        window.adminCloseDetail = adminCloseDetail;
+        window.adminAnalyzeWithAI = adminAnalyzeWithAI;
+        window.adminRetryItem = adminRetryItem;
+        window.adminAutoProcessAll = adminAutoProcessAll;
+        window.adminApproveItem = adminApproveItem;
+        window.adminRejectItem = adminRejectItem;
+        window.adminDeleteItem = adminDeleteItem;
+        window.adminBulkApprove = adminBulkApprove;
+        window.adminBulkReject = adminBulkReject;
+        window.adminBulkHide = adminBulkHide;
+        window.adminBulkDelete = adminBulkDelete;
+        window.adminOpenProof = adminOpenProof;
+        window.adminCloseProof = adminCloseProof;
+        window.processRejectionWithAI = processRejectionWithAI;
+        window.toggleProofMethod = toggleProofMethod;
+        window.checkDirectLink = checkDirectLink;
     </script>
 </body>
 </html>
