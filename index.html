@@ -2045,6 +2045,7 @@
             border-radius: 10px;
             border: 2px solid #28a745;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         .direct-link-area .link-status {
             font-size: 13px;
@@ -2676,15 +2677,15 @@
         let isOnline = true;
         let isAdmin = false;
         let allReferrals = [];
-        let selectedImage = null;          // base64 data URL from upload
-        let selectedLinkUrl = null;        // direct image URL from link
+        let selectedImage = null;
+        let selectedLinkUrl = null;
         let fullscreenTasksFilter = 'all';
         let minDeposit = 100;
         let minWithdraw = 1000;
         let _openedFromFullscreen = false;
         let isMyTaskDetailsOpen = false;
-        let proofMethod = 'upload';        // 'upload' or 'link'
-        let linkChecked = false;           // whether the direct link was successfully checked
+        let proofMethod = 'upload';
+        let linkChecked = false;
 
         let platformMinSettings = {
             youtube: { minMembers: 10, minCoins: 5 },
@@ -4207,7 +4208,7 @@
             img.crossOrigin = 'anonymous';
             img.onload = function() {
                 document.getElementById('linkPreviewContainer').innerHTML =
-                    `<img src="${url}" alt="Proof preview">`;
+                    `<img src="${url}" alt="Proof preview" style="max-width:100%; max-height:150px; border-radius:10px; border:2px solid #28a745; cursor:pointer;" onclick="openImageModal('${url}')">`;
                 document.getElementById('linkStatus').innerHTML = '✅ Image loaded successfully.';
                 document.getElementById('linkStatus').className = 'link-status';
                 linkChecked = true;
@@ -4298,31 +4299,37 @@
         });
 
         // ============================================================
-        // SUBMIT PROOF - supports both upload and direct link
+        // SUBMIT PROOF - with loading overlay for all types
         // ============================================================
         async function submitProof() {
             if (!currentTask) { showToast("No task selected"); return; }
 
             const submitBtn = document.getElementById('submitProofBtn');
             if (submitBtn.disabled) return;
-            submitBtn.disabled = true;
-            submitBtn.classList.add('btn-loading');
-            submitBtn.innerText = 'Submitting...';
 
-            let interval = null;
+            // Show loading overlay immediately
+            let interval = showLoadingOverlay('Submitting proof...', 'Please wait...');
 
             try {
                 // For text proof
                 if (currentTask.proofType === 'text') {
                     const proofText = document.getElementById('proofTextInput').value.trim();
-                    if (!proofText) { showToast("Please enter your proof text.");
+                    if (!proofText) {
+                        hideLoadingOverlay(interval);
+                        showToast("Please enter your proof text.");
                         submitBtn.disabled = false;
                         submitBtn.classList.remove('btn-loading');
-                        submitBtn.innerText = 'Submit Task'; return; }
-                    if (proofText.length < 3) { showToast("Please provide at least 3 characters.");
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
+                    if (proofText.length < 3) {
+                        hideLoadingOverlay(interval);
+                        showToast("Please provide at least 3 characters.");
                         submitBtn.disabled = false;
                         submitBtn.classList.remove('btn-loading');
-                        submitBtn.innerText = 'Submit Task'; return; }
+                        submitBtn.innerText = 'Submit Task';
+                        return;
+                    }
 
                     const taskRef = currentTask.type === 'official' ?
                         db.ref(`tasks/official/${currentTask.id}`) :
@@ -4356,6 +4363,7 @@
                     });
 
                     userSubmissionsMap[currentTask.id] = true;
+                    hideLoadingOverlay(interval);
                     showToast("✅ Task Submitted Successfully");
 
                     const wasFullscreen = _openedFromFullscreen;
@@ -4383,13 +4391,13 @@
 
                 if (proofMethod === 'upload') {
                     if (!selectedImage) {
+                        hideLoadingOverlay(interval);
                         showToast("Please upload a proof image.");
                         submitBtn.disabled = false;
                         submitBtn.classList.remove('btn-loading');
                         submitBtn.innerText = 'Submit Task';
                         return;
                     }
-                    interval = showLoadingOverlay('Uploading proof...', 'Please wait...');
                     try {
                         imageUrl = await uploadImage(selectedImage, 3);
                     } catch (uploadErr) {
@@ -4400,11 +4408,10 @@
                         submitBtn.innerText = 'Submit Task';
                         return;
                     }
-                    hideLoadingOverlay(interval);
-                    interval = null;
                 } else {
                     // Direct link
                     if (!linkChecked || !selectedLinkUrl) {
+                        hideLoadingOverlay(interval);
                         showToast("Please check your image link first.");
                         submitBtn.disabled = false;
                         submitBtn.classList.remove('btn-loading');
@@ -4415,6 +4422,7 @@
                 }
 
                 if (!imageUrl) {
+                    hideLoadingOverlay(interval);
                     showToast('No image available, please try again.');
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-loading');
@@ -4455,6 +4463,7 @@
                 });
 
                 userSubmissionsMap[currentTask.id] = true;
+                hideLoadingOverlay(interval);
                 showToast("✅ Task Submitted Successfully");
 
                 const wasFullscreen = _openedFromFullscreen;
@@ -4477,8 +4486,8 @@
 
             } catch (err) {
                 console.error('Submit error:', err);
+                hideLoadingOverlay(interval);
                 showToast('Error: ' + err.message);
-                if (interval) hideLoadingOverlay(interval);
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.innerText = 'Submit Task';
@@ -4688,6 +4697,7 @@
 
         // ============================================================
         // MY TASK DETAILS - with AI reason for approval/rejection
+        // and DELETE button only when 100% completed
         // ============================================================
         async function openMyTaskDetails(scrollToTaskTitle) {
             isMyTaskDetailsOpen = true;
@@ -4734,6 +4744,7 @@
                     let isCompleted = (approvedCount >= required);
                     let progressPct = Math.min(100, Math.round((approvedCount / required) * 100));
 
+                    // Skip only if completed (100%) - not before
                     if (isCompleted) continue;
 
                     let isTarget = (targetTaskId === taskId);
@@ -4769,7 +4780,10 @@
                         html += `<div style="color:#999;font-size:12px;margin-top:6px;">No submissions yet.</div>`;
                     }
                     html +=
-                        `<div class="task-actions"><button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${taskId}')">View Details</button></div>`;
+                        `<div class="task-actions">
+                            <button class="btn btn-sm" style="background:#764ba2;" onclick="viewTaskDetails('${taskId}')">View Details</button>
+                            ${isCompleted ? `<button class="btn btn-danger btn-sm" onclick="deleteMyTask('${taskId}')">🗑️ Delete Task</button>` : ''}
+                        </div>`;
                     html += `</div>`;
                 }
 
@@ -4794,6 +4808,20 @@
             } catch (e) {
                 showToast('Error loading task details');
                 document.getElementById('myTaskDetailBody').innerHTML = '<p>No approved tasks yet.</p>';
+            }
+        }
+
+        // ============================================================
+        // DELETE MY TASK (only when completed)
+        // ============================================================
+        async function deleteMyTask(taskId) {
+            if (!confirm('Delete this task permanently? This cannot be undone.')) return;
+            try {
+                await db.ref(`tasks/user/${taskId}`).remove();
+                showToast('🗑️ Task deleted.');
+                openMyTaskDetails();
+            } catch (e) {
+                showToast('Error deleting task: ' + e.message);
             }
         }
 
@@ -4837,13 +4865,14 @@
                                         </div>`;
             }
             let rejectReasonHtml = '';
-            // Show AI reason for approved or rejected
+            // Show AI reason for approved or rejected (creator sees creatorRejectReason)
             if (s.status === 'approved' && s.creatorRejectReason) {
                 rejectReasonHtml =
                     `<div class="ai-reason-creator"><strong>🤖 AI Reason (Approved):</strong> ${escapeHtml(s.creatorRejectReason)}</div>`;
             } else if (s.status === 'rejected' && s.creatorRejectReason) {
                 rejectReasonHtml =
                     `<div class="reject-reason-creator"><strong>❌ AI Reason (Rejected):</strong> ${escapeHtml(s.creatorRejectReason)}</div>`;
+                // Also show user reason if available (for creator to see)
                 if (s.userRejectReason) {
                     rejectReasonHtml +=
                         `<div class="reject-reason-user"><strong>👤 User Reason:</strong> ${escapeHtml(s.userRejectReason)}</div>`;
@@ -4904,7 +4933,7 @@
             currentViewTaskId = null; }
 
         // ============================================================
-        // APPROVE / REJECT LOGIC (with auto Gemini processing)
+        // APPROVE / REJECT LOGIC (with full-screen loading overlay)
         // ============================================================
         function openRejectModal(submissionId, taskId, workerId, reward) {
             pendingRejectSubmissionId = submissionId;
@@ -4972,11 +5001,8 @@
             const creatorId = currentUser.uid,
                 creatorName = currentUserData.username;
 
-            // Show loading on the submit button inside modal
-            const btn = document.getElementById('submitRejectBtn');
-            btn.disabled = true;
-            btn.innerText = 'Submitting...';
-            btn.classList.add('btn-loading');
+            // Show full-screen loading overlay
+            const interval = showLoadingOverlay('Processing rejection...', 'Please wait...');
 
             try {
                 let taskSnap = await db.ref(`tasks/official/${taskId}`).once('value');
@@ -5018,6 +5044,7 @@
                     status: 'pending'
                 });
 
+                hideLoadingOverlay(interval);
                 showToast('✅ Rejection sent. AI is analyzing...');
                 closeRejectModal();
 
@@ -5028,15 +5055,11 @@
                 refreshAfterAction(taskId);
 
             } catch (err) {
+                hideLoadingOverlay(interval);
                 console.error(err);
                 showToast('Error: ' + err.message);
-                btn.disabled = false;
-                btn.innerText = 'Submit';
-                btn.classList.remove('btn-loading');
             } finally {
-                btn.disabled = false;
-                btn.innerText = 'Submit';
-                btn.classList.remove('btn-loading');
+                // Reset button state (not needed if modal closed)
             }
         }
 
@@ -5320,7 +5343,7 @@
         }
 
         // ============================================================
-        // CLEANUP COMPLETED TASKS
+        // CLEANUP COMPLETED TASKS (only after 7 hours of 100% completion)
         // ============================================================
         async function cleanupCompletedTasks() {
             try {
@@ -6540,6 +6563,7 @@
         window.closeMyTaskDetails = closeMyTaskDetails;
         window.openMyPostedTasks = openMyPostedTasks;
         window.openMyTaskDetails = openMyTaskDetails;
+        window.deleteMyTask = deleteMyTask;
         window.submitProof = submitProof;
         window.openImageModal = openImageModal;
         window.closeImageModal = closeImageModal;
