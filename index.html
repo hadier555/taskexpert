@@ -246,7 +246,7 @@
             transform: scale(0.95);
         }
 
-        /* 🔥 TRACKING BADGE (Bottom-Left) */
+        /* Tracking Badge */
         #tracking-badge {
             position: absolute;
             bottom: 80px;
@@ -277,7 +277,7 @@
             50% { opacity: 0.3; transform: scale(0.7); }
         }
 
-        /* 🔥 CACHE BADGE (Top-Left) */
+        /* Cache Badge */
         #cache-badge {
             position: absolute;
             top: 24px;
@@ -376,12 +376,9 @@
             <a href="#" id="download-small" class="btn-download-small" target="_blank">⬇️ Download</a>
         </div>
 
-        <!-- 🔥 Tracking Badge -->
         <div id="tracking-badge">
             <span class="dot"></span> Tracking Active
         </div>
-
-        <!-- 🔥 Cache Badge -->
         <div id="cache-badge">
             <span class="icon">💾</span> Cached
         </div>
@@ -394,10 +391,10 @@
 
 <script>
     (function() {
-        // ===== 🔥 VAST URL (Aap ka naya) =====
+        // ===== 🔥 VAST URL =====
         const VAST_URL = 'https://difficultblock.com/dZmwF/z_d.GZNovtZcG_UP/Jezm/9KuAZaUHlnkOPaTZcNyyNvDNkk2RNEjakmt/NGzPIn0WOWT/YB3-MNwH';
         const DEFAULT_CTA = 'https://google.com';
-        const SKIP_DELAY = 15; // 🔥 15 Seconds (HilltopAds setting)
+        const SKIP_DELAY = 15;
 
         const video = document.getElementById('ad-video');
         const main = document.getElementById('main');
@@ -420,7 +417,6 @@
         let isMuted = false;
         let impressionUrls = [];
         let impressionsFired = false;
-        let isVideoCached = false;
 
         // Audio ON by default
         video.muted = false;
@@ -467,7 +463,6 @@
             isAdPlaying = false;
             impressionsFired = false;
             impressionUrls = [];
-            isVideoCached = false;
             clearInterval(skipInterval);
             video.pause();
             video.removeAttribute('src');
@@ -488,40 +483,46 @@
             isMuted = false;
             soundBtn.textContent = '🔊';
             video.onplay = null;
+            video.onerror = null;
         }
 
-        // ===== 🚀 LOAD VIDEO WITH CACHING =====
-        async function loadVideoWithCache(videoUrl) {
-            try {
-                // Try to fetch with cache
-                const response = await fetch(videoUrl, {
-                    cache: 'force-cache',
-                    mode: 'cors'
-                });
+        // ===== 🚀 LOAD VIDEO (with or without cache) =====
+        function loadVideo(videoUrl) {
+            return new Promise((resolve, reject) => {
+                // Try cache first
+                fetch(videoUrl, { cache: 'force-cache', mode: 'cors' })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.blob().then(blob => {
+                                const blobUrl = URL.createObjectURL(blob);
+                                video.src = blobUrl;
+                                cacheBadge.style.display = 'flex';
+                                console.log('✅ Video loaded from CACHE');
+                                resolve();
+                            });
+                        } else {
+                            // Fallback to direct src
+                            video.src = videoUrl;
+                            console.log('⚠️ Fetch not ok, using direct src');
+                            resolve();
+                        }
+                    })
+                    .catch(() => {
+                        // Fallback for CORS/network
+                        video.src = videoUrl;
+                        console.log('⚠️ Fetch error, using direct src');
+                        resolve();
+                    });
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const blobUrl = URL.createObjectURL(blob);
-                    video.src = blobUrl;
-                    isVideoCached = true;
-                    cacheBadge.style.display = 'flex';
-                    console.log('✅ Video loaded from CACHE/blob');
-                } else {
-                    // Fallback
-                    video.src = videoUrl;
-                    console.log('⚠️ Fetch not ok, using direct src');
-                }
-            } catch (err) {
-                // Fallback for CORS/network
-                video.src = videoUrl;
-                console.log('⚠️ Fetch error, using direct src:', err.message);
-            }
-
-            video.muted = false;
-            isMuted = false;
-            soundBtn.textContent = '🔊';
-            video.load();
-            video.play().catch(() => {});
+                // Timeout fallback - agar 10 seconds mein load na ho
+                setTimeout(() => {
+                    if (!video.src) {
+                        video.src = videoUrl;
+                        console.log('⏰ Timeout, using direct src');
+                        resolve();
+                    }
+                }, 10000);
+            });
         }
 
         function parseVASTAndPlay(xmlString) {
@@ -535,29 +536,32 @@
                     return;
                 }
 
-                // 1. Get Video URL
+                // 1. Get Video URL (better extraction)
                 const mediaFiles = xml.querySelectorAll('MediaFile');
                 let videoUrl = null;
                 for (let node of mediaFiles) {
                     const type = node.getAttribute('type') || '';
-                    const url = node.textContent.trim();
+                    let url = node.textContent.trim();
+                    // Some VAST have CDATA or URL in attribute
+                    if (!url) url = node.getAttribute('src') || node.getAttribute('url') || '';
                     if (url && (type.includes('mp4') || type.includes('video/mp4'))) {
                         videoUrl = url;
                         break;
                     }
                 }
+                // If still not found, try any video type
                 if (!videoUrl) {
                     for (let node of mediaFiles) {
-                        const type = node.getAttribute('type') || '';
-                        const url = node.textContent.trim();
-                        if (url && type.includes('video')) {
+                        let url = node.textContent.trim();
+                        if (!url) url = node.getAttribute('src') || node.getAttribute('url') || '';
+                        if (url && (node.getAttribute('type') || '').includes('video')) {
                             videoUrl = url;
                             break;
                         }
                     }
                 }
                 if (!videoUrl) {
-                    showError('No MP4 video found', true);
+                    showError('No video URL found in VAST', true);
                     showLoading(false);
                     playBtn.style.display = 'block';
                     return;
@@ -568,53 +572,89 @@
                 const clickNode = xml.querySelector('ClickThrough');
                 if (clickNode) currentClickUrl = clickNode.textContent.trim();
 
-                // 3. 🔥 Impression URLs
+                // 3. Impression URLs
                 impressionUrls = [];
                 const impressionNodes = xml.querySelectorAll('Impression');
                 impressionNodes.forEach(node => {
                     const url = node.textContent.trim();
                     if (url) impressionUrls.push(url);
                 });
+                // Also check InLine Impression
                 const inlineImp = xml.querySelector('InLine Impression');
                 if (inlineImp) {
                     const url = inlineImp.textContent.trim();
                     if (url && !impressionUrls.includes(url)) impressionUrls.push(url);
                 }
 
+                console.log('✅ Video URL:', videoUrl);
                 console.log('✅ Impressions:', impressionUrls);
                 console.log('✅ ClickThrough:', currentClickUrl);
 
                 impressionsFired = false;
-                isVideoCached = false;
                 showLoading(false);
 
-                // 🔥 Load video with caching
-                loadVideoWithCache(videoUrl);
+                // 🚀 LOAD VIDEO
+                loadVideo(videoUrl).then(() => {
+                    video.muted = false;
+                    isMuted = false;
+                    soundBtn.textContent = '🔊';
 
-                // 🔥 Impressions fire on play
-                video.onplay = function() {
-                    fireImpressions();
-                };
+                    // 🔥 Play video
+                    video.load();
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                console.log('✅ Video playing');
+                                isAdPlaying = true;
+                                showControls(true);
+                                startSkipTimer();
+                                // Fire impressions on play
+                                fireImpressions();
+                            })
+                            .catch(err => {
+                                console.error('❌ Video play error:', err);
+                                // Retry play after user interaction
+                                showError('Tap to play video', true);
+                                showLoading(false);
+                                playBtn.style.display = 'block';
+                                playBtn.textContent = '▶ Tap to Play';
+                                // On click, try playing again
+                                playBtn.onclick = function() {
+                                    video.play().catch(() => {});
+                                    playBtn.style.display = 'none';
+                                    showLoading(true);
+                                };
+                            });
+                    }
 
-                showControls(true);
-                startSkipTimer();
+                    // Video ended
+                    video.onended = function() {
+                        finishAd();
+                    };
 
-                const link = currentClickUrl || DEFAULT_CTA;
-                downloadSmall.href = link;
-                downloadSmall.style.display = 'inline-flex';
-                downloadBig.href = link;
-                downloadBig.style.display = 'inline-flex';
+                    // Video error
+                    video.onerror = function() {
+                        console.error('❌ Video error:', video.error);
+                        showError('Video error. Retry?', true);
+                        showLoading(false);
+                        playBtn.style.display = 'block';
+                    };
 
-                playBtn.style.display = 'none';
+                    // Update links
+                    const link = currentClickUrl || DEFAULT_CTA;
+                    downloadSmall.href = link;
+                    downloadSmall.style.display = 'inline-flex';
+                    downloadBig.href = link;
+                    downloadBig.style.display = 'inline-flex';
 
-                video.onended = function() {
-                    finishAd();
-                };
+                    playBtn.style.display = 'none';
 
-                // Fullscreen try
-                if (!document.fullscreenElement) {
-                    main.requestFullscreen().catch(() => {});
-                }
+                    // Fullscreen try
+                    if (!document.fullscreenElement) {
+                        main.requestFullscreen().catch(() => {});
+                    }
+                });
 
             } catch(e) {
                 showError('Parse error: ' + e.message, true);
@@ -623,17 +663,15 @@
             }
         }
 
-        // ===== FETCH VAST XML (with caching) =====
+        // ===== FETCH VAST =====
         function fetchAndPlay() {
             resetPlayer();
             hideError();
             showLoading(true);
             playBtn.style.display = 'none';
+            playBtn.onclick = null;
 
-            fetch(VAST_URL, {
-                cache: 'force-cache',
-                mode: 'cors'
-            })
+            fetch(VAST_URL, { cache: 'force-cache', mode: 'cors' })
                 .then(r => {
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     return r.text();
@@ -646,7 +684,7 @@
                 });
         }
 
-        // ===== SKIP TIMER (15 seconds) =====
+        // ===== SKIP TIMER =====
         function startSkipTimer() {
             let rem = SKIP_DELAY;
             skipBtn.disabled = true;
@@ -682,8 +720,8 @@
         retryBtn.addEventListener('click', fetchAndPlay);
 
         resetPlayer();
-        console.log('✅ VAST Ad Player with CACHE + IMPRESSION tracking!');
-        console.log('🔊 Audio ON by default | ⏱️ Skip after 15s');
+        console.log('✅ VAST Ad Player FIXED — Video will play now!');
+        console.log('🔊 Audio ON | ⏱️ Skip after 15s');
     })();
 </script>
 </body>
