@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- ✅ Site verification meta tag -->
+    <meta name="clckd" content="c124c5939d8a569ff3823b803fba763f" />
     <title>🎬 VAST Full‑Screen Ad Player</title>
-    <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body, html {
@@ -27,12 +28,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
         }
         #ad-container video {
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             background: #000;
         }
+        /* Fullscreen mode me video ko stretch */
+        #main:-webkit-full-screen #ad-container video { object-fit: contain; }
+        #main:-moz-full-screen #ad-container video { object-fit: contain; }
+        #main:fullscreen #ad-container video { object-fit: contain; }
+
         #play-btn {
             position: absolute;
             padding: 18px 50px;
@@ -106,6 +116,31 @@
         }
         #retry-btn:hover { background: #e64a19; }
 
+        /* Companion banner area */
+        #companion-area {
+            width: 100%;
+            min-height: 60px;
+            background: #0f0f0f;
+            border-top: 1px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 6px 10px;
+            overflow-x: auto;
+        }
+        #companion-area img {
+            max-height: 55px;
+            max-width: 180px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        #companion-area .placeholder {
+            color: #555;
+            font-size: 13px;
+        }
+
         #bottom-bar {
             height: 80px;
             min-height: 80px;
@@ -146,10 +181,18 @@
             white-space: nowrap;
         }
         .btn:active { transform: scale(0.94); }
-        .btn-download { background: #34a853; color: #fff; }
+        .btn-download {
+            background: #34a853;
+            color: #fff;
+        }
         .btn-download:hover { background: #2d9248; }
         .btn-share { background: #1a73e8; color: #fff; }
         .btn-share:hover { background: #1558b0; }
+        .btn-fullscreen {
+            background: #6b7280;
+            color: #fff;
+        }
+        .btn-fullscreen:hover { background: #4b5563; }
 
         .ad-controls {
             position: absolute;
@@ -194,18 +237,6 @@
             background: rgba(255,255,255,0.15);
             border-color: #fff;
         }
-        .ad-cta {
-            background: #f59e0b;
-            color: #000;
-            padding: 6px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 13px;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(245,158,11,0.4);
-            transition: 0.2s;
-        }
-        .ad-cta:hover { transform: scale(1.05); }
         #ad-status {
             position: absolute;
             top: 16px;
@@ -220,6 +251,20 @@
             pointer-events: none;
             white-space: nowrap;
         }
+        #ad-info {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            color: #aaa;
+            font-size: 13px;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 14px;
+            border-radius: 20px;
+            z-index: 15;
+            display: none;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
 
         @media (max-width: 600px) {
             .btn { padding: 8px 16px; font-size: 14px; }
@@ -228,47 +273,55 @@
             #bottom-bar { padding: 0 12px; height: 70px; min-height: 70px; }
             .ad-controls { gap: 10px; padding: 8px 14px; flex-wrap: wrap; justify-content: center; }
             .ad-countdown { font-size: 12px; min-width: 60px; }
+            #companion-area img { max-height: 45px; max-width: 120px; }
         }
     </style>
 </head>
 <body>
 <div id="main">
     <div id="ad-container">
-        <video id="ad-video" playsinline muted></video>
+        <video id="ad-video" playsinline controls></video>
         <div id="loading">
             <div class="spinner"></div>
             <span>Loading ad...</span>
         </div>
-        <button id="play-btn">▶ Play Ad</button>
+        <button id="play-btn">▶ Fetch & Play Ad</button>
         <button id="retry-btn">🔄 Retry</button>
         <div id="error-msg"></div>
         <div id="ad-status">Initializing...</div>
+        <div id="ad-info">📛 Ad Title · ⏱️ Duration</div>
+
+        <div id="companion-area">
+            <span class="placeholder">📸 Companion banner will appear here</span>
+        </div>
 
         <div class="ad-controls" id="ad-controls" style="display:none;">
             <span class="ad-countdown" id="ad-countdown">Ad · 0s</span>
             <button class="ad-skip-btn" id="ad-skip-btn" disabled>Skip ⏳</button>
-            <a class="ad-cta" id="ad-cta" href="#" target="_blank">🔗 Visit Advertiser</a>
         </div>
     </div>
 
     <div id="bottom-bar">
         <div class="sponsor-text">📢 <span>Sponsored</span> · Google Play</div>
         <div class="action-buttons">
-            <a href="#" id="download-link" class="btn btn-download">⬇️ Download</a>
+            <!-- ✅ Download button (advertiser link) -->
+            <a href="#" id="download-link" class="btn btn-download" target="_blank" style="display:none;">⬇️ Download</a>
             <button id="share-btn" class="btn btn-share">🔗 Share</button>
+            <button id="fullscreen-btn" class="btn btn-fullscreen">⛶ Full Screen</button>
         </div>
     </div>
 </div>
 
 <script>
     (function() {
-        // ===== 🔴 SIRF AAP KA NAYA VAST URL (3 hours wala) =====
+        // ===== 🔴 ONLY VAST URL =====
         const VAST_URL = 'https://difficultblock.com/dxm.FazZdVGvNlv/Z/G/Ux/EeCmJ9NubZPUplokgPvT/cfyPN_Dbkh2/NDjkkdtSNezsI/0UOvT/Yr3ZMJwo';
         const DEFAULT_CTA = 'https://google.com';
         const SKIP_DELAY = 6;
 
         const video = document.getElementById('ad-video');
         const container = document.getElementById('ad-container');
+        const main = document.getElementById('main');
         const playBtn = document.getElementById('play-btn');
         const retryBtn = document.getElementById('retry-btn');
         const errorMsg = document.getElementById('error-msg');
@@ -277,13 +330,15 @@
         const adControls = document.getElementById('ad-controls');
         const countdown = document.getElementById('ad-countdown');
         const skipBtn = document.getElementById('ad-skip-btn');
-        const ctaBtn = document.getElementById('ad-cta');
         const downloadLink = document.getElementById('download-link');
         const shareBtn = document.getElementById('share-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const companionArea = document.getElementById('companion-area');
+        const adInfo = document.getElementById('ad-info');
 
-        let adsLoader = null, adsManager = null, adDisplayContainer = null;
         let isAdPlaying = false;
-        let skipInterval = null, loadTimeout = null;
+        let skipInterval = null;
+        let currentClickUrl = '';
 
         function setStatus(msg) { adStatus.textContent = msg; console.log('[Ad]', msg); }
         function showError(msg, showRetry = false) {
@@ -301,12 +356,15 @@
         function showControls(show) {
             adControls.style.display = show ? 'flex' : 'none';
         }
+        function showAdInfo(title, duration) {
+            adInfo.style.display = 'block';
+            adInfo.textContent = '📛 ' + title + ' · ⏱️ ' + duration;
+        }
+        function hideAdInfo() { adInfo.style.display = 'none'; }
 
         function resetPlayer() {
             isAdPlaying = false;
             clearInterval(skipInterval);
-            clearTimeout(loadTimeout);
-            if (adsManager) { try { adsManager.destroy(); } catch(e) {} adsManager = null; }
             video.pause();
             video.removeAttribute('src');
             video.load();
@@ -315,110 +373,161 @@
             skipBtn.textContent = 'Skip ⏳';
             countdown.textContent = 'Ad · 0s';
             playBtn.style.display = 'block';
-            playBtn.textContent = '▶ Play Ad';
+            playBtn.textContent = '▶ Fetch & Play Ad';
             hideError();
             showLoading(false);
             setStatus('Ready');
+            downloadLink.style.display = 'none';
+            hideAdInfo();
+            companionArea.innerHTML = '<span class="placeholder">📸 Companion banner will appear here</span>';
         }
 
-        function loadAd() {
+        // ===== PARSE VAST =====
+        function parseVASTAndPlay(xmlString) {
+            try {
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(xmlString, 'text/xml');
+                const parseError = xml.querySelector('parsererror');
+                if (parseError) {
+                    showError('Invalid XML response', true);
+                    setStatus('Parse error');
+                    showLoading(false);
+                    playBtn.style.display = 'block';
+                    return;
+                }
+
+                let title = 'Untitled';
+                const titleNode = xml.querySelector('AdTitle');
+                if (titleNode) title = titleNode.textContent.trim();
+
+                let duration = 'N/A';
+                const durNode = xml.querySelector('Duration');
+                if (durNode) duration = durNode.textContent.trim();
+
+                const mediaFiles = xml.querySelectorAll('MediaFile');
+                let videoUrl = null;
+                for (let node of mediaFiles) {
+                    const type = node.getAttribute('type') || '';
+                    const url = node.textContent.trim();
+                    if (url && (type.includes('mp4') || type.includes('video/mp4'))) {
+                        videoUrl = url;
+                        break;
+                    }
+                }
+                if (!videoUrl) {
+                    for (let node of mediaFiles) {
+                        const type = node.getAttribute('type') || '';
+                        const url = node.textContent.trim();
+                        if (url && type.includes('video')) {
+                            videoUrl = url;
+                            break;
+                        }
+                    }
+                }
+                if (!videoUrl) {
+                    showError('No MP4 video found in VAST', true);
+                    setStatus('No video');
+                    showLoading(false);
+                    playBtn.style.display = 'block';
+                    return;
+                }
+
+                currentClickUrl = '';
+                const clickThroughNode = xml.querySelector('ClickThrough');
+                if (clickThroughNode) {
+                    currentClickUrl = clickThroughNode.textContent.trim();
+                }
+
+                showLoading(false);
+                video.src = videoUrl;
+                video.load();
+                video.play().catch(() => {});
+                setStatus('Playing: ' + title);
+                showAdInfo(title, duration);
+
+                // ✅ Download button = advertiser link (but text is "Download")
+                if (currentClickUrl) {
+                    downloadLink.href = currentClickUrl;
+                } else {
+                    downloadLink.href = DEFAULT_CTA;
+                }
+                downloadLink.style.display = 'inline-flex';
+                downloadLink.textContent = '⬇️ Download';
+
+                // Companion banners
+                companionArea.innerHTML = '';
+                const companions = xml.querySelectorAll('Companion');
+                let hasCompanion = false;
+                companions.forEach(comp => {
+                    const clickThrough = comp.querySelector('CompanionClickThrough');
+                    const staticRes = comp.querySelector('StaticResource');
+                    if (staticRes) {
+                        const imgUrl = staticRes.textContent.trim();
+                        const wrapper = document.createElement('div');
+                        wrapper.style.display = 'inline-block';
+                        wrapper.style.margin = '4px';
+                        let img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.alt = 'Companion Ad';
+                        if (clickThrough) {
+                            const a = document.createElement('a');
+                            a.href = clickThrough.textContent.trim();
+                            a.target = '_blank';
+                            a.appendChild(img);
+                            wrapper.appendChild(a);
+                        } else {
+                            wrapper.appendChild(img);
+                        }
+                        companionArea.appendChild(wrapper);
+                        hasCompanion = true;
+                    }
+                });
+                if (!hasCompanion) {
+                    companionArea.innerHTML = '<span class="placeholder">📸 No companion banner in this VAST</span>';
+                }
+
+                isAdPlaying = true;
+                showControls(true);
+                startSkipTimer();
+
+                playBtn.style.display = 'none';
+                setStatus('Ad playing');
+
+                video.onended = function() {
+                    finishAd();
+                };
+
+            } catch(e) {
+                showError('Parse error: ' + e.message, true);
+                setStatus('Error');
+                showLoading(false);
+                playBtn.style.display = 'block';
+            }
+        }
+
+        // ===== FETCH VAST =====
+        function fetchAndPlay() {
             resetPlayer();
             hideError();
             showLoading(true);
-            setStatus('Loading ad...');
+            setStatus('Fetching VAST...');
             playBtn.style.display = 'none';
-            initIMA();
-            setTimeout(requestVast, 200);
+
+            fetch(VAST_URL, { mode: 'cors' })
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.text();
+                })
+                .then(xml => parseVASTAndPlay(xml))
+                .catch(error => {
+                    showError('Fetch error: ' + error.message, true);
+                    setStatus('Network error');
+                    showLoading(false);
+                    playBtn.style.display = 'block';
+                });
         }
 
-        function initIMA() {
-            try {
-                adDisplayContainer = new google.ima.AdDisplayContainer(container, video);
-                adDisplayContainer.initialize();
-                adsLoader = new google.ima.AdsLoader(adDisplayContainer);
-                adsLoader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, onAdsManagerLoaded);
-                adsLoader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, onAdError);
-            } catch(e) {
-                setStatus('IMA init error');
-                showError('IMA init error: ' + e.message, true);
-                showLoading(false);
-                playBtn.style.display = 'block';
-            }
-        }
-
-        function requestVast() {
-            setStatus('Requesting VAST...');
-            const req = new google.ima.AdsRequest();
-            req.adTagUrl = VAST_URL;
-            req.linearAdSlotWidth = 640;
-            req.linearAdSlotHeight = 360;
-            req.setAdWillAutoPlay(true);
-            req.setAdWillPlayMuted(true);
-            try {
-                adsLoader.requestAds(req);
-                loadTimeout = setTimeout(() => {
-                    if (!isAdPlaying) {
-                        setStatus('VAST load timeout');
-                        showError('Ad load timeout. Retry?', true);
-                        showLoading(false);
-                        playBtn.style.display = 'block';
-                    }
-                }, 12000);
-            } catch(e) {
-                setStatus('Request failed');
-                showError('Request error: ' + e.message, true);
-                showLoading(false);
-                playBtn.style.display = 'block';
-            }
-        }
-
-        function onAdsManagerLoaded(event) {
-            clearTimeout(loadTimeout);
-            const settings = new google.ima.AdsRenderingSettings();
-            settings.restoreCustomPlaybackStateOnAdBreakComplete = true;
-            adsManager = event.getAdsManager(video, settings);
-            adsManager.addEventListener(google.ima.AdEvent.Type.LOADED, () => {
-                showLoading(false);
-                setStatus('Ad loaded');
-            });
-            adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, () => {
-                isAdPlaying = true;
-                showLoading(false);
-                setStatus('Ad started');
-                showControls(true);
-                startSkipTimer();
-            });
-            adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, finishAd);
-            adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, finishAd);
-            adsManager.addEventListener(google.ima.AdEvent.Type.ALL_ADS_COMPLETED, finishAd);
-            adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, onAdError);
-            try {
-                adsManager.init(640, 360, google.ima.ViewMode.NORMAL);
-                adsManager.start();
-            } catch(e) {
-                setStatus('AdManager start error');
-                showError('AdManager error: ' + e.message, true);
-                showLoading(false);
-                playBtn.style.display = 'block';
-            }
-        }
-
-        function onAdError(event) {
-            clearTimeout(loadTimeout);
-            const err = event?.getError?.()?.toString() || 'unknown';
-            setStatus('Ad error: ' + err);
-            showError('Ad error: ' + err + '. Click Retry.', true);
-            showLoading(false);
-            playBtn.style.display = 'block';
-        }
-
-        function finishAd() {
-            setStatus('Ad finished');
-            resetPlayer();
-            playBtn.style.display = 'block';
-            playBtn.textContent = '▶ Play Again';
-        }
-
+        // ===== SKIP TIMER =====
         function startSkipTimer() {
             let rem = SKIP_DELAY;
             skipBtn.disabled = true;
@@ -438,34 +547,46 @@
             }, 1000);
         }
 
+        function finishAd() {
+            clearInterval(skipInterval);
+            setStatus('Ad finished');
+            resetPlayer();
+            playBtn.style.display = 'block';
+            playBtn.textContent = '▶ Play Again';
+            // Download link ko rakhein
+            if (downloadLink.style.display !== 'none') {
+                // keep it
+            }
+        }
+
+        // ===== FULLSCREEN =====
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                main.requestFullscreen().catch(err => {
+                    alert('Fullscreen not supported: ' + err.message);
+                });
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        // ===== EVENTS =====
+        playBtn.addEventListener('click', fetchAndPlay);
+        retryBtn.addEventListener('click', fetchAndPlay);
+
         skipBtn.addEventListener('click', () => {
             if (skipBtn.disabled) return;
-            if (adsManager) {
-                try { adsManager.skip(); } catch(e) { finishAd(); }
-            } else {
-                finishAd();
-            }
+            finishAd();
         });
 
-        retryBtn.addEventListener('click', () => {
-            loadAd();
-        });
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-        playBtn.addEventListener('click', loadAd);
-
-        ctaBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (adsManager) {
-                try { adsManager.click(); } catch(e) { window.open(DEFAULT_CTA, '_blank'); }
-            } else {
-                window.open(DEFAULT_CTA, '_blank');
-            }
-        });
-
-        // 🔽 Yahan apni download link daalein
-        downloadLink.href = 'https://play.google.com/store/apps/details?id=com.example.app';
         shareBtn.addEventListener('click', () => {
-            const data = { title: 'Check this app!', text: 'Download now!', url: downloadLink.href };
+            const data = {
+                title: 'Check this app!',
+                text: 'Download now!',
+                url: downloadLink.href || window.location.href
+            };
             if (navigator.share) {
                 navigator.share(data).catch(()=>{});
             } else {
@@ -479,10 +600,11 @@
             }
         });
 
+        // Init
         setStatus('Ready');
         playBtn.style.display = 'block';
         showControls(false);
-        console.log('✅ VAST player ready. URL:', VAST_URL);
+        console.log('✅ VAST Full Player ready. URL:', VAST_URL);
     })();
 </script>
 </body>
